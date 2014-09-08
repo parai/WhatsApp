@@ -13,11 +13,28 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    entry.cpp
+    entry.cpp \
+    Entry/system/kernel/alarm.c \
+    Entry/system/kernel/event.c \
+    Entry/system/kernel/task.c \
+    Application/Configuration/os_cfg.c \
+    Entry/system/EcuM.c \
+    Entry/system/SchM.c
 
 HEADERS  += \
-    entry.h
+    entry.h \
+    Entry/include/Os.h \
+    Entry/include/Std_Types.h \
+    Entry/include/Compiler.h \
+    Entry/system/kernel/os_i.h \
+    Application/Configuration/os_cfg.h \
+    Entry/include/EcuM.h \
+    Entry/include/SchM.h
 
 FORMS    +=
 
 INCLUDEPATH += Entry
+INCLUDEPATH += Entry/include
+INCLUDEPATH += Entry/system/kernel
+INCLUDEPATH += Application/Configuration
+
