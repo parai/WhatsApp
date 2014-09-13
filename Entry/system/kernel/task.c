@@ -57,7 +57,8 @@ STATIC uint8 readyTable[8];
 STATIC TaskType    			CurrentTask;
 STATIC AppModeType				AppMode;
 /* ============================ [ DECLARES ] ====================================================== */
-extern FUNC(void,MEM_OsAlarmInit) OsAlarmInit ( void );
+extern FUNC(void,MEM_OsAlarmInit)    OsAlarmInit ( void );
+extern FUNC(void,MEM_OsResourceInit) OsResourceInit ( void );
 
 STATIC FUNC(void,MEM_TASK_INIT)         Init   ( void );
 STATIC FUNC(TaskType,MEM_TASK_GETBIT)   GetBit ( void  );
@@ -68,6 +69,7 @@ STATIC FUNC(void,MEM_TASK_CLEARBIT)     ClearBit( uint8 priority );
 
 STATIC FUNC(void,MEM_TASK_INIT) Init ( void )
 {
+    CurrentTask = 0;    // Idle is ready always
     readyGrp = 0;
     memset(readyTable,0,8);
 
@@ -86,6 +88,7 @@ STATIC FUNC(void,MEM_TASK_INIT) Init ( void )
     }
 
     OsAlarmInit();
+    OsResourceInit();
 }
 STATIC FUNC(TaskType,MEM_TASK_GETBIT) GetBit ( void  )
 {
@@ -98,7 +101,7 @@ STATIC FUNC(TaskType,MEM_TASK_GETBIT) GetBit ( void  )
     }
     else
     {
-        assert(0);	/* impossible case */
+        /* only os Idle is ready */
     }
 
     return result;
@@ -162,28 +165,46 @@ FUNC(StatusType,MEM_Schedule) 		Schedule      ( void )
     P2CONST(task_declare_t,AUTOMATIC,LOCAL) declare;
     StatusType ercd = E_OK;
 
-    task = GetBit();
-    assert(task < TASK_NUM);
-    declare = &TaskList[task];
+    if ( E_OK == GetResource(RES_SCHEDULER) )
+    {
+        task = GetBit();
+        assert(task < TASK_NUM);
+        declare = &TaskList[task];
 
-    if (task > CurrentTask)
-    {	/* task with high priority */
-        TaskType previous = CurrentTask;	/* link it in the dynamic ram queue */
+        if (task > CurrentTask)
+        {	/* task with high priority */
+            TaskType previous = CurrentTask;	/* link it in the dynamic ram queue */
 
-        CurrentTask = task;				/* preempt */
+            CurrentTask = task;		/* preempt */
+            SetBit(previous);       /* put this low priority task to ready map again */
+            ClearBit(CurrentTask);	/* pop up the higher ready task from ready map */
 
-        ClearBit(CurrentTask);	/* pop up the higher ready task from ready map */
+            ReleaseResource(RES_SCHEDULER);
 
-        declare->main();
+            declare->main();
 
-        CurrentTask = previous;
+            GetResource(RES_SCHEDULER);
+
+            ClearBit(previous);     /* resume the low priority task  from ready map */
+            CurrentTask = previous;
+        }
+        else
+        {
+            if(0 == CurrentTask)
+            {	/* no task is ready, execute idle*/
+                ReleaseResource(RES_SCHEDULER);
+
+                declare->main();
+
+                GetResource(RES_SCHEDULER);
+            }
+        }
+
+        ReleaseResource(RES_SCHEDULER);
     }
     else
     {
-        if(0 == CurrentTask)
-        {	/* no task is ready, execute idle*/
-            declare->main();
-        }
+        ercd = E_OS_RESOURCE;   /* Scheduler only supports the check of RES_SCHEDULER */
     }
 
     return ercd;
@@ -221,3 +242,9 @@ FUNC(void,MEM_StartOS)              StartOS       ( AppModeType Mode )
 
     Init();
 }
+
+TASK(OsIdle)
+{
+
+}
+

@@ -42,6 +42,8 @@ extern "C" {
 #define TASK(_task) 			void TaskMain##_task  ( void )
 #define ALARM(_alarm)	    	void AlarmMain##_alarm ( void )
 
+#define RES_SCHEDULER           (ResourceType)0 /* default resources for OS */
+
 /* ============================ [ TYPES    ] ====================================================== */
 typedef uint8 					StatusType;
 typedef uint32_t 				EventMaskType;
@@ -62,27 +64,30 @@ typedef struct
 	TickType TickPerBase;
 	TickType MinCycle;
 } 								AlarmBaseType;
-
 typedef AlarmBaseType *			AlarmBaseRefType;
+
+typedef uint8                   ResourceType;
 
 #include "os_i.h"
 /* ============================ [ DATAS    ] ====================================================== */
 /* ============================ [ DECLARES ] ====================================================== */
 /* ============================ [ LOCALS   ] ====================================================== */
 /* ============================ [ FNCTIONS ] ====================================================== */
-FUNC(void,MEM_OS_TICK) 				OsTick 		  ( void );
-FUNC(StatusType,MEM_GetAlarmBase) 	GetAlarmBase  ( AlarmType AlarmId, AlarmBaseRefType Info );
-FUNC(StatusType,MEM_GetAlarm) 		GetAlarm	  ( AlarmType AlarmId, TickRefType Tick );
-FUNC(StatusType,MEM_SetRelAlarm) 	SetRelAlarm   ( AlarmType AlarmId, TickType Increment, TickType Cycle );
-FUNC(StatusType,MEM_SetAbsAlarm) 	SetAbsAlarm   ( AlarmType AlarmId, TickType Increment, TickType Cycle );
-FUNC(StatusType,MEM_CancelAlarm)    CancelAlarm   ( AlarmType AlarmId );
-FUNC(TickType,MEM_GetOsTick)        GetOsTick     ( void );
-FUNC(StatusType,MEM_ACTIVATE_TASK) 	ActivateTask  ( TaskType TaskId);
-FUNC(StatusType,MEM_ACTIVATE_TASK) 	TerminateTask ( void );
-FUNC(StatusType,MEM_Schedule) 		Schedule      ( void );
-FUNC(StatusType,MEM_GetTaskID) 		GetTaskID     ( TaskRefType TaskID );
-FUNC(StatusType,MEM_GetTaskState) 	GetTaskState  ( TaskType TaskID,TaskStateRefType State );
-FUNC(void,MEM_StartOS)              StartOS       ( AppModeType Mode );
+FUNC(void,MEM_OS_TICK) 				 OsTick 		  ( void );
+FUNC(StatusType,MEM_GetAlarmBase) 	 GetAlarmBase    ( AlarmType AlarmId, AlarmBaseRefType Info );
+FUNC(StatusType,MEM_GetAlarm) 		 GetAlarm	     ( AlarmType AlarmId, TickRefType Tick );
+FUNC(StatusType,MEM_SetRelAlarm) 	 SetRelAlarm     ( AlarmType AlarmId, TickType Increment, TickType Cycle );
+FUNC(StatusType,MEM_SetAbsAlarm) 	 SetAbsAlarm     ( AlarmType AlarmId, TickType Increment, TickType Cycle );
+FUNC(StatusType,MEM_CancelAlarm)     CancelAlarm     ( AlarmType AlarmId );
+FUNC(TickType,MEM_GetOsTick)         GetOsTick       ( void );
+FUNC(StatusType,MEM_ACTIVATE_TASK) 	 ActivateTask    ( TaskType TaskId);
+FUNC(StatusType,MEM_ACTIVATE_TASK) 	 TerminateTask   ( void );
+FUNC(StatusType,MEM_Schedule) 		 Schedule        ( void );
+FUNC(StatusType,MEM_GetTaskID) 		 GetTaskID       ( TaskRefType TaskID );
+FUNC(StatusType,MEM_GetTaskState) 	 GetTaskState    ( TaskType TaskID,TaskStateRefType State );
+FUNC(void,MEM_StartOS)               StartOS         ( AppModeType Mode );
+FUNC(StatusType,MEM_GetResource)     GetResource     ( ResourceType ResID );
+FUNC(StatusType,MEM_ReleaseResource) ReleaseResource ( ResourceType ResID );
 #ifdef __cplusplus
 }
 #endif

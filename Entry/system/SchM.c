@@ -24,8 +24,13 @@
 
 TASK(SchM_Startup)
 {
-    SetRelAlarm(ALARMID_BswService,10,5000);
+    SetRelAlarm(ALARMID_SchM_BswService,10,5);
 	TerminateTask();
+}
+
+ALARM(SchM_BswService)
+{
+    (void)ActivateTask(TASKID_SchM_BswService);
 }
 
 TASK(SchM_BswService)

@@ -19,7 +19,7 @@
 /* ============================ [ DATAS    ] ====================================================== */
 CONST(task_declare_t,AUTOMATIC)  TaskList[TASK_NUM] =
 {
-    DeclareTask(OsIdle,			TRUE,	OSDEFAULTAPPMODE),
+    DeclareTask(OsIdle,			TRUE,	0xFFFFFFFFUL    ),
     DeclareTask(SchM_Startup,	TRUE,	OSDEFAULTAPPMODE),
     DeclareTask(SchM_BswService,FALSE,	0				)
 };
@@ -32,13 +32,3 @@ CONST(alarm_declare_t,AUTOMATIC) AlarmList[ALARM_NUM] =
 /* ============================ [ DECLARES ] ====================================================== */
 /* ============================ [ LOCALS   ] ====================================================== */
 /* ============================ [ FNCTIONS ] ====================================================== */
-TASK(OsIdle)
-{
-}
-
-ALARM(SchM_BswService)
-{
-    (void)ActivateTask(TASKID_SchM_BswService);
-}
-
-

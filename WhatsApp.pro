@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     Entry/system/kernel/task.c \
     Application/Configuration/os_cfg.c \
     Entry/system/EcuM.c \
-    Entry/system/SchM.c
+    Entry/system/SchM.c \
+    Entry/system/kernel/resource.c
 
 HEADERS  += \
     entry.h \

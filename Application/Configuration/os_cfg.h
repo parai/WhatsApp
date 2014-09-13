@@ -26,8 +26,12 @@ extern "C" {
 #define TASKID_SchM_BswService 	2
 #define TASK_NUM               	3
 
-#define ALARMID_BswService		0
-#define ALARM_NUM				1
+#define ALARMID_SchM_BswService		0
+#define ALARM_NUM                   1
+
+#define RES_CAN                 (RES_SCHEDULER + 1)
+#define RES_LCD                 (RES_SCHEDULER + 2)
+#define RES_NUMBER              (RES_SCHEDULER + 3)
 /* ============================ [ TYPES    ] ====================================================== */
 /* ============================ [ DATAS    ] ====================================================== */
 extern CONST(task_declare_t,AUTOMATIC)  TaskList[TASK_NUM];
