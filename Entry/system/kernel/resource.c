@@ -21,45 +21,12 @@
 STATIC uint8 ResourceBit[(RES_NUMBER+7)/8];
 /* ============================ [ DECLARES ] ====================================================== */
 /* ============================ [ LOCALS   ] ====================================================== */
-
-STATIC FUNC(void,MEM_RES_SETBIT) SetBit ( ResourceType ResID )
-{
-    uint8 x;
-    uint8 y;
-    y = ResID>>3;
-    x = ResID&7;
-
-    ResourceBit[y] |= 1<<x;
-}
-
-STATIC FUNC(void,MEM_RES_CLEARBIT) ClearBit ( ResourceType ResID )
-{
-    uint8 x;
-    uint8 y;
-    y = ResID>>3;
-    x = ResID&7;
-
-    ResourceBit[y] &= ~(1<<x);
-}
-
-STATIC FUNC(bool,MEM_RES_ISBITSET) IsBitSet ( ResourceType ResID)
-{
-    bool isBitSet = FALSE;
-    uint8 y = ResID>>3;
-    uint8 x = ResID&7;
-
-    if( ResourceBit[y] & (1<<x) )
-    {
-        isBitSet = TRUE;
-    }
-    return isBitSet;
-}
-
 /* ============================ [ FNCTIONS ] ====================================================== */
 /*! \fn StatusType GetResource ( ResourceType ResID )
  *  \brief Get a shared critical resource which will be used by several tasks
  *          As this is a implementation of Non-Preemtable OSEK OS BCC1, so treate the Resource
- *  as mutex.
+ *  as mutex. Infact, it is just a mark, if the mark is set, that is to say that the resource
+ * is occupied by other task.
  *  \param ResID Identifier to the critical resource
  *  \return the status of GetResource:
  *              E_OK: get ResID successfully
@@ -71,13 +38,13 @@ FUNC(StatusType,MEM_GetResource) GetResource ( ResourceType ResID )
 
     if (ResID < RES_NUMBER)
     {
-        if (IsBitSet(ResID))
+        if (IsBitopSet(ResourceBit,(uint32)ResID))
         {
             ercd = E_OS_ACCESS;
         }
         else
         {
-            SetBit(ResID);
+            BitopSet(ResourceBit,(uint32)ResID);
         }
     }
     else
@@ -93,9 +60,9 @@ FUNC(StatusType,MEM_ReleaseResource) ReleaseResource ( ResourceType ResID )
     StatusType ercd = E_OK;
     if (ResID < RES_NUMBER)
     {
-        if (IsBitSet(ResID))
+        if (IsBitopSet(ResourceBit,(uint32)ResID))
         {
-            ClearBit(ResID);
+            BitopClear(ResourceBit,(uint32)ResID);
         }
         else
         {

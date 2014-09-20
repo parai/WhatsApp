@@ -20,7 +20,10 @@ SOURCES += main.cpp \
     Application/Configuration/os_cfg.c \
     Entry/system/EcuM.c \
     Entry/system/SchM.c \
-    Entry/system/kernel/resource.c
+    Entry/system/kernel/resource.c \
+    Entry/system/kernel/bitop.c \
+    VirtualDevice/virtualdevice.cpp \
+    VirtualDevice/virtualcan.cpp
 
 HEADERS  += \
     entry.h \
@@ -30,12 +33,18 @@ HEADERS  += \
     Entry/system/kernel/os_i.h \
     Application/Configuration/os_cfg.h \
     Entry/include/EcuM.h \
-    Entry/include/SchM.h
+    Entry/include/SchM.h \
+    VirtualDevice/virtualdevice.h \
+    VirtualDevice/virtualcan.h
 
 FORMS    +=
 
+INCLUDEPATH += VirtualDevice
 INCLUDEPATH += Entry
 INCLUDEPATH += Entry/include
 INCLUDEPATH += Entry/system/kernel
 INCLUDEPATH += Application/Configuration
+
+RESOURCES += \
+    WhatsApp.qrc
 

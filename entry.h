@@ -14,30 +14,47 @@
  */
 #ifndef ENTRY_H
 #define ENTRY_H
-
+#include <QtWidgets>
 #include <QMainWindow>
 #include <QAction>
 #include <QToolBar>
 #include <QIcon>
 #include <QMessageBox>
 #include <QDebug>
-// ====================== [ ICON RESOURCES ] =======================
-#define mRES_DIR   "D:/Qt/Projects/WhatsApp/res/"   /* Base Directory */
-#define mICON_SAVE mRES_DIR "isave.bmp"
+#include "virtualdevice.h"
+#include "virtualcan.h"
+#include <string>
+#include <map>
+#include <cstdlib>
+#include <ctime>
+#include <vector>
 
+typedef std::map<std::string,VirtualDevice*> map_virtual_device_t;
+// ====================== [ ICON RESOURCES ] =======================
+#define mRES_DIR   ":/res/"   /* Base Directory */
+#define mICON_SAVE  mRES_DIR "isave.bmp"
+#define mICON_PARAI mRES_DIR "iParai.png"
 class Entry : public QMainWindow
 {
     Q_OBJECT
+private:
+    map_virtual_device_t map_virtual_device;
+    QMenu* menuBSW /* Basic Software Modules*/;
+    QMenu* menuVD  /* Virtual Device */;
 public:
     explicit Entry(QWidget *parent = 0);
+
+    void registerVirtualDevice(VirtualDevice* virtualDevice);
 
 signals:
 
 protected:
     void timerEvent(QTimerEvent *Event);
 private slots:
-    void save();
+    void save(void);
+    void open(void);
 private:
+    void createMenuAndToolbar(void);
     void createToolbar(void);
 
 };

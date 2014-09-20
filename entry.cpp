@@ -18,11 +18,36 @@
 Entry::Entry(QWidget *parent) :
     QMainWindow(parent)
 {
-        this->createToolbar();
-        this->startTimer(1);
+    this->setWindowTitle("WhatsApp ( parai@foxmail.com )");
+    this->setWindowIcon(QIcon(mICON_PARAI));
+    this->createMenuAndToolbar();
+    this->startTimer(1);
 
-        StartOS(OSDEFAULTAPPMODE);
+    this->resize(600,20);
+
+    // example ...
+    VirtualDevice* device = new VirtualCan(this);
+    registerVirtualDevice(device);
+
+    StartOS(OSDEFAULTAPPMODE);
 }
+
+void Entry::registerVirtualDevice(VirtualDevice* virtualDevice)
+{
+    std::string key((const char *)virtualDevice->Name().toLocal8Bit());
+    std::pair<map_virtual_device_t::iterator, bool> status = map_virtual_device.insert(std::make_pair(key, virtualDevice));
+    if (status.second == false)
+    {
+        qDebug() << "System error: Virtual device " << virtualDevice->Name() << " re-registeration!\n";
+    }
+    else
+    {
+        QAction * action = new QAction(virtualDevice->Name(),this);
+        this->connect(action,SIGNAL(triggered()),virtualDevice,SLOT(wakeup()));
+        menuVD->addAction(action);
+    }
+}
+
 // ==================== [ SIGNALS       ] =====================================
 void Entry::timerEvent(QTimerEvent *Event)
 {
@@ -35,20 +60,40 @@ void Entry::timerEvent(QTimerEvent *Event)
 }
 
 // ==================== [ PRIVATE SLOTS ] ======================================
-void Entry::save()
+void Entry::open(void)
 {
-    QMessageBox::about(this,"Save","Toolbar Icon Save Clicked!");
+
+}
+
+void Entry::save(void)
+{
+
 }
 
 // ==================== [ PRIVATE FUNCTIONS ] ==================================
-void Entry::createToolbar(void)
+void Entry::createMenuAndToolbar(void)
 {
-    QToolBar* toolbar = NULL;
     QAction * action = NULL;
-    toolbar = this->addToolBar("Console");
+    QToolBar* toolbar = this->addToolBar("Console");
+    QMenu* menubar = this->menuBar()->addMenu(tr("File"));
+
+    action = new QAction(tr("&Open"),this);
+    action->setShortcut(tr("Ctrl+O"));
+    this->connect(action,SIGNAL(triggered()),this,SLOT(open()));
+    menubar->addAction(action);
 
     action = new QAction(QIcon(mICON_SAVE),tr("&Save"),this);
     action->setShortcut(tr("Ctrl+S"));
     this->connect(action,SIGNAL(triggered()),this,SLOT(save()));
     toolbar->addAction(action);
+    menubar->addAction(action);
+
+    action = new QAction(tr("&Exit"),this);
+    action->setShortcut(tr("Ctrl+Q"));
+    this->connect(action,SIGNAL(triggered()),this,SLOT(close()));
+    menubar->addAction(action);
+
+    this->menuBSW = this->menuBar()->addMenu(tr("BSW"));
+
+    this->menuVD = menuBSW->addMenu(tr("Virtual Device"));
 }

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/iParai.png</file>
+        <file>res/isave.bmp</file>
+    </qresource>
+</RCC>
