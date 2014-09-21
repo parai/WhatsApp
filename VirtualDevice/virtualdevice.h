@@ -15,14 +15,13 @@ public:
 
 signals:
 
-public slots:
+private slots:
     virtual void wakeup(void) {
         if(!this->isVisible())
         {
             this->show();
         }
     }
-
 };
 
 #endif // VIRTUALDEVICE_H
