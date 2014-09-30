@@ -14,27 +14,21 @@
  */
 /* ============================ [ INCLUDES ] ====================================================== */
 #include "Os.h"
-
 /* ============================ [ MACROS   ] ====================================================== */
 /* ============================ [ TYPES    ] ====================================================== */
 /* ============================ [ DATAS    ] ====================================================== */
+CONST(task_declare_t,AUTOMATIC)  TaskList[TASK_NUM] =
+{
+    DeclareTask(OsIdle,			TRUE,	0xFFFFFFFFUL    ),
+    DeclareTask(SchM_Startup,	TRUE,	OSDEFAULTAPPMODE),
+    DeclareTask(SchM_BswService,FALSE,	0				)
+};
+
+
+CONST(alarm_declare_t,AUTOMATIC) AlarmList[ALARM_NUM] =
+{
+        DeclareAlarm(SchM_BswService)
+};
 /* ============================ [ DECLARES ] ====================================================== */
 /* ============================ [ LOCALS   ] ====================================================== */
 /* ============================ [ FNCTIONS ] ====================================================== */
-void StartupHook(void)
-{
-
-}
-void ShutdownHook(StatusType ercd)
-{
-
-}
-void PreTaskHook(void)
-{
-}
-void PostTaskHook(void)
-{
-}
-void ErrorHook(StatusType ercd)
-{
-}

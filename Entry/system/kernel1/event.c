@@ -21,20 +21,3 @@
 /* ============================ [ DECLARES ] ====================================================== */
 /* ============================ [ LOCALS   ] ====================================================== */
 /* ============================ [ FNCTIONS ] ====================================================== */
-void StartupHook(void)
-{
-
-}
-void ShutdownHook(StatusType ercd)
-{
-
-}
-void PreTaskHook(void)
-{
-}
-void PostTaskHook(void)
-{
-}
-void ErrorHook(StatusType ercd)
-{
-}

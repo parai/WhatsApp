@@ -21,20 +21,40 @@
 /* ============================ [ DECLARES ] ====================================================== */
 /* ============================ [ LOCALS   ] ====================================================== */
 /* ============================ [ FNCTIONS ] ====================================================== */
-void StartupHook(void)
-{
 
-}
-void ShutdownHook(StatusType ercd)
+FUNC(void,MEM_BITOP_SET) BitopSet ( uint8* pBuffer, uint32 Position )
 {
+    uint8   x;
+    uint32  y;
+    y = Position>>3;
+    x = Position&7;
 
+    pBuffer[y] |= 1<<x;
 }
-void PreTaskHook(void)
+
+FUNC(void,MEM_BITOP_CLEAR) BitopClear ( uint8* pBuffer, uint32 Position )
 {
+    uint8   x;
+    uint32  y;
+    y = Position>>3;
+    x = Position&7;
+
+    pBuffer[y] &= ~(1<<x);
 }
-void PostTaskHook(void)
+
+FUNC(bool,MEM_BITOP_ISBITSET) IsBitopSet ( uint8* pBuffer, uint32 Position )
 {
-}
-void ErrorHook(StatusType ercd)
-{
+    bool isBitSet;
+    uint8   x;
+    uint32  y;
+
+    isBitSet = FALSE;
+    y = Position>>3;
+    x = Position&7;
+
+    if( pBuffer[y] & (1<<x) )
+    {
+        isBitSet = TRUE;
+    }
+    return isBitSet;
 }

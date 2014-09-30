@@ -29,7 +29,7 @@ Entry::Entry(QWidget *parent) :
     VirtualDevice* device = new VirtualCan(this);
     registerVirtualDevice(device);
 
-    StartOS(OSDEFAULTAPPMODE);
+    autosar::StartOS(1);
 }
 
 void Entry::registerVirtualDevice(VirtualDevice* virtualDevice)
@@ -51,12 +51,7 @@ void Entry::registerVirtualDevice(VirtualDevice* virtualDevice)
 // ==================== [ SIGNALS       ] =====================================
 void Entry::timerEvent(QTimerEvent *Event)
 {
-    static int iCounter = 0;
-    iCounter ++ ;
-    (void)Event;
-    //qDebug() << iCounter << "ms Timer Elapsed!\n";
-    OsTick();
-    (void)Schedule();
+    autosar::OsTick();
 }
 
 // ==================== [ PRIVATE SLOTS ] ======================================

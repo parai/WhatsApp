@@ -19,17 +19,16 @@
  */
 #ifndef STD_TYPES_H
 #define STD_TYPES_H
-#ifdef __cplusplus
-extern "C" {
-#endif
 /* ============================ [ INCLUDES ] ====================================================== */
-#include <stdint.h>
-#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include "Compiler.h"
+#ifdef __cplusplus
+namespace autosar {
+extern "C" {
+#endif
 /* ============================ [ MACROS   ] ====================================================== */
 #ifndef MIN
 #define MIN(_x,_y) (((_x) < (_y)) ? (_x) : (_y))
@@ -41,10 +40,10 @@ extern "C" {
 #define E_NOT_OK 				(Std_ReturnType)1
 
 #ifndef TRUE
-#define TRUE                    (bool)1
+#define TRUE                    (BOOL)1
 #endif
 #ifndef FALSE
-#define FALSE                   (bool)0
+#define FALSE                   (BOOL)0
 #endif
 
 #define STD_HIGH		0x01
@@ -55,42 +54,57 @@ extern "C" {
 
 #define STD_ON			0x01
 #define STD_OFF			0x00
+
+#define UINT8_INVALID		((UINT8)(~0u))
+#define UINT16_INVALID		((UINT16)(~0u))
+
 /* ============================ [ TYPES    ] ====================================================== */
 /*! \typedef Std_Types
  *  AUTOSAR Standard Basic Types.
  */
-typedef int8_t         		sint8;
-typedef uint8_t       		uint8;
-typedef int16_t        		sint16;
-typedef uint16_t      		uint16;
-typedef int32_t         	sint32;
-typedef uint32_t       		uint32;
-typedef int64_t  			sint64;
-typedef uint64_t  			uint64;
-typedef uint_least8_t       uint8_least;
-typedef uint_least16_t      uint16_least;
-typedef uint_least32_t      uint32_least;
-typedef int_least8_t        sint8_least;
-typedef int_least16_t       sint16_least;
-typedef int_least32_t       sint32_least;
-typedef float               float32;
-typedef double              float64;
+typedef signed char         		sint8;
+typedef unsigned char       		uint8;
+typedef signed short        		sint16;
+typedef unsigned short      		uint16;
+typedef signed long         	    sint32;
+typedef unsigned long       		uint32;
+typedef signed long long  			sint64;
+typedef unsigned long long  		uint64;
+typedef uint32                      uint8_least;
+typedef uint32                      uint16_least;
+typedef uint32                      uint32_least;
+typedef uint32                      sint8_least;
+typedef uint32                      sint16_least;
+typedef uint32                      sint32_least;
+typedef float                       float32;
+typedef double                      float64;
 
-typedef volatile int8_t     vint8_t;
-typedef volatile uint8_t    vuint8_t;
-typedef volatile int16_t    vint16_t;
-typedef volatile uint16_t   vuint16_t;
-typedef volatile int32_t    vint32_t;
-typedef volatile uint32_t   vuint32_t;
-typedef volatile int64_t    vint64_t;
-typedef volatile uint64_t   vuint64_t;
+typedef volatile sint8     vint8_t;
+typedef volatile uint8     vuint8_t;
+typedef volatile sint16    vint16_t;
+typedef volatile uint16    vuint16_t;
+typedef volatile sint32    vint32_t;
+typedef volatile uint32    vuint32_t;
+typedef volatile sint64    vint64_t;
+typedef volatile uint64    vuint64_t;
 
 typedef uint8               Std_ReturnType;
+
+// externed from toppers_osek
+typedef int					BOOL;		/* boolean */
+typedef	signed char		    INT8;		/* 8 bit integer */
+typedef	unsigned char		UINT8;		/* 8 bit unsigned integer */
+typedef	signed short		INT16;		/* 16 bit integer */
+typedef	unsigned short  	UINT16;	    /* 16 bit unsigned integer */
+typedef	signed long	    	INT32;		/* 32 bit integer */
+typedef	unsigned long	    UINT32;		/* 32 bit unsigned integer */
+typedef	signed long long	INT64;		/* 64 bit unsigned intege */
+typedef	unsigned long long  UINT64;		/* 64 bit unsigned intege */
 /* ============================ [ DATAS    ] ====================================================== */
 /* ============================ [ DECLARES ] ====================================================== */
 /* ============================ [ LOCALS   ] ====================================================== */
 /* ============================ [ FNCTIONS ] ====================================================== */
 #ifdef __cplusplus
-}
+}}  // name space
 #endif
 #endif /* STD_TYPES_H */

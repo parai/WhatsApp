@@ -12,17 +12,50 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
-#ifndef ECUM_H
-#define ECUM_H
+#ifndef OS_I_H
+#define OS_I_H
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
 #endif
 /* ============================ [ INCLUDES ] ====================================================== */
-#include "Std_Types.h"
+#include "Os.h"
+
 /* ============================ [ MACROS   ] ====================================================== */
+#define DeclareTask(Name,Autostart,AppMode)		\
+    {											\
+        .main = TaskMain##Name,							\
+        .priority = TASKID_##Name,				\
+        .autostart = Autostart,					\
+        .app_mode = AppMode						\
+    }
+
+#define DeclareAlarm(Name)						\
+    {											\
+        .main = AlarmMain##Name						\
+    }
 
 /* ============================ [ TYPES    ] ====================================================== */
+/*! extended OS types */
+typedef void         (*task_main_t)(void);
+typedef void         (*alarm_main_t)(void);
+typedef uint8 		   task_priority_t;
+
+typedef struct
+{
+    task_main_t    	main;
+    task_priority_t priority;	/*! priority also represent the task id, the same as TaskType */
+    BOOL            autostart;
+    AppModeType     app_mode;	/*! means task runnable modes */
+}task_declare_t;
+
+typedef struct
+{
+    alarm_main_t main;
+    /* No Autostart support */
+}alarm_declare_t;
+
+#include "os_cfg.h"
 /* ============================ [ DATAS    ] ====================================================== */
 /* ============================ [ DECLARES ] ====================================================== */
 /* ============================ [ LOCALS   ] ====================================================== */
@@ -30,4 +63,4 @@ extern "C" {
 #ifdef __cplusplus
 }}  // name space
 #endif
-#endif /* ECUM_H */
+#endif // OS_I_H

@@ -28,7 +28,7 @@ TASK(SchM_Startup)
 	TerminateTask();
 }
 
-ALARM(SchM_BswService)
+ALARMCALLBACK(SchM_BswService)
 {
     (void)ActivateTask(TASKID_SchM_BswService);
 }

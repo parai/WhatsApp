@@ -12,29 +12,39 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
+#ifndef OS_CFG_H_
+#define OS_CFG_H_
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============================ [ INCLUDES ] ====================================================== */
 #include "Os.h"
 
 /* ============================ [ MACROS   ] ====================================================== */
+#define TASKID_OsIdle		   	0
+#define TASKID_SchM_Startup    	1
+#define TASKID_SchM_BswService 	2
+#define TASK_NUM               	3
+
+#define ALARMID_SchM_BswService		0
+#define ALARM_NUM                   1
+
+#define RES_CAN                 (RES_SCHEDULER + 1)
+#define RES_LCD                 (RES_SCHEDULER + 2)
+#define RES_NUMBER              (RES_SCHEDULER + 3)
 /* ============================ [ TYPES    ] ====================================================== */
 /* ============================ [ DATAS    ] ====================================================== */
-/* ============================ [ DECLARES ] ====================================================== */
+extern CONST(task_declare_t,AUTOMATIC)  TaskList[TASK_NUM];
+extern CONST(alarm_declare_t,AUTOMATIC) AlarmList[ALARM_NUM];
 /* ============================ [ LOCALS   ] ====================================================== */
 /* ============================ [ FNCTIONS ] ====================================================== */
-void StartupHook(void)
-{
+TASK(OsIdle);
+TASK(SchM_Startup);
+TASK(SchM_BswService);
 
-}
-void ShutdownHook(StatusType ercd)
-{
+ALARM(SchM_BswService);
 
+#ifdef __cplusplus
 }
-void PreTaskHook(void)
-{
-}
-void PostTaskHook(void)
-{
-}
-void ErrorHook(StatusType ercd)
-{
-}
+#endif
+#endif /* OS_CFG_H_ */

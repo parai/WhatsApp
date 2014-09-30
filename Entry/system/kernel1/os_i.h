@@ -12,22 +12,52 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
-#ifndef ECUM_H
-#define ECUM_H
-#ifdef __cplusplus
-namespace autosar {
-extern "C" {
-#endif
+#ifndef OS_I_H
+#define OS_I_H
 /* ============================ [ INCLUDES ] ====================================================== */
-#include "Std_Types.h"
+#include "Os.h"
+#include "os_i.h"
+
 /* ============================ [ MACROS   ] ====================================================== */
+#define DeclareTask(Name,Autostart,AppMode)		\
+    {											\
+        .main = TaskMain##Name,							\
+        .priority = TASKID_##Name,				\
+        .autostart = Autostart,					\
+        .app_mode = AppMode						\
+    }
+
+#define DeclareAlarm(Name)						\
+    {											\
+        .main = AlarmMain##Name						\
+    }
 
 /* ============================ [ TYPES    ] ====================================================== */
+/*! extended OS types */
+typedef void         (*task_main_t)(void);
+typedef void         (*alarm_main_t)(void);
+typedef uint8 		   task_priority_t;
+
+typedef struct
+{
+    task_main_t    	main;
+    task_priority_t priority;	/*! priority also represent the task id, the same as TaskType */
+    bool            autostart;
+    AppModeType     app_mode;	/*! means task runnable modes */
+}task_declare_t;
+
+typedef struct
+{
+    alarm_main_t main;
+    /* No Autostart support */
+}alarm_declare_t;
+
+#include "os_cfg.h"
 /* ============================ [ DATAS    ] ====================================================== */
 /* ============================ [ DECLARES ] ====================================================== */
 /* ============================ [ LOCALS   ] ====================================================== */
 /* ============================ [ FNCTIONS ] ====================================================== */
-#ifdef __cplusplus
-}}  // name space
-#endif
-#endif /* ECUM_H */
+FUNC(void,MEM_BITOP_SET)      BitopSet   ( uint8* pBuffer, uint32 Position );
+FUNC(void,MEM_BITOP_CLEAR)    BitopClear ( uint8* pBuffer, uint32 Position );
+FUNC(bool,MEM_BITOP_ISBITSET) IsBitopSet ( uint8* pBuffer, uint32 Position );
+#endif // OS_I_H
