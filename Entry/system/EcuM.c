@@ -27,7 +27,10 @@ void StartupHook(void)
 }
 void ShutdownHook(StatusType ercd)
 {
+    if( E_OK != ercd)
+    {
 
+    }
 }
 void PreTaskHook(void)
 {
@@ -37,4 +40,11 @@ void PostTaskHook(void)
 }
 void ErrorHook(StatusType ercd)
 {
+    if( E_OK != ercd)
+    {
+    }
+    else
+    {
+
+    }
 }

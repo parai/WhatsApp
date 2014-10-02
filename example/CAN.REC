@@ -1,0 +1,13 @@
+// the comment "//" must be at the begin of each line
+// this is an example for how to write a CAN REC for debug purpose
+// RX: the message should be received by WhatsApp
+// TX: the message should be transmitted by WhatsApp
+//     this type of message is not simulate-able, WhatsApp will ignore this type of message
+// The value for "Id" and each byte must be in hex mode and the hex prefix "0x" must be dropped,  
+// the "time(ms)" must be related time related to the previous message.
+// bus  time(ms)  direction(RX|TX)  Id    Byte 0  Byte 1   Byte 2   Byte 3   Byte 4   Byte 5   Byte 6   Byte 7
+	0	  1         RX             401     01      02       03       04       05       06       07       08
+	0	  5         RX             201     AA      BB       CC       DD       EE       FF       DE       AD
+	0	  1         RX             401     11      12       13       14       15       16       17       18
+	0	  5         RX             201     1A      2B       3C       4D       5E       6F       7E       9D	
+	

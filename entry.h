@@ -23,13 +23,9 @@
 #include <QDebug>
 #include "virtualdevice.h"
 #include "virtualcan.h"
-#include <string>
-#include <map>
-#include <cstdlib>
-#include <ctime>
-#include <vector>
+#include <QMap>
 
-typedef std::map<std::string,VirtualDevice*> map_virtual_device_t;
+typedef QMap<QString,VirtualDevice*> map_virtual_device_t;
 // ====================== [ ICON RESOURCES ] =======================
 #define mRES_DIR   ":/res/"   /* Base Directory */
 #define mICON_SAVE  mRES_DIR "isave.bmp"
@@ -43,6 +39,7 @@ private:
     QMenu* menuVD  /* Virtual Device */;
 public:
     explicit Entry(QWidget *parent = 0);
+    ~Entry();
 
     void registerVirtualDevice(VirtualDevice* virtualDevice);
 

@@ -7,3 +7,8 @@ VirtualDevice::VirtualDevice(QString name,QWidget *parent) :
 
     this->setWindowTitle(name);
 }
+
+VirtualDevice::~VirtualDevice()
+{
+    qDebug() << "~VirtualDevice(" << name << ")";
+}

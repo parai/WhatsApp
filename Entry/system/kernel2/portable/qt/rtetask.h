@@ -1,3 +1,17 @@
+/**
+ * WhatsApp - the open source AUTOSAR platform https://github.com/parai
+ *
+ * Copyright (C) 2014  WhatsApp <parai@foxmail.com>
+ *
+ * This source code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published by the
+ * Free Software Foundation; See <http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt>.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ */
 #ifndef RTETASK_H
 #define RTETASK_H
 
@@ -5,6 +19,7 @@
 #include <QThreadPool>
 #include <QThread>
 #include <QDebug>
+#include <QList>
 #include <assert.h>
 #include "Os.h"
 using namespace autosar;
@@ -27,9 +42,10 @@ class RteTaskPool
 {
 private:
     unsigned long task_num;
-    RteTask* task_context[1024];
+    QList<RteTask*> task_context;
 public:
     explicit RteTaskPool(unsigned long task_num,void (* const pc[])(void));
+    ~RteTaskPool();
     void start(unsigned long task_id);
     void stop(unsigned long task_id);
 

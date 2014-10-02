@@ -2,6 +2,7 @@
 #define VIRTUALDEVICE_H
 
 #include <QMainWindow>
+#include <QDebug>
 
 class VirtualDevice : public QMainWindow
 {
@@ -10,7 +11,7 @@ private:
     QString name;
 public:
     explicit VirtualDevice(QString name,QWidget *parent = 0);
-
+    virtual ~VirtualDevice();
     QString Name(void) { return this->name; }
 
 signals:

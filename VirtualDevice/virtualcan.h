@@ -8,11 +8,35 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QFileDialog>
+#include "ocdevice.h"
+class SimulationCan : public OcDevice
+{
+    Q_OBJECT
+private:
+    unsigned long canCardId;
+    QList<OcMessage*> rxMsgList;
+    QList<OcMessage*> txMsgList;
+public:
+    explicit SimulationCan(unsigned long canCardId);
+    ~SimulationCan();
+private:
+
+public:
+    OcStatus startup();
+    OcStatus shutdown();
+    OcStatus sendMessage(const OcMessage &msg);
+    OcStatus receivedMessage();
+    OcStatus internalGetMessage(OcMessage *msg);
+    int getBaudRate();
+    OcStatus setBaudRate(int baud);
+};
+
 class VirtualCan : public VirtualDevice
 {
     Q_OBJECT
 private:
-    int channelNumber;
+    unsigned long channelNumber;
+    QList<SimulationCan*> simulationCanList;
 
     QPushButton* btnPlayPause;
     QPushButton* btnHexlDeci;
@@ -20,7 +44,8 @@ private:
 
     QTableWidget* tableTrace;
 public:
-    explicit VirtualCan(QWidget *parent=0);
+    explicit VirtualCan(unsigned long channelNumber,QWidget *parent=0);
+    ~VirtualCan();
 private slots:
     void play_pause(void);
     void stop(void);
@@ -29,7 +54,7 @@ private slots:
     void hexl_decimal(void);
     void abs_rel_time(void);
 private:
-    void createChannels(void);
+    void createGui(void);
 };
 
 #endif // VIRTUALCAN_H

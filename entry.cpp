@@ -24,25 +24,31 @@ Entry::Entry(QWidget *parent) :
     this->createMenuAndToolbar();
     this->startTimer(1);
 
-    this->resize(600,20);
+    this->setGeometry(25,30,600,20);
 
     // example ...
-    VirtualDevice* device = new VirtualCan(this);
+    VirtualDevice* device = new VirtualCan(4,this);
     registerVirtualDevice(device);
 
     StartOS(OSDEFAULTAPPMODE);
 }
 
+Entry::~Entry()
+{
+    qDebug()<<"~Entry()";
+
+    map_virtual_device.clear(); // this in charge to destroy VirtualDevice
+}
+
 void Entry::registerVirtualDevice(VirtualDevice* virtualDevice)
 {
-    std::string key((const char *)virtualDevice->Name().toLocal8Bit());
-    std::pair<map_virtual_device_t::iterator, bool> status = map_virtual_device.insert(std::make_pair(key, virtualDevice));
-    if (status.second == false)
+    if (map_virtual_device.contains(virtualDevice->Name()))
     {
         qDebug() << "System error: Virtual device " << virtualDevice->Name() << " re-registeration!\n";
     }
     else
     {
+        map_virtual_device[virtualDevice->Name()] = virtualDevice;
         QAction * action = new QAction(virtualDevice->Name(),this);
         this->connect(action,SIGNAL(triggered()),virtualDevice,SLOT(wakeup()));
         menuVD->addAction(action);

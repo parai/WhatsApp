@@ -11,8 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = WhatsApp
 TEMPLATE = app
 
-DEFINES = USE_KERNEL2
-
+DEFINES = USE_KERNEL2 USE_OPENCAN_DIRECTLY
 
 SOURCES += main.cpp \
     entry.cpp \
@@ -29,7 +28,10 @@ SOURCES += main.cpp \
     Entry/system/kernel2/osctl.c \
     Entry/system/kernel2/resource.c \
     Entry/system/kernel2/task.c \
-    Entry/system/kernel2/task_manage.c
+    Entry/system/kernel2/task_manage.c \
+    VirtualDevice/OpenCAN/ocdevice.cpp \
+    VirtualDevice/OpenCAN/ocdevicemanager.cpp \
+    VirtualDevice/OpenCAN/ocmessage.cpp
 
 HEADERS  += \
     entry.h \
@@ -50,11 +52,18 @@ HEADERS  += \
     Entry/system/kernel2/osek_kernel.h \
     Entry/system/kernel2/oslog.h \
     Entry/system/kernel2/resource.h \
-    Entry/system/kernel2/task.h
+    Entry/system/kernel2/task.h \
+    VirtualDevice/OpenCAN/occore.h \
+    VirtualDevice/OpenCAN/ocdevice.h \
+    VirtualDevice/OpenCAN/ocdeviceinterface.h \
+    VirtualDevice/OpenCAN/ocdevicemanager.h \
+    VirtualDevice/OpenCAN/ocmessage.h \
+    VirtualDevice/OpenCAN/ocplugininfo.h
 
 FORMS    +=
 
 INCLUDEPATH += VirtualDevice
+INCLUDEPATH += VirtualDevice/OpenCAN
 INCLUDEPATH += Entry
 INCLUDEPATH += Entry/include
 INCLUDEPATH += Entry/system/kernel2/portable/qt
