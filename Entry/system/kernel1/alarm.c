@@ -48,9 +48,9 @@ FUNC(StatusType,MEM_GetAlarmBase) GetAlarmBase ( AlarmType AlarmId, AlarmBaseRef
 {
 	assert(AlarmId<ALARM_NUM);
 
-	Info[0].MaxAllowedValue = TICK_MAX;
-	Info[0].TickPerBase     = 1u;
-	Info[0].MinCycle        = 1u;
+    Info[0].maxallowedvalue = TICK_MAX;
+    Info[0].ticksperbase     = 1u;
+    Info[0].mincycle        = 1u;
 
 	return E_OK;
 }

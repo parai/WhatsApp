@@ -24,16 +24,17 @@
 
 TASK(SchM_Startup)
 {
-    SetRelAlarm(ALARMID_SchM_BswService,10,5);
+    SetRelAlarm(ALARMID_SchM_BswService,10,5000);
 	TerminateTask();
 }
 
 ALARMCALLBACK(SchM_BswService)
 {
-    (void)ActivateTask(TASKID_SchM_BswService);
+   (void)ActivateTask(TASKID_SchM_BswService);
 }
 
 TASK(SchM_BswService)
 {
+    //printf("SchM_BswService is Running\n");
 	TerminateTask();
 }

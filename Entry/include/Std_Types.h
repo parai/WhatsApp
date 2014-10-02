@@ -20,6 +20,8 @@
 #ifndef STD_TYPES_H
 #define STD_TYPES_H
 /* ============================ [ INCLUDES ] ====================================================== */
+#include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -90,7 +92,7 @@ typedef volatile uint64    vuint64_t;
 
 typedef uint8               Std_ReturnType;
 
-// externed from toppers_osek
+/* externed from toppers_osek */
 typedef int					BOOL;		/* boolean */
 typedef	signed char		    INT8;		/* 8 bit integer */
 typedef	unsigned char		UINT8;		/* 8 bit unsigned integer */

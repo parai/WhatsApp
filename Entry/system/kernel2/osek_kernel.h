@@ -57,14 +57,16 @@
 
 #ifndef _OSEK_KERNEL_H_
 #define _OSEK_KERNEL_H_
-#ifdef __cplusplus
-namespace autosar {
-extern "C" {
-#endif
+
 /*
  *  includes
  */
 #include "os_i.h"
+
+#ifdef __cplusplus
+namespace autosar {
+extern "C" {
+#endif
 /*
  *  type defines for kernel
  */
@@ -75,8 +77,17 @@ typedef UINT8		Priority;		/* priority for task/resource/ISR */
 typedef	UINT8		IPL;			/* interrupt processing level */
 #endif /* _MACRO_ONLY */
 
+#ifdef __cplusplus
+}} // namespace
+#endif
+
 #include "portable.h"
 #include "oslog.h"
+
+#ifdef __cplusplus
+namespace autosar {
+extern "C" {
+#endif
 /*
  *  number of prioritys
  */

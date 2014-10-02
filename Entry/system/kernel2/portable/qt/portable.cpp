@@ -1,10 +1,16 @@
 #include "osek_kernel.h"
 #include "task.h"
+#include "rtetask.h"
 
-VP tcb_sp[TASK_NUM];
-FP tcb_pc[TASK_NUM];
+extern "C" {
+STATIC VP tcb_sp[TASK_NUM];
+STATIC FP tcb_pc[TASK_NUM];
+STATIC RteTaskPool *tcb_manager;
+STATIC volatile BOOL stop_task_marker;
+
 #define SYSTEM_STACK_SZ 512
-static UINT8 lc_system_stack[SYSTEM_STACK_SZ];
+STATIC  UINT8 lc_system_stack[SYSTEM_STACK_SZ];
+STATIC	TickType				OsTickCounter;
 /* ================== FUNCTIONs DECLARE ========================*/
 void activate_r(void);
 void pre_idle(void);
@@ -13,7 +19,7 @@ void dispatch_task(void);
 /* ================== FUNCTIONs  ===============================*/
 TASK(OsIdle)
 {
-    
+    for(;;) tcb_manager->usleep(TASKID_OsIdle,1000);
 }
 
 void disable_int(){}
@@ -41,7 +47,8 @@ void activate_r(void)
 {
     tcb_curpri[runtsk] = tinib_exepri[runtsk];
     enable_int(); // enable interrupt
-    tinib_task[runtsk]();    
+
+    tcb_manager->start(runtsk);
 }
 
 //     pre_idle:
@@ -104,6 +111,12 @@ void exit_and_dispatch(void)
 /* void dispatcher(void)*/
 {
     PostTaskHook();
+    if(true == stop_task_marker)
+    {
+        tcb_manager->stop(runtsk);
+    }
+    stop_task_marker = true;    // reset it
+
     start_dispatch();
 }
 
@@ -114,7 +127,7 @@ void exit_and_dispatch(void)
 //              restore the value of PC (the address  to return from "dispatch") from stack
 void dispatcher_r(void)
 {
-    // TODO
+    tcb_manager->resume(runtsk);
 }
 void activate_context(TaskType TaskID)
 {
@@ -155,22 +168,26 @@ void ExitISR2(void)
 //            jump to "dispatcher
 void dispatch(void)
 {
-    
+    tcb_manager->suspend(runtsk);
     tcb_pc[runtsk] = (FP)dispatcher_r;
+
+    stop_task_marker = false;
     
     exit_and_dispatch(); // jump to "dispatcher"
 }
 
-ISR(SystemTick)
-{ 
+void OsTick(void)
+{
+    OsTickCounter ++;
     EnterISR2();
     (void)SignalCounter(0);
-    ExitISR2(); 
+    ExitISR2();
 }
 
 void sys_initialize(void)
 {
-
+    tcb_manager = new RteTaskPool(TASK_NUM,tinib_task);
+    stop_task_marker = true;
 }
 void tool_initialize(void)
 {
@@ -178,7 +195,8 @@ void tool_initialize(void)
 }
 void cpu_initialize(void)
 {
-
+    OsTickCounter = 0;
+    lc_system_stack[0] = 0;
 }
 void cpu_terminate(void)
 {
@@ -187,3 +205,5 @@ void sys_exit(void)
 {
     for(;;);
 }
+
+} // extern "C"

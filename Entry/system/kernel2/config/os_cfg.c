@@ -9,33 +9,35 @@ const UINT8	tnum_exttask = TASK_NUM;
 	
 const Priority	tinib_inipri[] =
 { 
-    2, /* SchM_BswService */ 
-    1, /* SchM_Startup */ 
-    0  /* OsIdle */ 
+    0, /* OsIdle */
+    1, /* SchM_Startup */
+    2  /* SchM_BswService */
 };
 const Priority	tinib_exepri[] = 
 {
-    2, /* SchM_BswService */ 
+    0, /* OsIdle */
     1, /* SchM_Startup */ 
-    0  /* OsIdle */ 
+    2  /* SchM_BswService */
 };
 const UINT8		tinib_maxact[]=
 {
-    1, /* SchM_BswService */ 
-    1, /* SchM_Startup */ 
-    1  /* OsIdle */  
+    1,  /* OsIdle */
+    1,  /* SchM_Startup */
+    1   /* SchM_BswService */
+
 };
 const AppModeType tinib_autoact[]=
 {
-    0xFFFFFFFF, 		/* SchM_BswService */ 
+    0xFFFFFFFF,    		/* OsIdle */
     0xFFFFFFFF, 		/* SchM_Startup */ 
-    0xFFFFFFFF    		/* OsIdle */ 
+    0                   /* SchM_BswService */
+
 };
 const FP			tinib_task[]=
 {
-    TASKNAME(SchM_BswService),
+    TASKNAME(OsIdle),
     TASKNAME(SchM_Startup),
-    TASKNAME(OsIdle)
+    TASKNAME(SchM_BswService)
 };
 
 
@@ -44,9 +46,9 @@ static UINT8  SchM_Startup_stk[512];
 static UINT8  OsIdle_stk[512];
 const VP			tinib_stk[]=
 {
-    SchM_BswService_stk,
+    OsIdle_stk,
     SchM_Startup_stk,
-    OsIdle_stk
+    SchM_BswService_stk
 };
 
 const UINT16		tinib_stksz[]=
@@ -116,7 +118,7 @@ const FP			 alminib_cback[ALARM_NUM] =
 };	/* alarm call back routine */
 const AppModeType alminib_autosta[ALARM_NUM] =
 {
-    0xFFFFFFFF, /* SchM_BswService */ 
+    0, /* SchM_BswService */
 };	/* alarm autostart mode */
 
 const TickType	 alminib_almval[ALARM_NUM] =

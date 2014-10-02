@@ -513,10 +513,3 @@ SignalCounter(CounterType cntid)
 	call_errorhook(ercd, OSServiceId_SignalCounter);
 	goto exit;
 }
-
-void OsTick(void)
-{
-    EnterISR2();
-    (void)SignalCounter(0);
-    ExitISR2();
-}

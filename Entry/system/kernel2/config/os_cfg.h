@@ -1,12 +1,12 @@
 #ifndef OS_CONFIG_H_H
 #define OS_CONFIG_H_H
+/* ============================ [ INCLUDES ] ====================================================== */
+#include "osek_kernel.h"
+
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
 #endif
-/* ============================ [ INCLUDES ] ====================================================== */
-#include "osek_kernel.h"
-
 /* ============================ [ MACROS   ] ====================================================== */
 #define TASKID_OsIdle 						0
 #define TASKID_SchM_Startup 				1

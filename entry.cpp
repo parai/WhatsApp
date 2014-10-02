@@ -14,6 +14,7 @@
  */
 #include "entry.h"
 #include "Os.h"
+using namespace autosar;
 
 Entry::Entry(QWidget *parent) :
     QMainWindow(parent)
@@ -29,7 +30,7 @@ Entry::Entry(QWidget *parent) :
     VirtualDevice* device = new VirtualCan(this);
     registerVirtualDevice(device);
 
-    autosar::StartOS(1);
+    StartOS(OSDEFAULTAPPMODE);
 }
 
 void Entry::registerVirtualDevice(VirtualDevice* virtualDevice)
@@ -51,7 +52,10 @@ void Entry::registerVirtualDevice(VirtualDevice* virtualDevice)
 // ==================== [ SIGNALS       ] =====================================
 void Entry::timerEvent(QTimerEvent *Event)
 {
-    autosar::OsTick();
+    OsTick();
+#if defined(USE_KERNEL1)
+    Schedule();
+#endif
 }
 
 // ==================== [ PRIVATE SLOTS ] ======================================

@@ -99,7 +99,7 @@ extern "C" {
 typedef uint8 					StatusType;
 typedef uint32   				EventMaskType;
 typedef EventMaskType *			EventMaskRefType;
-typedef uint16  				TaskType;
+typedef uint8  			    	TaskType;
 typedef TaskType *				TaskRefType;
 typedef uint8					TaskStateType;
 typedef TaskStateType *			TaskStateRefType;
@@ -138,8 +138,16 @@ typedef union {
 	AppModeType			mode;
 	CounterType			cntid;
 } _ErrorHook_Par;
+#ifdef __cplusplus
+}} //name space
+#endif
 
 #include "os_i.h"
+
+#ifdef __cplusplus
+namespace autosar {
+extern "C" {
+#endif
 /* ============================ [ DATAS    ] ====================================================== */
 extern OSServiceIdType	_errorhook_svcid;
 extern _ErrorHook_Par	_errorhook_par1, _errorhook_par2, _errorhook_par3;

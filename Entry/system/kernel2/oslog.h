@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <assert.h>
 
+#ifdef __cplusplus
+namespace autosar {
+extern "C" {
+#endif
 #ifndef LOG_STAOS_ENTER
   #define LOG_STAOS_ENTER(mode)
 #endif
@@ -218,5 +222,7 @@
 #ifndef LOG_GETTST_LEAVE
   #define LOG_GETTST_LEAVE(ercd, p_state)
 #endif
-
+#ifdef __cplusplus
+}} // namespace
+#endif
 #endif /* OSLOG_H */

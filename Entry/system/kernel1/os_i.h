@@ -17,7 +17,10 @@
 /* ============================ [ INCLUDES ] ====================================================== */
 #include "Os.h"
 #include "os_i.h"
-
+#ifdef __cplusplus
+namespace autosar {
+extern "C" {
+#endif
 /* ============================ [ MACROS   ] ====================================================== */
 #define DeclareTask(Name,Autostart,AppMode)		\
     {											\
@@ -51,8 +54,14 @@ typedef struct
     alarm_main_t main;
     /* No Autostart support */
 }alarm_declare_t;
-
+#ifdef __cplusplus
+}} //namespace
+#endif
 #include "os_cfg.h"
+#ifdef __cplusplus
+namespace autosar {
+extern "C" {
+#endif
 /* ============================ [ DATAS    ] ====================================================== */
 /* ============================ [ DECLARES ] ====================================================== */
 /* ============================ [ LOCALS   ] ====================================================== */
@@ -60,4 +69,8 @@ typedef struct
 FUNC(void,MEM_BITOP_SET)      BitopSet   ( uint8* pBuffer, uint32 Position );
 FUNC(void,MEM_BITOP_CLEAR)    BitopClear ( uint8* pBuffer, uint32 Position );
 FUNC(bool,MEM_BITOP_ISBITSET) IsBitopSet ( uint8* pBuffer, uint32 Position );
+
+#ifdef __cplusplus
+}} // namespace
+#endif
 #endif // OS_I_H

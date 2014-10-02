@@ -14,12 +14,12 @@
  */
 #ifndef OS_CFG_H_
 #define OS_CFG_H_
-#ifdef __cplusplus
-extern "C" {
-#endif
 /* ============================ [ INCLUDES ] ====================================================== */
 #include "Os.h"
-
+#ifdef __cplusplus
+namespace autosar {
+extern "C" {
+#endif
 /* ============================ [ MACROS   ] ====================================================== */
 #define TASKID_OsIdle		   	0
 #define TASKID_SchM_Startup    	1
@@ -42,9 +42,9 @@ TASK(OsIdle);
 TASK(SchM_Startup);
 TASK(SchM_BswService);
 
-ALARM(SchM_BswService);
+ALARMCALLBACK(SchM_BswService);
 
 #ifdef __cplusplus
-}
+}} //namespace
 #endif
 #endif /* OS_CFG_H_ */

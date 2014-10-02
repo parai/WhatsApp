@@ -14,13 +14,12 @@
  */
 #ifndef OS_I_H
 #define OS_I_H
+/* ============================ [ INCLUDES ] ====================================================== */
+#include "Os.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
 #endif
-/* ============================ [ INCLUDES ] ====================================================== */
-#include "Os.h"
-
 /* ============================ [ MACROS   ] ====================================================== */
 #define DeclareTask(Name,Autostart,AppMode)		\
     {											\
@@ -54,8 +53,16 @@ typedef struct
     alarm_main_t main;
     /* No Autostart support */
 }alarm_declare_t;
+#ifdef __cplusplus
+}} //namespace
+#endif
 
 #include "os_cfg.h"
+
+#ifdef __cplusplus
+namespace autosar {
+extern "C" {
+#endif
 /* ============================ [ DATAS    ] ====================================================== */
 /* ============================ [ DECLARES ] ====================================================== */
 /* ============================ [ LOCALS   ] ====================================================== */
