@@ -15,7 +15,7 @@
 #include "osek_kernel.h"
 #include "task.h"
 #include "rtetask.h"
-
+namespace autosar {
 extern "C" {
 STATIC VP tcb_sp[TASK_NUM];
 STATIC FP tcb_pc[TASK_NUM];
@@ -24,7 +24,6 @@ STATIC volatile BOOL stop_task_marker;
 
 #define SYSTEM_STACK_SZ 512
 STATIC  UINT8 lc_system_stack[SYSTEM_STACK_SZ];
-STATIC	TickType				OsTickCounter;
 /* ================== FUNCTIONs DECLARE ========================*/
 void activate_r(void);
 void pre_idle(void);
@@ -190,14 +189,6 @@ void dispatch(void)
     exit_and_dispatch(); // jump to "dispatcher"
 }
 
-void OsTick(void)
-{
-    OsTickCounter ++;
-    EnterISR2();
-    (void)SignalCounter(0);
-    ExitISR2();
-}
-
 void sys_initialize(void)
 {
     tcb_manager = new RteTaskPool(TASK_NUM,tinib_task);
@@ -209,7 +200,6 @@ void tool_initialize(void)
 }
 void cpu_initialize(void)
 {
-    OsTickCounter = 0;
     lc_system_stack[0] = 0;
 }
 void cpu_terminate(void)
@@ -221,3 +211,5 @@ void sys_exit(void)
 }
 
 } // extern "C"
+} // autosar
+

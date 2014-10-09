@@ -14,14 +14,14 @@
  */
 #ifndef OS_H_
 #define OS_H_
-/* ============================ [ INCLUDES ] ====================================================== */
+/* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
 
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
 #endif
-/* ============================ [ MACROS   ] ====================================================== */
+/* ============================ [ MACROS    ] ====================================================== */
 #define E_OS_ACCESS 			(StatusType)1
 #define	E_OS_CALLEVEL 			(StatusType)2
 #define	E_OS_ID					(StatusType)3
@@ -95,7 +95,7 @@ extern "C" {
 #define OSServiceId_ShutdownOS					((OSServiceIdType) 25)
 #define OSServiceId_SignalCounter				((OSServiceIdType) 26)
 
-/* ============================ [ TYPES    ] ====================================================== */
+/* ============================ [ TYPES     ] ====================================================== */
 typedef uint8 					StatusType;
 typedef uint32   				EventMaskType;
 typedef EventMaskType *			EventMaskRefType;
@@ -148,12 +148,12 @@ typedef union {
 namespace autosar {
 extern "C" {
 #endif
-/* ============================ [ DATAS    ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
 extern OSServiceIdType	_errorhook_svcid;
 extern _ErrorHook_Par	_errorhook_par1, _errorhook_par2, _errorhook_par3;
-/* ============================ [ DECLARES ] ====================================================== */
-/* ============================ [ LOCALS   ] ====================================================== */
-/* ============================ [ FNCTIONS ] ====================================================== */
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 FUNC(void,MEM_OS_TICK) 				 OsTick 		  ( void );
 FUNC(StatusType,MEM_GetAlarmBase) 	 GetAlarmBase    ( AlarmType AlarmId, AlarmBaseRefType Info );
 FUNC(StatusType,MEM_GetAlarm) 		 GetAlarm	     ( AlarmType AlarmId, TickRefType Tick );
@@ -161,6 +161,7 @@ FUNC(StatusType,MEM_SetRelAlarm) 	 SetRelAlarm     ( AlarmType AlarmId, TickType
 FUNC(StatusType,MEM_SetAbsAlarm) 	 SetAbsAlarm     ( AlarmType AlarmId, TickType Increment, TickType Cycle );
 FUNC(StatusType,MEM_CancelAlarm)     CancelAlarm     ( AlarmType AlarmId );
 FUNC(TickType,MEM_GetOsTick)         GetOsTick       ( void );
+FUNC(TickType,MEM_GetOsElapsedTick)  GetOsElapsedTick( TickType prevTick );
 FUNC(StatusType,MEM_ACTIVATE_TASK) 	 ActivateTask    ( TaskType TaskId);
 FUNC(StatusType,MEM_ACTIVATE_TASK) 	 TerminateTask   ( void );
 FUNC(StatusType,MEM_Schedule) 		 Schedule        ( void );

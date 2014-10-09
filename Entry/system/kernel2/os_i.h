@@ -14,16 +14,15 @@
  */
 #ifndef OS_I_H
 #define OS_I_H
-/* ============================ [ INCLUDES ] ====================================================== */
+/* ============================ [ INCLUDES  ] ====================================================== */
 #include "Os.h"
 #ifdef __cplusplus
-namespace autosar {
-extern "C" {
+namespace autosar {	extern "C" {
 #endif
-/* ============================ [ MACROS   ] ====================================================== */
+/* ============================ [ MACROS    ] ====================================================== */
 #define DeclareTask(Name,Autostart,AppMode)		\
     {											\
-        .main = TaskMain##Name,							\
+        .main = TaskMain##Name,					\
         .priority = TASKID_##Name,				\
         .autostart = Autostart,					\
         .app_mode = AppMode						\
@@ -31,10 +30,10 @@ extern "C" {
 
 #define DeclareAlarm(Name)						\
     {											\
-        .main = AlarmMain##Name						\
+        .main = AlarmMain##Name					\
     }
 
-/* ============================ [ TYPES    ] ====================================================== */
+/* ============================ [ TYPES     ] ====================================================== */
 /*! extended OS types */
 typedef void         (*task_main_t)(void);
 typedef void         (*alarm_main_t)(void);
@@ -53,21 +52,22 @@ typedef struct
     alarm_main_t main;
     /* No Autostart support */
 }alarm_declare_t;
+
 #ifdef __cplusplus
-}} //namespace
+}} /* namespace */
 #endif
 
 #include "os_cfg.h"
 
 #ifdef __cplusplus
-namespace autosar {
-extern "C" {
+namespace autosar {	extern "C" {
 #endif
-/* ============================ [ DATAS    ] ====================================================== */
-/* ============================ [ DECLARES ] ====================================================== */
-/* ============================ [ LOCALS   ] ====================================================== */
-/* ============================ [ FNCTIONS ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 #ifdef __cplusplus
-}}  // name space
+}}  /* name space */
 #endif
-#endif // OS_I_H
+#endif /* OS_I_H */
+

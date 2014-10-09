@@ -31,7 +31,11 @@ SOURCES += main.cpp \
     Entry/system/kernel2/task_manage.c \
     VirtualDevice/OpenCAN/ocdevice.cpp \
     VirtualDevice/OpenCAN/ocdevicemanager.cpp \
-    VirtualDevice/OpenCAN/ocmessage.cpp
+    VirtualDevice/OpenCAN/ocmessage.cpp \
+    VirtualDevice/MCAL/config/Can_Cfg.c \
+    Entry/communication/config/CanIf_Cfg.c \
+    Entry/communication/CanIf.c \
+    VirtualDevice/MCAL/Can.cpp
 
 HEADERS  += \
     entry.h \
@@ -58,7 +62,14 @@ HEADERS  += \
     VirtualDevice/OpenCAN/ocdeviceinterface.h \
     VirtualDevice/OpenCAN/ocdevicemanager.h \
     VirtualDevice/OpenCAN/ocmessage.h \
-    VirtualDevice/OpenCAN/ocplugininfo.h
+    VirtualDevice/OpenCAN/ocplugininfo.h \
+    Entry/include/Modules.h \
+    Entry/include/Can.h \
+    Entry/include/ComStack_Types.h \
+    VirtualDevice/MCAL/config/Can_Cfg.h \
+    Entry/communication/config/CanIf_Cfg.h \
+    Entry/include/CanIf.h \
+    Entry/include/CanTp.h
 
 FORMS    +=
 
@@ -70,6 +81,8 @@ INCLUDEPATH += Entry/system/kernel2/portable/qt
 INCLUDEPATH += Entry/system/kernel2
 INCLUDEPATH += Entry/system/kernel2/config
 INCLUDEPATH += Application/Configuration
+INCLUDEPATH += Entry/communication/config
+INCLUDEPATH += VirtualDevice/MCAL/config/
 
 RESOURCES += \
     WhatsApp.qrc

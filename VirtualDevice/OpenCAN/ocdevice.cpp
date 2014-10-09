@@ -123,7 +123,7 @@ OcMessage* OcDevice::getMessage()
 
 void OcDevice::timerEvent(QTimerEvent *)
 {
-	//if (started)
+    if (started)
 	{
 		while (receivedMessage())
 		{

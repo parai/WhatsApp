@@ -12,22 +12,27 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
-#ifndef SCHM_H
-#define SCHM_H
-#ifdef __cplusplus
-namespace autosar {
-extern "C" {
-#endif
+#ifndef CANTP_H_
+#define CANTP_H_
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
-/* ============================ [ MACROS    ] ====================================================== */
 
+#ifdef __cplusplus
+namespace autosar { extern "C" {
+#endif
+/* ============================ [ MACROS    ] ====================================================== */
+// TODO
+#define CANTP_RX_DIAG_LS_MSG 0
+#define CANTP_RX_DIAG_HS_MSG 1
+
+#define CANTP_TX_DIAG_LS_MSG 0
+#define CANTP_TX_DIAG_HS_MSG 1
 /* ============================ [ TYPES     ] ====================================================== */
 /* ============================ [ DATAS     ] ====================================================== */
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
 #ifdef __cplusplus
-}}  // name space
+}}  /* name space */
 #endif
-#endif /* SCHM_H */
+#endif /* CANTP_H_ */

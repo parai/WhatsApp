@@ -14,13 +14,11 @@
  */
 #ifndef OSLOG_H
 #define OSLOG_H
-#include <stdio.h>
-#include <assert.h>
-
+/* ============================ [ INCLUDES  ] ====================================================== */
 #ifdef __cplusplus
-namespace autosar {
-extern "C" {
+namespace autosar { extern "C" {
 #endif
+/* ============================ [ MACROS    ] ====================================================== */
 #ifndef LOG_STAOS_ENTER
   #define LOG_STAOS_ENTER(mode)
 #endif
@@ -236,7 +234,13 @@ extern "C" {
 #ifndef LOG_GETTST_LEAVE
   #define LOG_GETTST_LEAVE(ercd, p_state)
 #endif
+
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 #ifdef __cplusplus
-}} // namespace
+}} /* namespace */
 #endif
 #endif /* OSLOG_H */

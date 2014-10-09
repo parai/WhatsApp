@@ -71,6 +71,10 @@ public:
 	void setData(quint8 data[MAX_MESSAGE_LENGTH], int length = MAX_MESSAGE_LENGTH);
 
 	bool operator==(const OcMessage &m) const;
+    void operator=(const OcMessage &m);
+
+    void setBusId(quint32 busid);
+    quint32 busid(void);
 
 protected:
 	/// CAN message identifier
@@ -83,6 +87,7 @@ protected:
 	bool canExt;
 	/// Timestamp
 	quint32 time;
+    quint32 busId;    // externded by parai
 };
 
 // Inline Methods
@@ -161,5 +166,28 @@ inline bool OcMessage::operator==(const OcMessage &m) const
 		msgData[3] == m.msgData[3] && msgData[4] == m.msgData[4] && msgData[5] == m.msgData[5] &&
 		msgData[6] == m.msgData[6] && msgData[7] == m.msgData[7]);
 }
+inline void OcMessage::operator=(const OcMessage &m)
+{
+    canExt = m.canExt;
+    msgId = m.msgId ;
+    dataLen = m.dataLen ;
+    time = m.time;
+    busId = m.busId;
+    for (int x = 0; x < MAX_MESSAGE_LENGTH; ++x)
+    {
+        msgData[x] = m.msgData[x];
+    }
+}
+
+inline void OcMessage::setBusId(quint32 busid)
+{
+    busId = busid;
+}
+
+inline quint32 OcMessage::busid(void)
+{
+    return busId;
+}
+
 
 #endif // OCMESSAGE_H

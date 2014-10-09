@@ -12,15 +12,41 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
-/* ============================ [ INCLUDES ] ====================================================== */
+/* ============================ [ INCLUDES  ] ====================================================== */
 #include "Os.h"
+#include "EcuM.h"
+#include "Can.h"
+#include "CanIf.h"
 
-/* ============================ [ MACROS   ] ====================================================== */
-/* ============================ [ TYPES    ] ====================================================== */
-/* ============================ [ DATAS    ] ====================================================== */
-/* ============================ [ DECLARES ] ====================================================== */
-/* ============================ [ LOCALS   ] ====================================================== */
-/* ============================ [ FNCTIONS ] ====================================================== */
+#ifdef __cplusplus
+namespace autosar {
+#endif
+/* ============================ [ MACROS    ] ====================================================== */
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitZero (void)
+{
+
+}
+
+STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitOne ( const EcuM_ConfigType *ConfigPtr )
+{
+
+}
+
+STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitTwo ( const EcuM_ConfigType *ConfigPtr )
+{
+	Can_Init(&Can_Config);
+	CanIf_Init(&CanIf_Config);
+}
+
+STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitThree ( const EcuM_ConfigType *ConfigPtr )
+{
+
+}
+/* ============================ [ FUNCTIONS ] ====================================================== */
 void StartupHook(void)
 {
 
@@ -48,3 +74,23 @@ void ErrorHook(StatusType ercd)
 
     }
 }
+
+FUNC(void, MEM_EcuM_Init) EcuM_Init ( void )
+{
+
+	EcuM_AL_DriverInitZero();
+	EcuM_AL_DriverInitOne(NULL);
+
+	StartOS(OSDEFAULTAPPMODE);
+}
+
+FUNC(void,MEM_EcuM_StartupTwo) EcuM_StartupTwo ( void )
+{
+	EcuM_AL_DriverInitTwo(NULL);
+
+	EcuM_AL_DriverInitThree(NULL);
+}
+
+#ifdef __cplusplus
+} /* namespace autosar */
+#endif

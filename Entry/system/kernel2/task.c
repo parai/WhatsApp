@@ -55,23 +55,42 @@
  * INDIRECTLY CAUSED FROM THE USE OF THIS SOFTWARE.
  */
 
-/*
- *	includes
- */
-
+/* ============================ [ INCLUDES  ] ====================================================== */
 #include "osek_kernel.h"
 #include "check.h"
 #include "task.h"
 #include "resource.h"
+#ifdef __cplusplus
+namespace autosar {
+#endif
+/* ============================ [ MACROS    ] ====================================================== */
 
 /*
- *  task ready queue management APIs
+ *  task ready priority map
+ *
+ *  each bit of bitmap corresponds to a special priority <pri>. if at least
+ *  one task with pri is in ready state, the <pri> bit in bitmap should be set.
+ *  Only when no any task with <pri> is in ready state, the <pri> bit in bitmap
+ *  should be cleared, which means no tasks is in the ready state on the queue
+ *  of <pri>.
+ *  For toppers_osek,this bit map is 16 bit long,so only 16 priority was allowed
+ *  from 0 to 15.
+ *  by default toppers_osek assume that the host CPU is big endianness mode.
+ *  Also the default PRIMAP implement is OK for little endianness mode cpu,as it
+ *  just has 16 bit.
+ *  if you want to make it more right,you can change the define as below if the
+ *  host CPU is in little endianness mode by the way add the define in your compiler
+ *  pre-processor.
+ *	#define PRIMAP_BIT(pri)	(0x8000u >> (pri))
+ *	#define	bitmap_search(bitmap) (16 - ffs(bitmap))
+ *  And also you can re-implement the bitmap mechanism to make better osek os.
+ *  Such as use the ucOS ready map
  */
-Inline void	ready_insert_first(Priority pri, TaskType tskid);
-Inline void	ready_insert_last(Priority pri, TaskType tskid);
-Inline TaskType	ready_delete_first(Priority pri);
-Inline Priority	bitmap_search(UINT16 bitmap);
-
+#ifndef PRIMAP_BIT
+#define	PRIMAP_BIT(pri)		(1u << (pri))
+#endif /* PRIMAP_BIT */
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
 /*
  *  task ready queue list
  *
@@ -87,18 +106,51 @@ static TaskType ready_queue_first[TNUM_PRIORITY];
 static TaskType ready_queue_last[TNUM_PRIORITY];
 
 /*
+ * current running task
+ */
+TaskType runtsk;
+
+/*
+ * the next should be scheduled task which has higher or equal priority
+ */
+TaskType schedtsk;
+
+/*
+ *  the next should be scheduled task's priority,may lower than schedtsk's pri
+ */
+Priority nextpri;
+
+/*
+ *  ready priority map
+ *
+ *  each bit of it correspond to a priority which has task(s) in runnable state
+ */
+static UINT16 ready_primap;
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/*
+ *  task ready queue management APIs
+ */
+Inline void ready_insert_first ( Priority pri , TaskType tskid );
+Inline void ready_insert_last ( Priority pri , TaskType tskid );
+Inline TaskType ready_delete_first ( Priority pri );
+#ifndef CPU_BITMAP_SEARCH
+Inline Priority bitmap_search ( UINT16 bitmap );
+#endif
+
+/*
  *  insert the task tskid at the head of the ready queue of pri
  */
-Inline void
-ready_insert_first(Priority pri, TaskType tskid)
+Inline void ready_insert_first ( Priority pri , TaskType tskid )
 {
-	TaskType	first;
+	TaskType first;
 
 	assert(pri <= TPRI_MAXTASK);
 	first = ready_queue_first[pri];
 	ready_queue_first[pri] = tskid;
 	tcb_next[tskid] = first;
-	if (first == TSKID_NULL) {
+	if ( first == TSKID_NULL )
+	{
 		ready_queue_last[pri] = tskid;
 	}
 }
@@ -106,14 +158,15 @@ ready_insert_first(Priority pri, TaskType tskid)
 /*
  *  insert the tskid at the tail of the ready queue of pri
  */
-Inline void
-ready_insert_last(Priority pri, TaskType tskid)
+Inline void ready_insert_last ( Priority pri , TaskType tskid )
 {
 	assert(pri <= TPRI_MAXTASK);
-	if (ready_queue_first[pri] == TSKID_NULL) {
+	if ( ready_queue_first[pri] == TSKID_NULL )
+	{
 		ready_queue_first[pri] = tskid;
 	}
-	else {
+	else
+	{
 		tcb_next[ready_queue_last[pri]] = tskid;
 	}
 	ready_queue_last[pri] = tskid;
@@ -123,111 +176,68 @@ ready_insert_last(Priority pri, TaskType tskid)
 /*
  *  remove the head tsk from the ready queue of pri,and return it.
  */
-Inline TaskType
-ready_delete_first(Priority pri)
+Inline TaskType ready_delete_first ( Priority pri )
 {
-	TaskType	first;
+	TaskType first;
 
 	first = ready_queue_first[pri];
 	assert(first != TSKID_NULL);
 	ready_queue_first[pri] = tcb_next[first];
-	return(first);
+	return (first);
 }
 
-/*
- *  task ready priority map
- *
- *  each bit of bitmap corresponds to a special priority <pri>. if at least
- *  one task with pri is in ready state, the <pri> bit in bitmap should be set.
- *  Only when no any task with <pri> is in ready state, the <pri> bit in bitmap
- *  should be cleared, which means no tasks is in the ready state on the queue
- *  of <pri>.
- *  For toppers_osek,this bit map is 16 bit long,so only 16 prioritys was allowed
- *  from 0 to 15.
- *  by default toppers_osek assume that the host cpu is big endianness mode.
- *  Also the default PRIMAP implement is ok for little endianness mode cpu,as it 
- *  just has 16 bit.
- *  if you want to make it more rigth,you can change the define as belows if the 
- *  host cpu is in little endianness mode by the way add the define in your compiler
- *  pre-processor.
- *	#define PRIMAP_BIT(pri)	(0x8000u >> (pri))
- *	#define	bitmap_search(bitmap) (16 - ffs(bitmap))
- *  And also you can re-implement the bitmap mechanism to make better osek os.
- *  Such as use the ucOS ready map
- */
-#ifndef PRIMAP_BIT
-#define	PRIMAP_BIT(pri)		(1u << (pri))
-#endif /* PRIMAP_BIT */
 
 #ifndef CPU_BITMAP_SEARCH
 
-Inline Priority
-bitmap_search(UINT16 bitmap)
+Inline Priority bitmap_search ( UINT16 bitmap )
 {
-	static const UINT8 search_table[] = { 0, 1, 1, 2, 2, 2, 2,
-						3, 3, 3, 3, 3, 3, 3, 3 };
-	Priority	pri = 0;
+	static const UINT8 search_table[] = { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3 };
+	Priority pri = 0;
 
-	assert((bitmap & ((UINT16) 0xffffu)) != 0);
-	if ((bitmap & ((UINT16) 0xff00u)) != 0) {
+	assert((bitmap & ((UINT16 ) 0xffffu)) != 0);
+	if ( (bitmap & ((UINT16) 0xff00u)) != 0 )
+	{
 		bitmap >>= 8;
 		pri += 8;
 	}
-	if ((bitmap & ((UINT16) 0xf0)) != 0) {
+	if ( (bitmap & ((UINT16) 0xf0)) != 0 )
+	{
 		bitmap >>= 4;
 		pri += 4;
 	}
-	return(pri + (search_table[(bitmap & ((UINT16) 0x0f)) - 1]));
+	return (pri + (search_table[(bitmap & ((UINT16) 0x0f)) - 1]));
 }
 
 #endif /* CPU_BITMAP_SEARCH */
 
-/*
- * current running task 
- */
-TaskType	runtsk;
-
-/*
- * the next should be scheduled task which has higher or equal priority 
- */
-TaskType	schedtsk;
-
-/*
- *  the next should be scheduled task's priority,may lower than schedtsk's pri
- */
-Priority	nextpri;
-
-/*
- *  ready priority map
- *
- *  each bit of it correspond to a priority which has task(s) in runnable state
- */
-static UINT16	ready_primap;
-
+/* ============================ [ FUNCTIONS ] ====================================================== */
 /*
  *  initialize task related 
  */
-void
-task_initialize(void)
+void task_initialize ( void )
 {
-	Priority	pri;
-	TaskType	tskid;
+	Priority pri;
+	TaskType tskid;
 
 	runtsk = TSKID_NULL;
 	schedtsk = TSKID_NULL;
-	for (pri = 0; pri < TNUM_PRIORITY; pri++) {
+	for ( pri = 0; pri < TNUM_PRIORITY ; pri++ )
+	{
 		ready_queue_first[pri] = TSKID_NULL;
 	}
 	nextpri = TPRI_MINTASK;
 	ready_primap = 0u;
 
-	for (tskid = 0; tskid < tnum_task; tskid++) {
+	for ( tskid = 0; tskid < tnum_task ; tskid++ )
+	{
 		tcb_actcnt[tskid] = 0;
-		if ((tinib_autoact[tskid] & appmode) != APPMODE_NONE) {
-			(void)make_active(tskid);
+		if ( (tinib_autoact[tskid] & appmode) != APPMODE_NONE )
+		{
+			(void) make_active(tskid);
 			tcb_tstat[tskid] = TS_RUNNABLE;
 		}
-		else {
+		else
+		{
 			tcb_tstat[tskid] = TS_DORMANT;
 		}
 	}
@@ -239,71 +249,74 @@ task_initialize(void)
  *  TerminateTask and ChainTask may call make_active only when task actcnt is not zero
  *  set up task's pre-running enviroment
  */
-BOOL
-make_active(TaskType tskid)
+BOOL make_active ( TaskType tskid )
 {
 	tcb_curpri[tskid] = tinib_inipri[tskid];
-	if (tskid < tnum_exttask) {
+	if ( tskid < tnum_exttask )
+	{
 		tcb_curevt[tskid] = EVTMASK_NONE;
 		tcb_waievt[tskid] = EVTMASK_NONE;
 	}
 	tcb_lastres[tskid] = RESID_NULL;
 	activate_context(tskid);
-	return(make_runnable(tskid));
+	return (make_runnable(tskid));
 }
 
 /*
  *  make the task runnable
  */
-BOOL
-make_runnable(TaskType tskid)
+BOOL make_runnable ( TaskType tskid )
 {
-	Priority	pri, schedpri;
+	Priority pri, schedpri;
 
 	tcb_tstat[tskid] = TS_RUNNABLE;
-	if (schedtsk != TSKID_NULL) {
+	if ( schedtsk != TSKID_NULL )
+	{
 		pri = tcb_curpri[tskid];
 		schedpri = tcb_curpri[schedtsk];
-		if (pri <= schedpri) {
+		if ( pri <= schedpri )
+		{
 			/*
 			 *  schedtsk has higher priority than tskid, so just 
 			 *  put the tskid at the tail of the ready queue of pri
 			 */
-			ready_insert_last(pri, tskid);
+			ready_insert_last(pri,tskid);
 			ready_primap |= PRIMAP_BIT(pri);
-			if (pri > nextpri) {
+			if ( pri > nextpri )
+			{
 				nextpri = pri;
 			}
-			return(FALSE);
+			return (FALSE );
 		}
 		/*
 		 *  tskid has higher priority than schedtsk, so put 
 		 *  the schedtsk at the head of the ready queue of schedpri
-         *  because the schedtsk will be preempted by tskid
+		 *  because the schedtsk will be preempted by tskid
 		 */
-		ready_insert_first(schedpri, schedtsk);
+		ready_insert_first(schedpri,schedtsk);
 		ready_primap |= PRIMAP_BIT(schedpri);
 		nextpri = schedpri;
 	}
 	schedtsk = tskid;
-	return(TRUE);
+	return (TRUE );
 }
 
 /*
  *  search task should be scheduled next
  */
-void
-search_schedtsk(void)
+void search_schedtsk ( void )
 {
-	if (ready_primap == ((UINT16) 0)) {
+	if ( ready_primap == ((UINT16) 0) )
+	{
 		schedtsk = TSKID_NULL;
 	}
-	else {
+	else
+	{
 		schedtsk = ready_delete_first(nextpri);
-		if (ready_queue_first[nextpri] == TSKID_NULL) {
+		if ( ready_queue_first[nextpri] == TSKID_NULL )
+		{
 			ready_primap &= ~PRIMAP_BIT(nextpri);
-			nextpri = (ready_primap == ((UINT16) 0)) ?
-						TPRI_MINTASK : bitmap_search(ready_primap);
+			nextpri = (ready_primap == ((UINT16) 0)) ?TPRI_MINTASK : bitmap_search(ready_primap);
 		}
 	}
 }
@@ -311,11 +324,15 @@ search_schedtsk(void)
 /*
  *  preempt current running task<runtsk> which is also the schedtsk
  */
-void
-preempt(void)
+void preempt ( void )
 {
 	assert(runtsk == schedtsk);
-	ready_insert_first(tcb_curpri[schedtsk], schedtsk);
+	ready_insert_first(tcb_curpri[schedtsk],schedtsk);
 	ready_primap |= PRIMAP_BIT(tcb_curpri[schedtsk]);
 	search_schedtsk();
 }
+
+#ifdef __cplusplus
+} /* namespace autosar */
+#endif
+

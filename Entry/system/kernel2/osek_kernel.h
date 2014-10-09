@@ -58,36 +58,13 @@
 #ifndef _OSEK_KERNEL_H_
 #define _OSEK_KERNEL_H_
 
-/*
- *  includes
- */
+/* ============================ [ INCLUDES  ] ====================================================== */
 #include "os_i.h"
 
 #ifdef __cplusplus
-namespace autosar {
-extern "C" {
+namespace autosar { extern "C" {
 #endif
-/*
- *  type defines for kernel
- */
-#ifndef _MACRO_ONLY
-typedef void		*VP;			/* void pointer */
-typedef void		(*FP)(void);	/* function pointer */
-typedef UINT8		Priority;		/* priority for task/resource/ISR */
-typedef	UINT8		IPL;			/* interrupt processing level */
-#endif /* _MACRO_ONLY */
-
-#ifdef __cplusplus
-}} // namespace
-#endif
-
-#include "portable.h"
-#include "oslog.h"
-
-#ifdef __cplusplus
-namespace autosar {
-extern "C" {
-#endif
+/* ============================ [ MACROS    ] ====================================================== */
 /*
  *  number of prioritys
  */
@@ -104,11 +81,11 @@ extern "C" {
  */
 #define TPRI_MINTASK	((Priority) 0)		/* minimum priority */
 #define TPRI_MAXTASK	((Priority)(TNUM_PRIORITY - 1))
-											/* maximum priority */
+/* maximum priority */
 #define TPRI_SCHEDULER	((Priority) 127)	/* priority of the scheduler */
 #define TPRI_MINISR		((Priority) 128)	/* the minimum priority of ISRs */
 #define TPRI_NULL		((Priority) UINT8_INVALID)
-											/* invalid priprity */
+/* invalid priprity */
 
 /*
  *  Event Macros
@@ -136,28 +113,55 @@ extern "C" {
 #define TCL_STARTUP		((UINT8) 0x10)	/* StartupHook */
 #define TCL_SHUTDOWN	((UINT8) 0x20)	/* ShutdownHook */
 
+/*
+ *  if BASIC_STATUS undefined, the EXTEND_STATUS will be the default
+ */
+#ifndef BASIC_STATUS
+#define EXTENDED_STATUS
+#endif /* BASIC_STATUS */
+/* ============================ [ TYPES     ] ====================================================== */
+#ifndef _MACRO_ONLY
+typedef void *VP; /* void pointer */
+typedef void (*FP) ( void ); /* function pointer */
+typedef UINT8 Priority; /* priority for task/resource/ISR */
+typedef UINT8 IPL; /* interrupt processing level */
+#endif /* _MACRO_ONLY */
+
+#ifdef __cplusplus
+}} /* namespace */
+#endif
+
+#include "portable.h"
+#include "oslog.h"
+
+#ifdef __cplusplus
+namespace autosar { extern "C" {
+#endif
 
 #ifndef _MACRO_ONLY
+/* ============================ [ DATAS     ] ====================================================== */
 /*
  *  help the OS to remember os kernel status,see osctl.c
  */
-extern UINT8		callevel;	/* help to remember os calling level */
-extern AppModeType	appmode;	/* help to remember os application mode */
+extern UINT8 callevel; /* help to remember os calling level */
+extern AppModeType appmode; /* help to remember os application mode */
 
+
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 /*
  *  OS lock/unlock API
  */
-Inline void	lock_cpu(void);		/* lock the cpu,that no interrupts will be acknowledged */
-Inline void	unlock_cpu(void);	/* unlock the cpu,that interruprs can be acknowledged */
+Inline void lock_cpu ( void ); /* lock the cpu,that no interrupts will be acknowledged */
+Inline void unlock_cpu ( void ); /* unlock the cpu,that interruprs can be acknowledged */
 
-Inline void
-lock_cpu(void)
+Inline void lock_cpu ( void )
 {
 	disable_int();
 }
 
-Inline void
-unlock_cpu(void)
+Inline void unlock_cpu ( void )
 {
 	enable_int();
 }
@@ -165,28 +169,22 @@ unlock_cpu(void)
 /*
  *  called when os error encountered
  */
-extern void	call_errorhook(StatusType ercd, OSServiceIdType svcid);
+extern void call_errorhook ( StatusType ercd , OSServiceIdType svcid );
 
 /*
  *  called when task enter or leave running state
  */
-extern void	call_posttaskhook(void);
-extern void	call_pretaskhook(void);
+extern void call_posttaskhook ( void );
+extern void call_pretaskhook ( void );
 
 /*
  *  os_cfg.c
  */
-extern void	object_initialize(void);
+extern void object_initialize ( void );
 
 #endif /* _MACRO_ONLY */
 
-/*
- *  if BASIC_STATUS undefined, the EXTEND_STATUS will be the default
- */
-#ifndef BASIC_STATUS
-#define EXTENDED_STATUS
-#endif /* BASIC_STATUS */
 #ifdef __cplusplus
-}}  // name space
+}}  /* name space */
 #endif
 #endif /* _OSEK_KERNEL_H_ */

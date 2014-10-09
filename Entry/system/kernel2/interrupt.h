@@ -57,52 +57,57 @@
 
 #ifndef _INTERRUPT_H_
 #define _INTERRUPT_H_
+/* ============================ [ INCLUDES  ] ====================================================== */
 #ifdef __cplusplus
-namespace autosar {
-extern "C" {
+namespace autosar { extern "C" {
 #endif
+/* ============================ [ MACROS    ] ====================================================== */
 /*
  *  ISR ID INVALID MACRO
  */
 #define ISRID_NULL		((IsrType) UINT8_INVALID)	
 
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
 /*
  *  ISR type 2 numbers configured, see os_cfg.c
  */
-extern const UINT8		tnum_isr2;			
+extern const UINT8 tnum_isr2;
 
 /*
  *  ISR initialize priority
  */
-extern const Priority	isrinib_intpri[];	
+extern const Priority isrinib_intpri[];
 
 /*
  *  ISR reource acquired since last GetResource()
  */
-extern ResourceType		isrcb_lastres[];	
+extern ResourceType isrcb_lastres[];
 
 /*
  *  ISR maximum IPL allowed for ECU, see os_cfg.c
  */
-extern const IPL		ipl_maxisr2;
+extern const IPL ipl_maxisr2;
 
 /*
  *  help the os to remember the current running catalogue 2 ISR
  *
  *  if it is ISRID_NULL, then no ISR is running
  */
-extern IsrType		runisr;
+extern IsrType runisr;
 
 /*
  *  SuspendAllInterrupts nest count
  */
-extern UINT8		sus_all_cnt;	
-
+extern UINT8 sus_all_cnt;
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 /*
  *  interrupt initialize
  */
-extern void	interrupt_initialize(void);
+extern void interrupt_initialize ( void );
 #ifdef __cplusplus
-}}  // name space
+}}  /* name space */
 #endif
 #endif /* _INTERRUPT_H_ */

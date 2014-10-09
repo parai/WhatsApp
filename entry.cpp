@@ -14,6 +14,7 @@
  */
 #include "entry.h"
 #include "Os.h"
+#include "EcuM.h"
 using namespace autosar;
 
 Entry::Entry(QWidget *parent) :
@@ -29,8 +30,9 @@ Entry::Entry(QWidget *parent) :
     // example ...
     VirtualDevice* device = new VirtualCan(4,this);
     registerVirtualDevice(device);
+    device->setVisible(true);
 
-    StartOS(OSDEFAULTAPPMODE);
+    EcuM_Init();
 }
 
 Entry::~Entry()

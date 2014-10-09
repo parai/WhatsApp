@@ -55,61 +55,76 @@
  * INDIRECTLY CAUSED FROM THE USE OF THIS SOFTWARE.
  */
 
-/*
- *	Includes
- */
+/* ============================ [ INCLUDES  ] ====================================================== */
 
 #include "osek_kernel.h"
 #include "check.h"
 #include "interrupt.h"
-
+#ifdef __cplusplus
+namespace autosar {
+#endif
+/* ============================ [ MACROS    ] ====================================================== */
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
 /*
  *  help os to remember os status
  */
-UINT8		callevel;		/* remember calling level<task,ISR> */
-AppModeType	appmode;		/* remember current application mode */
+UINT8 callevel; /* remember calling level<task,ISR> */
+AppModeType appmode; /* remember current application mode */
 
 /*
  *  help to remember error related information
  */
-OSServiceIdType	_errorhook_svcid;
-_ErrorHook_Par	_errorhook_par1, _errorhook_par2, _errorhook_par3;
+OSServiceIdType _errorhook_svcid;
+_ErrorHook_Par _errorhook_par1, _errorhook_par2, _errorhook_par3;
+/* ============================ [ DECLARES  ] ====================================================== */
+extern void cpu_initialize ( void );
+extern void sys_initialize ( void );
+extern void tool_initialize ( void );
+
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 
 /*
  *  called when os encounter an error
  */
-void
-call_errorhook(StatusType ercd, OSServiceIdType svcid)
+void call_errorhook ( StatusType ercd , OSServiceIdType svcid )
 {
-	UINT8	saved_callevel;
-	IPL	saved_ipl;
-	volatile FP	errorhook_adr;
-	
-	errorhook_adr = (FP)ErrorHook;
-	
-	if (sus_all_cnt > 0) {
-		if ((errorhook_adr != NULL) && (callevel != TCL_ERROR)) {
+	UINT8 saved_callevel;
+	IPL saved_ipl;
+	volatile FP errorhook_adr;
+
+	errorhook_adr = (FP) ErrorHook;
+
+	if ( sus_all_cnt > 0 )
+	{
+		if ( (errorhook_adr != NULL) && (callevel != TCL_ERROR) )
+		{
 			_errorhook_svcid = svcid;
 			ErrorHook(ercd);
 		}
-		ShutdownOS(E_OS_CALLEVEL);	/* error cann't be restored,... */
+		ShutdownOS( E_OS_CALLEVEL); /* error cann't be restored,... */
 	}
-	else {
-		if (( errorhook_adr != NULL) && (callevel != TCL_ERROR)) {
+	else
+	{
+		if ( (errorhook_adr != NULL) && (callevel != TCL_ERROR) )
+		{
 			_errorhook_svcid = svcid;
 			saved_callevel = callevel;
 			callevel = TCL_ERROR;
 			saved_ipl = current_ipl();
-			if (saved_ipl < ipl_maxisr2) {
+			if ( saved_ipl < ipl_maxisr2 )
+			{
 				set_ipl(ipl_maxisr2);
 			}
 			unlock_cpu();
 			ErrorHook(ercd);
 			lock_cpu();
-			if (saved_ipl < ipl_maxisr2) {
+			if ( saved_ipl < ipl_maxisr2 )
+			{
 				set_ipl(saved_ipl);
 			}
-			callevel = saved_callevel;	
+			callevel = saved_callevel;
 		}
 	}
 }
@@ -117,57 +132,47 @@ call_errorhook(StatusType ercd, OSServiceIdType svcid)
 /*
  *  called the task release the cpu
  */
-void
-call_posttaskhook(void)
+void call_posttaskhook ( void )
 {
 	callevel = TCL_PREPOST;
 	set_ipl(ipl_maxisr2);
 	unlock_cpu();
 	PostTaskHook();
 	lock_cpu();
-	set_ipl(IPL_ENA_ALL);
-	callevel = TCL_TASK;	
+	set_ipl( IPL_ENA_ALL);
+	callevel = TCL_TASK;
 }
 
 /*
  *  called the task acquire the cpu
  */
-void
-call_pretaskhook(void)
+void call_pretaskhook ( void )
 {
 	callevel = TCL_PREPOST;
 	set_ipl(ipl_maxisr2);
 	unlock_cpu();
 	PreTaskHook();
 	lock_cpu();
-	set_ipl(IPL_ENA_ALL);
-	callevel = TCL_TASK;	
+	set_ipl( IPL_ENA_ALL);
+	callevel = TCL_TASK;
 }
 
 /*
  *  get current Application mode
  */
-AppModeType
-GetActiveApplicationMode(void)
+AppModeType GetActiveApplicationMode ( void )
 {
-	AppModeType	mode;
+	AppModeType mode;
 
 	LOG_GETAAM_ENTER();
 	mode = appmode;
 	LOG_GETAAM_LEAVE(mode);
-	return(mode);
+	return (mode);
 }
-
-/* Import Functions */
-extern void cpu_initialize(void);
-extern void sys_initialize(void);
-extern void tool_initialize(void);
-
 /*
  *  OS Start
  */
-void
-StartOS(AppModeType mode)
+void StartOS ( AppModeType mode )
 {
 	volatile FP startuphook_adr;
 
@@ -181,8 +186,8 @@ StartOS(AppModeType mode)
 	/*
 	 *  Do the needed initialize
 	 */
-	cpu_initialize();  /* implemented in cpu_context.c */
-	sys_initialize();  /* user defined interface */
+	cpu_initialize(); /* implemented in cpu_context.c */
+	sys_initialize(); /* user defined interface */
 	tool_initialize(); /* user defined interface */
 
 	/*
@@ -194,9 +199,10 @@ StartOS(AppModeType mode)
 	 *  StartupHook
 	 *
 	 */
-	startuphook_adr = (FP)StartupHook;
-	
-	if (startuphook_adr != NULL) {
+	startuphook_adr = (FP) StartupHook;
+
+	if ( startuphook_adr != NULL )
+	{
 		/*
 		 *  StartupHook
 		 */
@@ -214,8 +220,7 @@ StartOS(AppModeType mode)
 /*
  *  OS Shutdown
  */
-void
-ShutdownOS(StatusType ercd)
+void ShutdownOS ( StatusType ercd )
 {
 	volatile FP shutdownhook_adr;
 
@@ -229,10 +234,11 @@ ShutdownOS(StatusType ercd)
 	/*
 	 *  ShutdownHook
 	 */
-	 
-	 shutdownhook_adr = (FP)ShutdownHook;
-	 
-	if (shutdownhook_adr != NULL) {
+
+	shutdownhook_adr = (FP) ShutdownHook;
+
+	if ( shutdownhook_adr != NULL )
+	{
 		/*
 		 *  ShutdownHook
 		 */
@@ -250,4 +256,8 @@ ShutdownOS(StatusType ercd)
 	cpu_terminate();
 	sys_exit();
 }
+
+#ifdef __cplusplus
+} /* namespace autosar */
+#endif
 

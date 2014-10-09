@@ -55,22 +55,26 @@
  * INDIRECTLY CAUSED FROM THE USE OF THIS SOFTWARE.
  */
 
-/*
- *	Includes
- */
-
+/* ============================ [ INCLUDES  ] ====================================================== */
 #include "osek_kernel.h"
 #include "check.h"
 #include "task.h"
 #include "resource.h"
-
+#ifdef __cplusplus
+namespace autosar {
+#endif
+/* ============================ [ MACROS    ] ====================================================== */
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 /*
  *  Set a event or a group of event for a task
  */
-StatusType
-SetEvent(TaskType tskid, EventMaskType mask)
+StatusType SetEvent ( TaskType tskid , EventMaskType mask )
 {
-	StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_SETEVT_ENTER(tskid, mask);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2);
@@ -81,33 +85,34 @@ SetEvent(TaskType tskid, EventMaskType mask)
 	D_CHECK_STATE(tcb_tstat[tskid] != TS_DORMANT);
 
 	tcb_curevt[tskid] |= mask;
-	if ((tcb_curevt[tskid] & tcb_waievt[tskid]) != EVTMASK_NONE) {
+	if ( (tcb_curevt[tskid] & tcb_waievt[tskid]) != EVTMASK_NONE )
+	{
 		tcb_waievt[tskid] = EVTMASK_NONE;
-		if ((make_runnable(tskid)) && (callevel == TCL_TASK)) {
+		if ( (make_runnable(tskid)) && (callevel == TCL_TASK) )
+		{
 			dispatch();
 		}
 	}
-  exit:
+exit :
 	unlock_cpu();
 	LOG_SETEVT_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
-  d_error_exit:
+d_error_exit :
 	_errorhook_par1.tskid = tskid;
 	_errorhook_par2.mask = mask;
-	call_errorhook(ercd, OSServiceId_SetEvent);
+	call_errorhook(ercd,OSServiceId_SetEvent);
 	goto exit;
 }
 
 /*
- *  cleat task's current event by mask
+ *  clear task's current event by mask
  */
-StatusType
-ClearEvent(EventMaskType mask)
+StatusType ClearEvent ( EventMaskType mask )
 {
-	StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_CLREVT_ENTER(mask);
 	CHECK_CALLEVEL(TCL_TASK);
@@ -115,25 +120,24 @@ ClearEvent(EventMaskType mask)
 
 	lock_cpu();
 	tcb_curevt[runtsk] &= ~mask;
-  exit:
+exit :
 	unlock_cpu();
 	LOG_CLREVT_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
 	_errorhook_par1.mask = mask;
-	call_errorhook(ercd, OSServiceId_ClearEvent);
+	call_errorhook(ercd,OSServiceId_ClearEvent);
 	goto exit;
 }
 
 /*
  *  get task's current event
  */
-StatusType
-GetEvent(TaskType tskid, EventMaskRefType p_mask)
+StatusType GetEvent ( TaskType tskid , EventMaskRefType p_mask )
 {
-	StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_GETEVT_ENTER(tskid, p_mask);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2 | TCL_ERROR | TCL_PREPOST);
@@ -143,27 +147,26 @@ GetEvent(TaskType tskid, EventMaskRefType p_mask)
 	lock_cpu();
 	D_CHECK_STATE(tcb_tstat[tskid] != TS_DORMANT);
 	*p_mask = tcb_curevt[tskid];
-  exit:
+exit :
 	unlock_cpu();
 	LOG_GETEVT_LEAVE(ercd, *p_mask);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
-  d_error_exit:
+d_error_exit :
 	_errorhook_par1.tskid = tskid;
 	_errorhook_par2.p_mask = p_mask;
-	call_errorhook(ercd, OSServiceId_GetEvent);
+	call_errorhook(ercd,OSServiceId_GetEvent);
 	goto exit;
 }
 
 /*
  *  wait a event
  */
-StatusType
-WaitEvent(EventMaskType mask)
+StatusType WaitEvent ( EventMaskType mask )
 {
-	StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_WAIEVT_ENTER(mask);
 	CHECK_CALLEVEL(TCL_TASK);
@@ -171,7 +174,8 @@ WaitEvent(EventMaskType mask)
 	CHECK_RESOURCE(tcb_lastres[runtsk] == RESID_NULL);
 
 	lock_cpu();
-	if ((tcb_curevt[runtsk] & mask) == EVTMASK_NONE) {
+	if ( (tcb_curevt[runtsk] & mask) == EVTMASK_NONE )
+	{
 		tcb_curpri[runtsk] = tinib_inipri[runtsk];
 		tcb_tstat[runtsk] = TS_WAITING;
 		tcb_waievt[runtsk] = mask;
@@ -179,14 +183,17 @@ WaitEvent(EventMaskType mask)
 		dispatch();
 		tcb_curpri[runtsk] = tinib_exepri[runtsk];
 	}
-  exit:
+exit :
 	unlock_cpu();
 	LOG_WAIEVT_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
 	_errorhook_par1.mask = mask;
-	call_errorhook(ercd, OSServiceId_WaitEvent);
+	call_errorhook(ercd,OSServiceId_WaitEvent);
 	goto exit;
 }
+#ifdef __cplusplus
+} /* namespace autosar */
+#endif

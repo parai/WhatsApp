@@ -12,19 +12,21 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
-/* ============================ [ INCLUDES ] ====================================================== */
+/* ============================ [ INCLUDES  ] ====================================================== */
 #include "Os.h"
-
-/* ============================ [ MACROS   ] ====================================================== */
-/* ============================ [ TYPES    ] ====================================================== */
-/* ============================ [ DATAS    ] ====================================================== */
+#ifdef __cplusplus
+namespace autosar {
+#endif
+/* ============================ [ MACROS    ] ====================================================== */
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
 STATIC	TickType				OsTickCounter;
 
 STATIC TickType			 	AlarmTick[ALARM_NUM];
 STATIC TickType			 	AlarmPeriod[ALARM_NUM];
-/* ============================ [ DECLARES ] ====================================================== */
-/* ============================ [ LOCALS   ] ====================================================== */
-/* ============================ [ FNCTIONS ] ====================================================== */
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 FUNC(void,MEM_OsTick) OsTick ( void )
 {
 	AlarmType AlarmId;
@@ -107,9 +109,22 @@ FUNC(TickType,MEM_GetOsTick) GetOsTick( void )
 {
 	return OsTickCounter;
 }
+FUNC(TickType,MEM_GetOsElapsedTick)  GetOsElapsedTick  ( TickType prevTick )
+{
+    if (OsTickCounter >= prevTick) {
+		return(OsTickCounter - prevTick);
+	}
+	else {
+		return(prevTick - OsTickCounter + (TICK_MAX + 1));
+	}
+}
 
 FUNC(void,MEM_OsAlarmInit) OsAlarmInit ( void )
 {
     memset(AlarmTick,0,sizeof(AlarmTick));
     memset(AlarmPeriod,0,sizeof(AlarmPeriod));
 }
+
+#ifdef __cplusplus
+} /* namespace autosar */
+#endif

@@ -55,60 +55,68 @@
  * INDIRECTLY CAUSED FROM THE USE OF THIS SOFTWARE.
  */
 
-/*
- *	includes
- */
+/* ============================ [ INCLUDES  ] ====================================================== */
 
 #include "osek_kernel.h"
 #include "check.h"
 #include "task.h"
 #include "resource.h"
-
+#ifdef __cplusplus
+namespace autosar {
+#endif
+/* ============================ [ MACROS    ] ====================================================== */
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 /*
  *  Activate Task
  */
-StatusType
-ActivateTask(TaskType tskid)
+StatusType ActivateTask ( TaskType tskid )
 {
-	StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_ACTTSK_ENTER(tskid);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2);
 	CHECK_TSKID(tskid);
 
 	lock_cpu();
-	if (tcb_tstat[tskid] == TS_DORMANT) {
-		if ((make_active(tskid)) && (callevel == TCL_TASK)) {
+	if ( tcb_tstat[tskid] == TS_DORMANT )
+	{
+		if ( (make_active(tskid)) && (callevel == TCL_TASK) )
+		{
 			dispatch();
 		}
 	}
-	else if (tcb_actcnt[tskid] < tinib_maxact[tskid]) {
+	else if ( tcb_actcnt[tskid] < tinib_maxact[tskid] )
+	{
 		tcb_actcnt[tskid] += 1;
 	}
-	else {
+	else
+	{
 		ercd = E_OS_LIMIT;
 		goto d_error_exit;
 	}
-  exit:
+exit :
 	unlock_cpu();
 	LOG_ACTTSK_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
-  d_error_exit:
+d_error_exit :
 	_errorhook_par1.tskid = tskid;
-	call_errorhook(ercd, OSServiceId_ActivateTask);
+	call_errorhook(ercd,OSServiceId_ActivateTask);
 	goto exit;
 }
 
 /*
  *  Terminate Task
  */
-StatusType
-TerminateTask(void)
+StatusType TerminateTask ( void )
 {
-	StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_TERTSK_ENTER();
 	CHECK_CALLEVEL(TCL_TASK);
@@ -121,28 +129,28 @@ TerminateTask(void)
 	 */
 	tcb_tstat[runtsk] = TS_DORMANT;
 	search_schedtsk();
-	if (tcb_actcnt[runtsk] > 0) {
+	if ( tcb_actcnt[runtsk] > 0 )
+	{
 		tcb_actcnt[runtsk] -= 1;
-		(void)make_active(runtsk);
+		(void) make_active(runtsk);
 	}
 	exit_and_dispatch();
 	/* shouldn't return here,if it is an serious error */
 
-  error_exit:
+error_exit :
 	lock_cpu();
-	call_errorhook(ercd, OSServiceId_TerminateTask);
+	call_errorhook(ercd,OSServiceId_TerminateTask);
 	unlock_cpu();
 	LOG_TERTSK_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 }
 
 /*
  *  chain task
  */
-StatusType
-ChainTask(TaskType tskid)
+StatusType ChainTask ( TaskType tskid )
 {
-    StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_CHNTSK_ENTER(tskid);
 	CHECK_CALLEVEL(TCL_TASK);
@@ -150,84 +158,88 @@ ChainTask(TaskType tskid)
 	CHECK_TSKID(tskid);
 
 	lock_cpu();
-	if (tskid == runtsk) {
+	if ( tskid == runtsk )
+	{
 		// tcb_tstat[runtsk] = TS_DORMANT;
 		search_schedtsk();
-		(void)make_active(runtsk);
+		(void) make_active(runtsk);
 	}
-	else {
+	else
+	{
 		/*
 		 *  first activete tskid
 		 *  then terminate runtsk
 		 */
-		if ((tcb_tstat[tskid] != TS_DORMANT)
-			&& (tcb_actcnt[tskid] >= tinib_maxact[tskid])) {
+		if ( (tcb_tstat[tskid] != TS_DORMANT) && (tcb_actcnt[tskid] >= tinib_maxact[tskid]) )
+		{
 			ercd = E_OS_LIMIT;
 			goto d_error_exit;
 		}
 		tcb_tstat[runtsk] = TS_DORMANT;
 		search_schedtsk();
-		if (tcb_actcnt[runtsk] > 0) {
+		if ( tcb_actcnt[runtsk] > 0 )
+		{
 			tcb_actcnt[runtsk] -= 1;
-			(void)make_active(runtsk);
+			(void) make_active(runtsk);
 		}
-		if (tcb_tstat[tskid] == TS_DORMANT) {
-			(void)make_active(tskid);
+		if ( tcb_tstat[tskid] == TS_DORMANT )
+		{
+			(void) make_active(tskid);
 		}
-		else {
+		else
+		{
 			tcb_actcnt[tskid] += 1;
 		}
 	}
 	exit_and_dispatch();
 	/* shouldn't return here, if so , a serious error */
 
-  error_exit:
+error_exit :
 	lock_cpu();
-  d_error_exit:
+d_error_exit :
 	_errorhook_par1.tskid = tskid;
-	call_errorhook(ercd, OSServiceId_ChainTask);
+	call_errorhook(ercd,OSServiceId_ChainTask);
 	unlock_cpu();
 	LOG_CHNTSK_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 }
 
 /*
  *  Schedule
  */
-StatusType
-Schedule(void)
+StatusType Schedule ( void )
 {
-	StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_SCHED_ENTER();
 	CHECK_CALLEVEL(TCL_TASK);
 	CHECK_RESOURCE(tcb_lastres[runtsk] == RESID_NULL);
 
 	lock_cpu();
-	if (tinib_inipri[runtsk] < nextpri) {
+	if ( tinib_inipri[runtsk] < nextpri )
+	{
 		tcb_curpri[runtsk] = tinib_inipri[runtsk];
 		preempt();
 		dispatch();
 		tcb_curpri[runtsk] = tinib_exepri[runtsk];
 	}
-  exit:
+exit :
 	unlock_cpu();
 	LOG_SCHED_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
-	call_errorhook(ercd, OSServiceId_Schedule);
+	call_errorhook(ercd,OSServiceId_Schedule);
 	goto exit;
 }
 
 /*
  *  Get Task ID
  */
-StatusType
-GetTaskID(TaskRefType p_tskid)
+StatusType GetTaskID ( TaskRefType p_tskid )
 {
-	StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_GETTID_ENTER(p_tskid);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2 | TCL_ERROR | TCL_PREPOST);
@@ -235,18 +247,18 @@ GetTaskID(TaskRefType p_tskid)
 	lock_cpu();
 	*p_tskid = runtsk;
 	/*
-     *  if runtsk id TSKID_NULL,should return INVALID_TASK
+	 *  if runtsk id TSKID_NULL,should return INVALID_TASK
 	 *      (runtsk == TSKID_NULL) ? INVALID_TASK : runtsk
-     *  but infact TSKID_NULL == INVALID_TASK
+	 *  but infact TSKID_NULL == INVALID_TASK
 	 */
-  exit:
+exit :
 	unlock_cpu();
 	LOG_GETTID_LEAVE(ercd, *p_tskid);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
-	call_errorhook(ercd, OSServiceId_GetTaskID);
+	call_errorhook(ercd,OSServiceId_GetTaskID);
 	goto exit;
 
 }
@@ -254,10 +266,9 @@ GetTaskID(TaskRefType p_tskid)
 /*
  *  Get Task State
  */
-StatusType
-GetTaskState(TaskType tskid, TaskStateRefType p_state)
+StatusType GetTaskState ( TaskType tskid , TaskStateRefType p_state )
 {
-	StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_GETTST_ENTER(tskid, p_state);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2 | TCL_ERROR | TCL_PREPOST);
@@ -265,15 +276,19 @@ GetTaskState(TaskType tskid, TaskStateRefType p_state)
 
 	lock_cpu();
 	*p_state = (tskid == runtsk) ? RUNNING : tcb_tstat[tskid];
-  exit:
+exit :
 	unlock_cpu();
 	LOG_GETTST_LEAVE(ercd, *p_state);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
 	_errorhook_par1.tskid = tskid;
 	_errorhook_par2.p_state = p_state;
-	call_errorhook(ercd, OSServiceId_GetTaskState);
+	call_errorhook(ercd,OSServiceId_GetTaskState);
 	goto exit;
 }
+#ifdef __cplusplus
+} /* namespace autosar */
+#endif
+

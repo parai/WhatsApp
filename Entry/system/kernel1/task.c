@@ -12,12 +12,14 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
-/* ============================ [ INCLUDES ] ====================================================== */
+/* ============================ [ INCLUDES  ] ====================================================== */
 #include "Os.h"
-
-/* ============================ [ MACROS   ] ====================================================== */
-/* ============================ [ TYPES    ] ====================================================== */
-/* ============================ [ DATAS    ] ====================================================== */
+#ifdef __cplusplus
+namespace autosar {
+#endif
+/* ============================ [ MACROS    ] ====================================================== */
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
 /**
  python:
 cstr = 'PRIVATE uint8 tableUnMap[256] = {'
@@ -56,7 +58,7 @@ STATIC uint8 readyTable[8];
 
 STATIC TaskType    			CurrentTask;
 STATIC AppModeType				AppMode;
-/* ============================ [ DECLARES ] ====================================================== */
+/* ============================ [ DECLARES  ] ====================================================== */
 extern FUNC(void,MEM_OsAlarmInit)    OsAlarmInit ( void );
 extern FUNC(void,MEM_OsResourceInit) OsResourceInit ( void );
 
@@ -65,7 +67,7 @@ STATIC FUNC(TaskType,MEM_TASK_GETBIT)   GetBit ( void  );
 STATIC FUNC(void,MEM_TASK_SETBIT)       SetBit ( uint8 priority );
 STATIC FUNC(bool,MEM_TASK_ISBITSET)     IsBitSet( uint8 priority );
 STATIC FUNC(void,MEM_TASK_CLEARBIT)     ClearBit( uint8 priority );
-/* ============================ [ LOCALS   ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
 
 STATIC FUNC(void,MEM_TASK_INIT) Init ( void )
 {
@@ -136,7 +138,7 @@ STATIC FUNC(void,MEM_TASK_CLEARBIT) ClearBit(uint8 priority)
         readyGrp &= ~( 1<<y );
     }
 }
-/* ============================ [ FNCTIONS ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 FUNC(StatusType,MEM_ActivateTask)  ActivateTask ( TaskType TaskID )
 {
     StatusType ercd = E_OK;
@@ -247,4 +249,8 @@ TASK(OsIdle)
 {
 
 }
+
+#ifdef __cplusplus
+} /* namespace autosar */
+#endif
 

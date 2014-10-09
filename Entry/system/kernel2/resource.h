@@ -57,15 +57,18 @@
 
 #ifndef _RESOURCE_H_
 #define _RESOURCE_H_
+/* ============================ [ INCLUDES  ] ====================================================== */
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
 #endif
+/* ============================ [ MACROS    ] ====================================================== */
 /*
  *  INVALID RESOURCE INDETIFIER
  */
 #define RESID_NULL		((ResourceType) UINT8_INVALID)	/* Invalid ID */
-
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
 /*
  *  resource number configured
  */
@@ -82,7 +85,9 @@ extern const Priority	resinib_ceilpri[];
  */
 extern Priority			rescb_prevpri[];	/* previous priority of task which has acquired this res */
 extern ResourceType		rescb_prevres[];	/* previous resource of task which has acquired this res */
-
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 /*
  *  resource initialize
  */

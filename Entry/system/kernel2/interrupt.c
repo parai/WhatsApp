@@ -55,24 +55,28 @@
  * INDIRECTLY CAUSED FROM THE USE OF THIS SOFTWARE.
  */
 
-/*
- *	Includes
- */
-
+/* ============================ [ INCLUDES  ] ====================================================== */
 #include "osek_kernel.h"
 #include "interrupt.h"
+#ifdef __cplusplus
+namespace autosar
+{
+#endif
 
+/* ============================ [ MACROS    ] ====================================================== */
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
 /*
  *  help the kernel to remember current ISR ID
  */
-IsrType		runisr;
+IsrType runisr;
 
 /*
  *  SuspendAllInterrupts nest count
  *
  *  disable_int() will be called when sus_all_cnt is ZERO
  */
-UINT8		sus_all_cnt;
+UINT8 sus_all_cnt;
 
 /*
  *  SuspendOSInterrupts nest
@@ -80,18 +84,18 @@ UINT8		sus_all_cnt;
  *  will call set_ipl(ipl_maxisr2) to block all the ISR2 if sus_os_cnt
  *  is ZERO. 
  */
-static UINT8	sus_os_cnt;
+static UINT8 sus_os_cnt;
 
 /*
  *  SuspendOSInterrupts call time ipl
  *
  *  when call set_ipl(ipl_maxisr2) to block all the OS ISR2 if
- *  sus_os_cnt is ZERO, saved_ipl will used to store the current 
+ *  sus_os_cnt is ZERO, saved_ipl will be used to store the current
  *  CPU IPL(interrupt processing level).
  *  And then when ResumeOSInterrupts called and sus_os_cnt is One,
  *  then CPU IPL will be restored by saved_ipl.
  */
-static IPL	saved_ipl;
+static IPL saved_ipl;
 
 /*
  *  SuspendAllInterrupts/SuspendOSInterrupts call level saved
@@ -102,20 +106,23 @@ static IPL	saved_ipl;
  *  when ResumeAllInterrupts/ResumeOSInterrupts is called and if
  *  sus_all_cnt or sus_os_cnt is One, should restore OS calling level.
  */
-static UINT8	saved_callevel;
+static UINT8 saved_callevel;
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 
 /*
  *  interrupt initialize
  */
-void
-interrupt_initialize(void)
+void interrupt_initialize ( void )
 {
-	IsrType		isrid;
+	IsrType isrid;
 
 	isrid = ISRID_NULL;
 	sus_all_cnt = 0u;
 	sus_os_cnt = 0u;
-	for (isrid = 0; isrid < tnum_isr2; isrid++) {
+	for ( isrid = 0; isrid < tnum_isr2 ; isrid++ )
+	{
 		isrcb_lastres[isrid] = 0u;
 	}
 }
@@ -123,8 +130,7 @@ interrupt_initialize(void)
 /*
  *  Disable all interrupts
  */
-void
-DisableAllInterrupts(void)
+void DisableAllInterrupts ( void )
 {
 	LOG_DISINT_ENTER();
 	disable_int();
@@ -134,8 +140,7 @@ DisableAllInterrupts(void)
 /*
  *  Enable all interrupts
  */
-void
-EnableAllInterrupts(void)
+void EnableAllInterrupts ( void )
 {
 	LOG_ENAINT_ENTER();
 	enable_int();
@@ -145,25 +150,28 @@ EnableAllInterrupts(void)
 /*
  *  Suspend all interrupts
  */
-void
-SuspendAllInterrupts(void)
+void SuspendAllInterrupts ( void )
 {
 	LOG_SUSALL_ENTER();
-	if (sus_all_cnt == UINT8_INVALID) {
+	if ( sus_all_cnt == UINT8_INVALID )
+	{
 		/*
 		 *  SuspendAllInterrupts has reached its max nest count
 		 *  So do nothing. May a ResumeAllInterrupts call has been forgot.
 		 */
 	}
-	else if (sus_all_cnt == 0) {
+	else if ( sus_all_cnt == 0 )
+	{
 		disable_int();
 		sus_all_cnt++;
-		if (sus_os_cnt == 0) {
+		if ( sus_os_cnt == 0 )
+		{
 			saved_callevel = callevel;
 			callevel = TCL_NULL;
 		}
 	}
-	else {
+	else
+	{
 		sus_all_cnt++;
 	}
 	LOG_SUSALL_LEAVE();
@@ -172,24 +180,27 @@ SuspendAllInterrupts(void)
 /*
  *  Resume all interrupts
  */
-void
-ResumeAllInterrupts(void)
+void ResumeAllInterrupts ( void )
 {
 	LOG_RSMALL_ENTER();
-	if (sus_all_cnt == 0) {
+	if ( sus_all_cnt == 0 )
+	{
 		/*
 		 *  SuspendAllInterrupts hasn't been called before ResumeAllInterrupts
 		 *  It's an error, so just do nothig.
 		 */
 	}
-	else if (sus_all_cnt == 1) {
-		if (sus_os_cnt == 0) {
+	else if ( sus_all_cnt == 1 )
+	{
+		if ( sus_os_cnt == 0 )
+		{
 			callevel = saved_callevel;
 		}
 		sus_all_cnt--;
 		enable_int();
 	}
-	else {
+	else
+	{
 		sus_all_cnt--;
 	}
 	LOG_RSMALL_LEAVE();
@@ -198,35 +209,39 @@ ResumeAllInterrupts(void)
 /*
  *  Suspend OS interrupts
  */
-void
-SuspendOSInterrupts(void)
+void SuspendOSInterrupts ( void )
 {
-	IPL	ipl;
+	IPL ipl;
 
 	LOG_SUSOSI_ENTER();
-	if (sus_os_cnt == UINT8_INVALID) {
+	if ( sus_os_cnt == UINT8_INVALID )
+	{
 		/*
 		 *  SuspendOSInterrupts has reached its max nest count
 		 *  do nothing.
 		 */
 	}
-	else if (sus_os_cnt == 0) {
+	else if ( sus_os_cnt == 0 )
+	{
 		ipl = current_ipl();
 
 		/*
 		 *  to block all the OS ISR2s, should set the IPL to the max IPL of all the OS ISR2
 		 */
-		if (ipl < ipl_maxisr2) {
+		if ( ipl < ipl_maxisr2 )
+		{
 			set_ipl(ipl_maxisr2);
 		}
 		sus_os_cnt++;
 		saved_ipl = ipl;
-		if (sus_all_cnt == 0) {
+		if ( sus_all_cnt == 0 )
+		{
 			saved_callevel = callevel;
 			callevel = TCL_NULL;
 		}
 	}
-	else {
+	else
+	{
 		sus_os_cnt++;
 	}
 	LOG_SUSOSI_LEAVE();
@@ -235,18 +250,20 @@ SuspendOSInterrupts(void)
 /*
  *  Resume OS Interrupts
  */
-void
-ResumeOSInterrupts(void)
+void ResumeOSInterrupts ( void )
 {
 	LOG_RSMOSI_ENTER();
-	if (sus_os_cnt == 0) {
+	if ( sus_os_cnt == 0 )
+	{
 		/*
 		 *  SuspendOSInterrupts hasn't been called before ResumeOSInterrupts
 		 *  do nothing as it is an error
 		 */
 	}
-	else if (sus_os_cnt == 1) {
-		if (sus_all_cnt == 0) {
+	else if ( sus_os_cnt == 1 )
+	{
+		if ( sus_all_cnt == 0 )
+		{
 			callevel = saved_callevel;
 		}
 		sus_os_cnt--;
@@ -254,12 +271,19 @@ ResumeOSInterrupts(void)
 		/*
 		 *  to resume the OS ISR2 acknowledge, restore the IPL to the saved_ipl
 		 */
-		if (saved_ipl < ipl_maxisr2) {
+		if ( saved_ipl < ipl_maxisr2 )
+		{
 			set_ipl(saved_ipl);
 		}
 	}
-	else {
+	else
+	{
 		sus_os_cnt--;
 	}
 	LOG_RSMOSI_LEAVE();
 }
+
+#ifdef __cplusplus
+} /* namespace autosar */
+#endif
+

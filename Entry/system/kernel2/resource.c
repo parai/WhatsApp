@@ -55,25 +55,30 @@
  * INDIRECTLY CAUSED FROM THE USE OF THIS SOFTWARE.
  */
 
-/*
- *	includes
- */
-
+/* ============================ [ INCLUDES  ] ====================================================== */
 #include "osek_kernel.h"
 #include "check.h"
 #include "task.h"
 #include "interrupt.h"
 #include "resource.h"
-
+#ifdef __cplusplus
+namespace autosar {
+#endif
+/* ============================ [ MACROS    ] ====================================================== */
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 /*
  *  initialize resource
  */
-void
-resource_initialize(void)
+void resource_initialize ( void )
 {
-	ResourceType	resid;
+	ResourceType resid;
 
-	for (resid = 0; resid < tnum_resource; resid++) {
+	for ( resid = 0; resid < tnum_resource ; resid++ )
+	{
 		rescb_prevpri[resid] = TPRI_NULL;
 	}
 }
@@ -81,18 +86,18 @@ resource_initialize(void)
 /*
  *  Get resource
  */
-StatusType
-GetResource(ResourceType resid)
+StatusType GetResource ( ResourceType resid )
 {
-	StatusType	ercd = E_OK;
-	Priority	ceilpri, curpri;
+	StatusType ercd = E_OK;
+	Priority ceilpri, curpri;
 
 	LOG_GETRES_ENTER(resid);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2);
 	CHECK_RESID(resid);
 
 	ceilpri = resinib_ceilpri[resid];
-	if (callevel == TCL_TASK) {
+	if ( callevel == TCL_TASK )
+	{
 		CHECK_ACCESS(tinib_inipri[runtsk] <= ceilpri);
 
 		lock_cpu();
@@ -101,14 +106,17 @@ GetResource(ResourceType resid)
 		rescb_prevpri[resid] = curpri;
 		rescb_prevres[resid] = tcb_lastres[runtsk];
 		tcb_lastres[runtsk] = resid;
-		if (ceilpri > curpri) {
+		if ( ceilpri > curpri )
+		{
 			tcb_curpri[runtsk] = ceilpri;
-			if (ceilpri >= TPRI_MINISR) {
+			if ( ceilpri >= TPRI_MINISR )
+			{
 				set_ipl(ceilpri - TPRI_MINISR);
 			}
 		}
 	}
-	else {
+	else
+	{
 		CHECK_ACCESS(isrinib_intpri[runisr] <= ceilpri);
 
 		lock_cpu();
@@ -117,57 +125,63 @@ GetResource(ResourceType resid)
 		rescb_prevpri[resid] = curpri;
 		rescb_prevres[resid] = isrcb_lastres[runisr];
 		isrcb_lastres[runisr] = resid;
-		if (ceilpri > curpri) {
+		if ( ceilpri > curpri )
+		{
 			set_ipl(ceilpri - TPRI_MINISR);
 		}
 	}
-  exit:
+exit :
 	unlock_cpu();
 	LOG_GETRES_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
-  d_error_exit:
+d_error_exit :
 	_errorhook_par1.resid = resid;
-	call_errorhook(ercd, OSServiceId_GetResource);
+	call_errorhook(ercd,OSServiceId_GetResource);
 	goto exit;
 }
 
 /*
  *  release resource
  */
-StatusType
-ReleaseResource(ResourceType resid)
+StatusType ReleaseResource ( ResourceType resid )
 {
-	StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_RELRES_ENTER(resid);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2);
 	CHECK_RESID(resid);
 
-	if (callevel == TCL_TASK) {
+	if ( callevel == TCL_TASK )
+	{
 		CHECK_ACCESS(tinib_inipri[runtsk] <= resinib_ceilpri[resid]);
 		CHECK_NOFUNC(tcb_lastres[runtsk] == resid);
 
 		lock_cpu();
-		if (rescb_prevpri[resid] >= TPRI_MINISR) {
+		if ( rescb_prevpri[resid] >= TPRI_MINISR )
+		{
 			set_ipl(rescb_prevpri[resid] - TPRI_MINISR);
 		}
-		else{
-			if (tcb_curpri[runtsk] >= TPRI_MINISR) {
+		else
+		{
+			if ( tcb_curpri[runtsk] >= TPRI_MINISR )
+			{
 				set_ipl(IPL_ENA_ALL);
 			}
 		}
 		tcb_curpri[runtsk] = rescb_prevpri[resid];
 		tcb_lastres[runtsk] = rescb_prevres[resid];
 		rescb_prevpri[resid] = TPRI_NULL;
-		if (tcb_curpri[runtsk] < nextpri) {
+		if ( tcb_curpri[runtsk] < nextpri )
+		{
 			preempt();
 			dispatch();
 		}
 	}
-	else {
+	else
+	{
 		CHECK_ACCESS(isrinib_intpri[runisr] <= resinib_ceilpri[resid]);
 		CHECK_NOFUNC(isrcb_lastres[runisr] == resid);
 
@@ -176,14 +190,19 @@ ReleaseResource(ResourceType resid)
 		isrcb_lastres[runisr] = rescb_prevres[resid];
 		rescb_prevpri[resid] = TPRI_NULL;
 	}
-  exit:
+exit :
 	unlock_cpu();
 	LOG_RELRES_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
 	_errorhook_par1.resid = resid;
-	call_errorhook(ercd, OSServiceId_ReleaseResource);
+	call_errorhook(ercd,OSServiceId_ReleaseResource);
 	goto exit;
 }
+
+#ifdef __cplusplus
+} /* namespace autosar */
+#endif
+

@@ -14,6 +14,7 @@
  */
 #include "os_cfg.h"
 #include "osek_kernel.h"
+
 /* ============================= TASK =================================================== */
 /*
  *  os_cfg.c, static configured information for tasks
@@ -109,7 +110,7 @@ const TickType	cntinib_tickbase[COUNTER_NUM] =
 };
 const TickType	cntinib_mincyc[COUNTER_NUM] = 
 {
-    50
+    1
 };
 
 /*

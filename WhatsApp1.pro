@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = WhatsApp
 TEMPLATE = app
 
-DEFINES = USE_KERNEL1
+DEFINES = USE_KERNEL1 USE_OPENCAN_DIRECTLY
 
 
 SOURCES += main.cpp \
@@ -25,7 +25,13 @@ SOURCES += main.cpp \
     Entry/system/kernel1/bitop.c \
     Entry/system/kernel1/event.c \
     Entry/system/kernel1/resource.c \
-    Entry/system/kernel1/task.c
+    Entry/system/kernel1/task.c \
+    VirtualDevice/OpenCAN/ocdevice.cpp \
+    VirtualDevice/OpenCAN/ocdevicemanager.cpp \
+    VirtualDevice/OpenCAN/ocmessage.cpp \
+    VirtualDevice/MCAL/config/Can_Cfg.c \
+    VirtualDevice/MCAL/Can.cpp \
+    Entry/communication/CanIf.c
 
 HEADERS  += \
     entry.h \
@@ -37,7 +43,18 @@ HEADERS  += \
     VirtualDevice/virtualdevice.h \
     VirtualDevice/virtualcan.h \
     Entry/system/kernel1/config/os_cfg.h \
-    Entry/system/kernel1/os_i.h
+    Entry/system/kernel1/os_i.h \
+    VirtualDevice/MCAL/config/Can_Cfg.h \
+    VirtualDevice/OpenCAN/occore.h \
+    VirtualDevice/OpenCAN/ocdevice.h \
+    VirtualDevice/OpenCAN/ocdeviceinterface.h \
+    VirtualDevice/OpenCAN/ocdevicemanager.h \
+    VirtualDevice/OpenCAN/ocmessage.h \
+    VirtualDevice/OpenCAN/ocplugininfo.h \
+    Entry/include/Can.h \
+    Entry/include/CanIf.h \
+    Entry/include/ComStack_Types.h \
+    Entry/include/Modules.h
 
 FORMS    +=
 
@@ -48,6 +65,8 @@ INCLUDEPATH += Entry/system/kernel1
 INCLUDEPATH += Entry/system/kernel1
 INCLUDEPATH += Entry/system/kernel1/config
 INCLUDEPATH += Application/Configuration
+INCLUDEPATH += VirtualDevice/OpenCAN
+INCLUDEPATH += VirtualDevice/MCAL/config
 
 RESOURCES += \
     WhatsApp.qrc

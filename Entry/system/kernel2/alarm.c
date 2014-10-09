@@ -55,44 +55,49 @@
  * INDIRECTLY CAUSED FROM THE USE OF THIS SOFTWARE.
  */
 
-/*
- *	Includes
- */
-
+/* ============================ [ INCLUDES  ] ====================================================== */
 #include "osek_kernel.h"
 #include "check.h"
 #include "alarm.h"
+#ifdef __cplusplus
+namespace autosar
+{
+#endif
+/* ============================ [ MACROS    ] ====================================================== */
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
+STATIC TickType OsTickCounter;
 
-/*
- *  Local Alarm APIs
- */
-Inline TickType	add_tick(TickType almval, TickType incr, TickType maxval2);
-Inline TickType	diff_tick(TickType val1, TickType val2, TickType maxval2);
-static void	enqueue_alarm(AlarmType almid, CounterType cntid);
-static void	dequeue_alarm(AlarmType almid, CounterType cntid);
+/* ============================ [ DECLARES  ] ====================================================== */
+Inline TickType add_tick ( TickType almval , TickType incr , TickType maxval2 );
+Inline TickType diff_tick ( TickType val1 , TickType val2 , TickType maxval2 );
+static void enqueue_alarm ( AlarmType almid , CounterType cntid );
+static void dequeue_alarm ( AlarmType almid , CounterType cntid );
 
+/* ============================ [ LOCALS    ] ====================================================== */
 /*
- *  to calculate the next alarm expiry value or counter current value
+ *  to calculate the next alarm expire value or counter current value
  *
- *  almval + incr: alarm curreent value + alarm increment(cycle value)
+ *  almval + incr: alarm current value + alarm increment(cycle value)
  *  maxval2 is the max allowed value for alarm and counter
  */
-Inline TickType
-add_tick(TickType almval, TickType incr, TickType maxval2)
+Inline TickType add_tick ( TickType almval , TickType incr , TickType maxval2 )
 {
 	/*
 	 *  if almval + incr <= maxval2 then no overflow
 	 *  so next expiry value is (almval + incr)
 	 */
-	if (incr <= (maxval2 - almval)) {
-		return(almval + incr);
+	if ( incr <= (maxval2 - almval) )
+	{
+		return (almval + incr);
 	}
-	else {
+	else
+	{
 		/*
-		 *  if almval + incr > maxval2, overflow 
+		 *  if almval + incr > maxval2, overflow
 		 *  so should roll back from zero
 		 */
-		return(almval + incr - (maxval2 + 1));
+		return (almval + incr - (maxval2 + 1));
 	}
 }
 
@@ -102,20 +107,21 @@ add_tick(TickType almval, TickType incr, TickType maxval2)
  *  val1: the counter current value; val2: the alarm next expiry value
  *  calculate the diff between val1 and val2
  */
-Inline TickType
-diff_tick(TickType val1, TickType val2, TickType maxval2)
+Inline TickType diff_tick ( TickType val1 , TickType val2 , TickType maxval2 )
 {
-	if (val1 >= val2) {
-		return(val1 - val2);
+	if ( val1 >= val2 )
+	{
+		return (val1 - val2);
 	}
-	else {
+	else
+	{
 		/*
 		 *  as val1 < val2,that's counter current value < alarm next erpiry value
 		 *  So It's not the time to process this alarm.
 		 *  As maxval2 is always the 2 times of maxval,so |val2 - val1| < maxval.
 		 *  SO,the return value always bigger than maxval.
 		 */
-		return(val1 - val2 + (maxval2 + 1));
+		return (val1 - val2 + (maxval2 + 1));
 	}
 }
 
@@ -123,14 +129,13 @@ diff_tick(TickType val1, TickType val2, TickType maxval2)
  *  put the alarm to counter queue
  *
  * in the time value order from min to max,the almid was linked to cntid's queue
- * but shoul note that the absolut max value dosen't mean the the last in the queue,
+ * but should note that the absolute max value dosen't mean the the last in the queue,
  * if the almid is an overflowed one,it should skip all the non-overflowed one.
  */
-static void
-enqueue_alarm(AlarmType almid, CounterType cntid)
+static void enqueue_alarm ( AlarmType almid , CounterType cntid )
 {
-	TickType	enqval, curval;
-	AlarmType	next, prev;
+	TickType enqval, curval;
+	AlarmType next, prev;
 
 	enqval = almcb_almval[almid];
 	curval = cntcb_curval[cntid];
@@ -140,27 +145,29 @@ enqueue_alarm(AlarmType almid, CounterType cntid)
 	 */
 	next = cntcb_almque[cntid];
 	prev = ALMID_NULL;
-	if (curval < enqval) {
+	if ( curval < enqval )
+	{
 		/*
 		 *  enqval > curval , so it's an non-overflowed one
-		 *  skip all the alarm in the queue whose almval < enqval 
-		 *  untill find the right positon where almval >enqval or 
+		 *  skip all the alarm in the queue whose almval < enqval
+		 *  until find the right position where almval >enqval or
 		 *  find an overflowed alarm.
 		 */
-		while ((next != ALMID_NULL) && ((curval <= almcb_almval[next])
-					&& (almcb_almval[next] <= enqval))) {
+		while ( (next != ALMID_NULL) && ((curval <= almcb_almval[next]) && (almcb_almval[next] <= enqval)) )
+		{
 			prev = next;
 			next = almcb_next[prev];
 		}
 	}
-	else {
+	else
+	{
 		/*
-		 *  this is an overflowed alarm,so should first skip all the 
+		 *  this is an overflowed alarm,so should first skip all the
 		 *  non-overflowed one( whose value > curval),
 		 *  and then in the overflowed parts find the alarm whose value > enqval
 		 */
-		while ((next != ALMID_NULL) && ((curval <= almcb_almval[next])
-					|| (almcb_almval[next] <= enqval))) {
+		while ( (next != ALMID_NULL) && ((curval <= almcb_almval[next]) || (almcb_almval[next] <= enqval)) )
+		{
 			prev = next;
 			next = almcb_next[prev];
 		}
@@ -171,13 +178,16 @@ enqueue_alarm(AlarmType almid, CounterType cntid)
 	 */
 	almcb_next[almid] = next;
 	almcb_prev[almid] = prev;
-	if (prev != ALMID_NULL) {
+	if ( prev != ALMID_NULL )
+	{
 		almcb_next[prev] = almid;
 	}
-	else {
+	else
+	{
 		cntcb_almque[cntid] = almid;
 	}
-	if (next != ALMID_NULL) {
+	if ( next != ALMID_NULL )
+	{
 		almcb_prev[next] = almid;
 	}
 }
@@ -185,44 +195,51 @@ enqueue_alarm(AlarmType almid, CounterType cntid)
 /*
  *  remove the almid from the queue of cntid
  */
-static void
-dequeue_alarm(AlarmType almid, CounterType cntid)
+static void dequeue_alarm ( AlarmType almid , CounterType cntid )
 {
-	AlarmType	next, prev;
+	AlarmType next, prev;
 
 	next = almcb_next[almid];
 	prev = almcb_prev[almid];
-	if (prev != ALMID_NULL) {
+	if ( prev != ALMID_NULL )
+	{
 		almcb_next[prev] = next;
 	}
-	else {
+	else
+	{
 		cntcb_almque[cntid] = next;
 	}
-	if (next != ALMID_NULL) {
+	if ( next != ALMID_NULL )
+	{
 		almcb_prev[next] = prev;
 	}
 	almcb_next[almid] = almid;
 }
 
+/* ============================ [ FUNCTIONS ] ====================================================== */
 /*
  *  initialize the alarm and counter
  */
-void
-alarm_initialize(void)
+void alarm_initialize ( void )
 {
-	CounterType	cntid;
-	AlarmType	almid;
+	CounterType cntid;
+	AlarmType almid;
 
-	for (cntid = 0; cntid < tnum_counter; cntid++) {
+	OsTickCounter = 0;
+
+	for ( cntid = 0; cntid < tnum_counter ; cntid++ )
+	{
 		cntcb_curval[cntid] = 0u;
 		cntcb_almque[cntid] = ALMID_NULL;
 	}
-	for (almid = 0; almid < tnum_alarm; almid++) {
+	for ( almid = 0; almid < tnum_alarm ; almid++ )
+	{
 		almcb_next[almid] = almid;
-		if ((alminib_autosta[almid] & appmode) != APPMODE_NONE) {
+		if ( (alminib_autosta[almid] & appmode) != APPMODE_NONE )
+		{
 			almcb_almval[almid] = alminib_almval[almid];
 			almcb_cycle[almid] = alminib_cycle[almid];
-			enqueue_alarm(almid, alminib_cntid[almid]);
+			enqueue_alarm(almid,alminib_cntid[almid]);
 		}
 	}
 }
@@ -230,11 +247,10 @@ alarm_initialize(void)
 /*
  *  Get the alarm base information
  */
-StatusType
-GetAlarmBase(AlarmType almid, AlarmBaseRefType p_info)
+StatusType GetAlarmBase ( AlarmType almid , AlarmBaseRefType p_info )
 {
-	StatusType	ercd = E_OK;
-	CounterType	cntid;
+	StatusType ercd = E_OK;
+	CounterType cntid;
 
 	LOG_GETALB_ENTER(almid, p_info);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2 | TCL_ERROR | TCL_PREPOST);
@@ -244,15 +260,15 @@ GetAlarmBase(AlarmType almid, AlarmBaseRefType p_info)
 	p_info->maxallowedvalue = cntinib_maxval[cntid];
 	p_info->ticksperbase = cntinib_tickbase[cntid];
 	p_info->mincycle = cntinib_mincyc[cntid];
-  exit:
+exit :
 	LOG_GETALB_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
 	_errorhook_par1.almid = almid;
 	_errorhook_par2.p_info = p_info;
-	call_errorhook(ercd, OSServiceId_GetAlarmBase);
+	call_errorhook(ercd,OSServiceId_GetAlarmBase);
 	unlock_cpu();
 	goto exit;
 }
@@ -260,54 +276,54 @@ GetAlarmBase(AlarmType almid, AlarmBaseRefType p_info)
 /*
  *  get the alarm next expiry value in ticks
  */
-StatusType
-GetAlarm(AlarmType almid, TickRefType p_tick)
+StatusType GetAlarm ( AlarmType almid , TickRefType p_tick )
 {
-	StatusType	ercd = E_OK;
-	CounterType	cntid;
-	TickType	curval;
+	StatusType ercd = E_OK;
+	CounterType cntid;
+	TickType curval;
 
 	LOG_GETALM_ENTER(almid, p_tick);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2 | TCL_ERROR | TCL_PREPOST);
 	CHECK_ALMID(almid);
 
 	lock_cpu();
-	if (almcb_next[almid] == almid) {
+	if ( almcb_next[almid] == almid )
+	{
 		ercd = E_OS_NOFUNC;
 		goto d_error_exit;
 	}
 	cntid = alminib_cntid[almid];
 	curval = cntcb_curval[cntid];
-	if (curval < almcb_almval[almid]) {
+	if ( curval < almcb_almval[almid] )
+	{
 		*p_tick = almcb_almval[almid] - curval;
 	}
-	else {
-		*p_tick = (cntinib_maxval2[cntid] - curval) + 1
-					+ almcb_almval[almid];
+	else
+	{
+		*p_tick = (cntinib_maxval2[cntid] - curval) + 1 + almcb_almval[almid];
 	}
-  exit:
+exit :
 	unlock_cpu();
 	LOG_GETALM_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
-  d_error_exit:
+d_error_exit :
 	_errorhook_par1.almid = almid;
 	_errorhook_par2.p_tick = p_tick;
-	call_errorhook(ercd, OSServiceId_GetAlarm);
+	call_errorhook(ercd,OSServiceId_GetAlarm);
 	goto exit;
 }
 
 /*
  *  start a alarm,set its next expiry value relate to counter curval
  */
-StatusType
-SetRelAlarm(AlarmType almid, TickType incr, TickType cycle)
+StatusType SetRelAlarm ( AlarmType almid , TickType incr , TickType cycle )
 {
-	StatusType	ercd = E_OK;
-	CounterType	cntid;
-	TickType	maxval;
+	StatusType ercd = E_OK;
+	CounterType cntid;
+	TickType maxval;
 
 	LOG_SETREL_ENTER(almid, incr, cycle);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2);
@@ -316,42 +332,40 @@ SetRelAlarm(AlarmType almid, TickType incr, TickType cycle)
 	cntid = alminib_cntid[almid];
 	maxval = cntinib_maxval[cntid];
 	CHECK_VALUE((0u < incr) && (incr <= maxval));
-	CHECK_VALUE((cycle == 0u)
-		|| ((cntinib_mincyc[cntid] <= cycle) && (cycle <= maxval)));
+	CHECK_VALUE((cycle == 0u) || ((cntinib_mincyc[cntid] <= cycle) && (cycle <= maxval)));
 
 	lock_cpu();
-	if (almcb_next[almid] != almid) {
+	if ( almcb_next[almid] != almid )
+	{
 		ercd = E_OS_STATE;
 		goto d_error_exit;
 	}
-	almcb_almval[almid] = add_tick(cntcb_curval[cntid], incr,
-										cntinib_maxval2[cntid]);
+	almcb_almval[almid] = add_tick(cntcb_curval[cntid],incr,cntinib_maxval2[cntid]);
 	almcb_cycle[almid] = cycle;
-	enqueue_alarm(almid, cntid);
-  exit:
+	enqueue_alarm(almid,cntid);
+exit :
 	unlock_cpu();
 	LOG_SETREL_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
-  d_error_exit:
+d_error_exit :
 	_errorhook_par1.almid = almid;
 	_errorhook_par2.incr = incr;
 	_errorhook_par3.cycle = cycle;
-	call_errorhook(ercd, OSServiceId_SetRelAlarm);
+	call_errorhook(ercd,OSServiceId_SetRelAlarm);
 	goto exit;
 }
 
 /*
  *  start a alarm,set its next expiry value absolute to counter curval
  */
-StatusType
-SetAbsAlarm(AlarmType almid, TickType start, TickType cycle)
+StatusType SetAbsAlarm ( AlarmType almid , TickType start , TickType cycle )
 {
-	StatusType	ercd = E_OK;
-	CounterType	cntid;
-	TickType	maxval, start2;
+	StatusType ercd = E_OK;
+	CounterType cntid;
+	TickType maxval, start2;
 
 	LOG_SETABS_ENTER(almid, start, cycle);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2);
@@ -360,46 +374,52 @@ SetAbsAlarm(AlarmType almid, TickType start, TickType cycle)
 	cntid = alminib_cntid[almid];
 	maxval = cntinib_maxval[cntid];
 	CHECK_VALUE(start <= maxval);
-	CHECK_VALUE((cycle == 0u)
-		|| ((cntinib_mincyc[cntid] <= cycle) && (cycle <= maxval)));
+	CHECK_VALUE((cycle == 0u) || ((cntinib_mincyc[cntid] <= cycle) && (cycle <= maxval)));
 
 	lock_cpu();
-	if (almcb_next[almid] != almid) {
+	if ( almcb_next[almid] != almid )
+	{
 		ercd = E_OS_STATE;
 		goto d_error_exit;
 	}
 
 	start2 = start + maxval + 1;
-	if (cntcb_curval[cntid] <= maxval) {
-		if (start <= cntcb_curval[cntid]) {
+	if ( cntcb_curval[cntid] <= maxval )
+	{
+		if ( start <= cntcb_curval[cntid] )
+		{
 			almcb_almval[almid] = start2;
 		}
-		else {
+		else
+		{
 			almcb_almval[almid] = start;
 		}
 	}
-	else {
-		if (start2 <= cntcb_curval[cntid]) {
+	else
+	{
+		if ( start2 <= cntcb_curval[cntid] )
+		{
 			almcb_almval[almid] = start;
 		}
-		else {
+		else
+		{
 			almcb_almval[almid] = start2;
 		}
 	}
 	almcb_cycle[almid] = cycle;
-	enqueue_alarm(almid, cntid);
-  exit:
+	enqueue_alarm(almid,cntid);
+exit :
 	unlock_cpu();
 	LOG_SETABS_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
-  d_error_exit:
+d_error_exit :
 	_errorhook_par1.almid = almid;
 	_errorhook_par2.start = start;
 	_errorhook_par3.cycle = cycle;
-	call_errorhook(ercd, OSServiceId_SetAbsAlarm);
+	call_errorhook(ercd,OSServiceId_SetAbsAlarm);
 	goto exit;
 }
 
@@ -407,51 +427,50 @@ SetAbsAlarm(AlarmType almid, TickType start, TickType cycle)
  *  cancle the alarm
  *
  */
-StatusType
-CancelAlarm(AlarmType almid)
+StatusType CancelAlarm ( AlarmType almid )
 {
-	StatusType	ercd = E_OK;
+	StatusType ercd = E_OK;
 
 	LOG_CANALM_ENTER(almid);
 	CHECK_CALLEVEL(TCL_TASK | TCL_ISR2);
 	CHECK_ALMID(almid);
 
 	lock_cpu();
-	if (almcb_next[almid] == almid) {
+	if ( almcb_next[almid] == almid )
+	{
 		ercd = E_OS_NOFUNC;
 		goto d_error_exit;
 	}
-	dequeue_alarm(almid, alminib_cntid[almid]);
+	dequeue_alarm(almid,alminib_cntid[almid]);
 
 	/*
 	 *  set alarm cycle to zero
 	 *  if something wrong with dequeue_alarm() not really cancel
-	 *  this alarm, the Zero value of alarm cycle will make sure 
+	 *  this alarm, the Zero value of alarm cycle will make sure
 	 *  it will be auto-cancled at the next expiry value when SignalCounter()
 	 */
 	almcb_cycle[almid] = 0u;
-  exit:
+exit :
 	unlock_cpu();
 	LOG_CANALM_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
-  d_error_exit:
+d_error_exit :
 	_errorhook_par1.almid = almid;
-	call_errorhook(ercd, OSServiceId_CancelAlarm);
+	call_errorhook(ercd,OSServiceId_CancelAlarm);
 	goto exit;
 }
 
 /*
  *  signal the counter that it should increment
  */
-StatusType
-SignalCounter(CounterType cntid)
+StatusType SignalCounter ( CounterType cntid )
 {
-	StatusType	ercd = E_OK;
-	TickType	newval;
-	AlarmType	almid, next;
+	StatusType ercd = E_OK;
+	TickType newval;
+	AlarmType almid, next;
 
 	LOG_SIGCNT_ENTER(cntid);
 	CHECK_CALLEVEL(TCL_ISR2);
@@ -462,8 +481,7 @@ SignalCounter(CounterType cntid)
 	/*
 	 *  calculate the counter next value
 	 */
-	newval = add_tick(cntcb_curval[cntid], cntinib_tickbase[cntid],
-												cntinib_maxval2[cntid]);
+	newval = add_tick(cntcb_curval[cntid],cntinib_tickbase[cntid],cntinib_maxval2[cntid]);
 
 	/*
 	 *  store the counter current value
@@ -473,15 +491,16 @@ SignalCounter(CounterType cntid)
 	/*
 	 *  process the already expiried one
 	 */
-	while (((almid = cntcb_almque[cntid]) != ALMID_NULL)
-			&& diff_tick(newval, almcb_almval[almid], cntinib_maxval2[cntid])
-												<= cntinib_maxval[cntid]) {
+	while ( ((almid = cntcb_almque[cntid]) != ALMID_NULL)
+			&& diff_tick(newval,almcb_almval[almid],cntinib_maxval2[cntid]) <= cntinib_maxval[cntid] )
+	{
 		/*
 		 *  find one,first remove it from the counter queue
 		 */
 		next = almcb_next[almid];
 		cntcb_almque[cntid] = next;
-		if (next != ALMID_NULL) {
+		if ( next != ALMID_NULL )
+		{
 			almcb_prev[next] = ALMID_NULL;
 		}
 		almcb_next[almid] = almid;
@@ -496,20 +515,52 @@ SignalCounter(CounterType cntid)
 		/*
 		 *  if this alarm is cyclic alarm,put it to the counter queue again
 		 */
-		if ((almcb_next[almid] == almid) && (almcb_cycle[almid] > 0u)) {
-			almcb_almval[almid] = add_tick(almcb_almval[almid], 
-								almcb_cycle[almid], cntinib_maxval2[cntid]);
-			enqueue_alarm(almid, cntid);
+		if ( (almcb_next[almid] == almid) && (almcb_cycle[almid] > 0u) )
+		{
+			almcb_almval[almid] = add_tick(almcb_almval[almid],almcb_cycle[almid],cntinib_maxval2[cntid]);
+			enqueue_alarm(almid,cntid);
 		}
 	}
-  exit:
+exit :
 	unlock_cpu();
 	LOG_SIGCNT_LEAVE(ercd);
-	return(ercd);
+	return (ercd);
 
-  error_exit:
+error_exit :
 	lock_cpu();
 	_errorhook_par1.cntid = cntid;
-	call_errorhook(ercd, OSServiceId_SignalCounter);
+	call_errorhook(ercd,OSServiceId_SignalCounter);
 	goto exit;
 }
+
+/*
+ * Functions that implemented by parai.
+ * For some simple timer control purpose
+ */
+FUNC(TickType,MEM_GetOsElapsedTick) GetOsElapsedTick ( TickType prevTick )
+{
+	return diff_tick(OsTickCounter,prevTick,TICK_MAX);
+}
+
+/*
+ * TickType is 32 bits long, so if OsTick rate is 1ms, when OsTickCounter overflow,
+ * it will be 49.710269 days, that is a very time. For most of the ECUs on vehicle,
+ * they will not work for such a long time, but exception for there ECUs which always
+ * powered on no matter the status of ignition.
+ */
+FUNC(void,MEM_OS_TICK) OsTick ( void )
+{
+	OsTickCounter++;
+	EnterISR2();
+	(void) SignalCounter(0);
+	ExitISR2();
+}
+
+FUNC(TickType,MEM_GetOsTick) GetOsTick ( void )
+{
+	return OsTickCounter;
+}
+#ifdef __cplusplus
+} /* namespace autosar */
+#endif
+

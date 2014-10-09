@@ -57,15 +57,18 @@
 
 #ifndef _ALARM_H_
 #define _ALARM_H_
+/* ============================ [ INCLUDES  ] ====================================================== */
 #ifdef __cplusplus
-namespace autosar {
-extern "C" {
+namespace autosar { extern "C" {
 #endif
+
+/* ============================ [ MACROS    ] ====================================================== */
 /*
  *  invalid alarm ID
  */
 #define ALMID_NULL		((AlarmType) UINT8_INVALID)
-
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
 /*
  *  number of ALARM and Counter
  */
@@ -103,11 +106,14 @@ extern AlarmType		almcb_prev[];		/* previous alarm in queue */
 extern TickType			almcb_almval[];		/* expire time */
 extern TickType			almcb_cycle[];		/* alarm cycle time */
 
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 /*
  *  initialize alarm
  */
 extern void	alarm_initialize(void);
 #ifdef __cplusplus
-}}  // name space
+}}  /* name space */
 #endif
 #endif /* _ALARM_H_ */

@@ -61,10 +61,11 @@
 
 #ifndef _TASK_H_
 #define _TASK_H_
+/* ============================ [ INCLUDES  ] ====================================================== */
 #ifdef __cplusplus
-namespace autosar {
-extern "C" {
+namespace autosar { extern "C" {
 #endif
+/* ============================ [ MACROS    ] ====================================================== */
 /*
  *  Task ID macro
  */
@@ -77,53 +78,58 @@ extern "C" {
 #define TS_DORMANT		SUSPENDED			/* suspended state */
 #define TS_WAITING		WAITING				/* waiting state */
 
+/* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ DATAS     ] ====================================================== */
 /*
  *  os_cfg.c, static configured information for tasks
  */
-extern const UINT8	tnum_task;		/* number of the (basic & extend) task has been configured */
-extern const UINT8	tnum_exttask;		/* number of the extend task has been configured */
-extern const Priority	tinib_inipri[];		/* task init priority */
-extern const Priority	tinib_exepri[];		/* task priority when start to execute */
-extern const UINT8		tinib_maxact[];		/* task max activate count */
-extern const AppModeType tinib_autoact[];	/* task autostart mode */
-extern const FP			tinib_task[];		/* task entery */
-extern const VP			tinib_stk[];		/* task stack buffer entry */
-extern const UINT16		tinib_stksz[];		/* task stack buffer size */
+extern const UINT8 tnum_task; /* number of the (basic & extend) task has been configured */
+extern const UINT8 tnum_exttask; /* number of the extend task has been configured */
+extern const Priority tinib_inipri[]; /* task init priority */
+extern const Priority tinib_exepri[]; /* task priority when start to execute */
+extern const UINT8 tinib_maxact[]; /* task max activate count */
+extern const AppModeType tinib_autoact[]; /* task autostart mode */
+extern const FP tinib_task[]; /* task entery */
+extern const VP tinib_stk[]; /* task stack buffer entry */
+extern const UINT16 tinib_stksz[]; /* task stack buffer size */
 
 /*
  *  os_cfg.c
  *
  *  used to manage tasks < tasks queue, state, proority, activate count >
  */
-extern TaskType			tcb_next[];			/* task linker,indicate the next task in the queue */
-extern UINT8			tcb_tstat[];		/* task state */
-extern Priority			tcb_curpri[];		/* task current priority */
-extern UINT8			tcb_actcnt[];		/* task current activate count */
-extern EventMaskType	tcb_curevt[];		/* task current event has been set */
-extern EventMaskType	tcb_waievt[];		/* task wait event */
-extern ResourceType		tcb_lastres[];		/* task acquired resource recently */
+extern TaskType tcb_next[]; /* task linker,indicate the next task in the queue */
+extern UINT8 tcb_tstat[]; /* task state */
+extern Priority tcb_curpri[]; /* task current priority */
+extern UINT8 tcb_actcnt[]; /* task current activate count */
+extern EventMaskType tcb_curevt[]; /* task current event has been set */
+extern EventMaskType tcb_waievt[]; /* task wait event */
+extern ResourceType tcb_lastres[]; /* task acquired resource recently */
 
 /*
  *  help the scheduler to remember the current task in running state
  *
  *  when it is TKSID_NULL, no task is in ready state
  */
-extern TaskType			runtsk;
+extern TaskType runtsk;
 
 /*
  *  help the scheduler to remember the next highest ready task  
  */
-extern TaskType			schedtsk;
+extern TaskType schedtsk;
 
 /*
  *  help the scheduler to remember the next high priority
  */
-extern Priority			nextpri;
+extern Priority nextpri;
 
+/* ============================ [ DECLARES  ] ====================================================== */
+/* ============================ [ LOCALS    ] ====================================================== */
+/* ============================ [ FUNCTIONS ] ====================================================== */
 /*
  *  initialize tasks
  */
-extern void	task_initialize(void);
+extern void task_initialize ( void );
 
 /*
  *  activate a task
@@ -131,7 +137,7 @@ extern void	task_initialize(void);
  *  and if the tskid has the highest priority, this API will
  *  return ture, so a dispatch should be done, else return false
  */
-extern BOOL	make_active(TaskType tskid);
+extern BOOL make_active ( TaskType tskid );
 
 /*
  *  help to make the tskid runnable
@@ -145,7 +151,7 @@ extern BOOL	make_active(TaskType tskid);
  *  and the tskid will be the next schedtsk, the API then return TRUE to
  *  indicate that a dispatch should be done.
  */
-extern BOOL	make_runnable(TaskType tskid);
+extern BOOL make_runnable ( TaskType tskid );
 
 /*
  *  search a schedtsk
@@ -157,7 +163,7 @@ extern BOOL	make_runnable(TaskType tskid);
  *  if when this API was called and ready_primap is arleady 0,then TSKID_NULL
  *  will just be returned.
  */
-extern void	search_schedtsk(void);
+extern void search_schedtsk ( void );
 
 /*
  *  preempt current running task
@@ -166,8 +172,8 @@ extern void	search_schedtsk(void);
  *  the head of its ready queue and set its bitmap priority.
  *  And followed preempt() should be a dispatch().
  */
-extern void	preempt(void);
+extern void preempt ( void );
 #ifdef __cplusplus
-}}  // name space
+}}  /* name space */
 #endif
 #endif /* _TASK_H_ */

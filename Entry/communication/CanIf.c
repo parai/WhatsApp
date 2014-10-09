@@ -12,22 +12,31 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
-#ifndef SCHM_H
-#define SCHM_H
+/* ============================ [ INCLUDES  ] ====================================================== */
+#include "CanIf.h"
 #ifdef __cplusplus
 namespace autosar {
-extern "C" {
 #endif
-/* ============================ [ INCLUDES  ] ====================================================== */
-#include "Std_Types.h"
-/* ============================ [ MACROS    ] ====================================================== */
 
+/* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
 /* ============================ [ DATAS     ] ====================================================== */
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
+FUNC(void,MEM_CanIf_Init) CanIf_Init(const CanIf_ConfigType* Config)
+{
+
+}
+FUNC(void,MEM_CanIf_TxConfirmation) CanIf_TxConfirmation ( PduIdType canTxPduId )
+{
+
+}
+FUNC(void,MEM_CanIf_RxIndication)   CanIf_RxIndication   ( uint8 Hrh, Can_IdType CanId, uint8 CanDlc, const uint8 *CanSduPtr )
+{
+
+}
+
 #ifdef __cplusplus
-}}  // name space
+} /* namespace autosar */
 #endif
-#endif /* SCHM_H */
