@@ -59,11 +59,12 @@ extern "C" {
 
 #define UINT8_INVALID		((UINT8)(~0u))
 #define UINT16_INVALID		((UINT16)(~0u))
-
+#define UINT32_INVALID		((UINT32)(~0u))
 /* ============================ [ TYPES     ] ====================================================== */
 /*! \typedef Std_Types
  *  AUTOSAR Standard Basic Types.
  */
+typedef unsigned char               boolean;
 typedef signed char         		sint8;
 typedef unsigned char       		uint8;
 typedef signed short        		sint16;

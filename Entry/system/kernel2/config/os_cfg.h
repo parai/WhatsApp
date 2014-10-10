@@ -18,8 +18,7 @@
 #include "osek_kernel.h"
 
 #ifdef __cplusplus
-namespace autosar {
-extern "C" {
+namespace autosar { extern "C" {
 #endif
 /* ============================ [ MACROS    ] ====================================================== */
 #define TASKID_OsIdle 						0
@@ -48,6 +47,6 @@ extern TASK(SchM_BswService);
 
 extern ALARMCALLBACK(SchM_BswService);
 #ifdef __cplusplus
-}}  // name space
+}}  /* name space */
 #endif
 #endif  /* OS_CONFIG_H_H */

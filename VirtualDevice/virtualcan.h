@@ -62,10 +62,9 @@ private:
     QList<PduIdType> swHandle;
     QList<int>       timerId;
 public:
-    explicit VirtualCan(unsigned long channelNumber,QWidget *parent=0);
+    explicit VirtualCan(QString name,unsigned long channelNumber,QWidget *parent=0);
     ~VirtualCan();
-    void SendMessage(PduIdType swHandle,OcMessage *msg);
-    static class VirtualCan* GetInstance(void);
+    void WriteMessage(PduIdType swHandle,OcMessage *msg);
 private slots:
     void on_play_pause(void);
     void on_stop(void);

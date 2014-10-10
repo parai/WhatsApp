@@ -1,6 +1,7 @@
 # WhatsApp
 * For a trip to understand what is application and how to develop a good application, 
 also know how to build a good platform for application.
+* Entry platform according to AUTOSAR 4.0
 
 ### OS
 * For OS, I don't know how to simulate a perfect OS with all the features should be supported by AUTOSAR OS. 
@@ -28,7 +29,7 @@ is not good,period.
 And then make it better if I want to do it.    
 ### TOOLS
 * Any one else who want to use AUTOSAR platform, he must use the tool to do configuration for the application,
-such as BSW thing and RTE.
+such as BSW things and RTE.
 * Yes, before I have builded a good tool to configure the BSWs for ArcCore, but never RTE.
 * So, maybe I need to know more what is RTE, how to define it. So I decided to learn "Methodology and Templates"
 to get more information.

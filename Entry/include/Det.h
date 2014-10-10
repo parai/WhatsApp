@@ -12,87 +12,25 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
+#ifndef DET_H_
+#define DET_H_
 /* ============================ [ INCLUDES  ] ====================================================== */
-#include "Os.h"
-#include "EcuM.h"
-#include "Can.h"
-#include "CanIf.h"
-#include "Det.h"
+#include "Std_Types.h"
+#include "Modules.h"
 
 #ifdef __cplusplus
-namespace autosar {
+namespace autosar { extern "C" {
 #endif
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
 /* ============================ [ DATAS     ] ====================================================== */
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
-STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitZero (void)
-{
-	Det_Init();
-	Det_Start();
-}
-
-STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitOne ( const EcuM_ConfigType *ConfigPtr )
-{
-
-}
-
-STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitTwo ( const EcuM_ConfigType *ConfigPtr )
-{
-	Can_Init(&Can_Config);
-	CanIf_Init(&CanIf_Config);
-}
-
-STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitThree ( const EcuM_ConfigType *ConfigPtr )
-{
-
-}
 /* ============================ [ FUNCTIONS ] ====================================================== */
-void StartupHook(void)
-{
-
-}
-void ShutdownHook(StatusType ercd)
-{
-    if( E_OK != ercd)
-    {
-
-    }
-}
-void PreTaskHook(void)
-{
-}
-void PostTaskHook(void)
-{
-}
-void ErrorHook(StatusType ercd)
-{
-    if( E_OK != ercd)
-    {
-    }
-    else
-    {
-
-    }
-}
-
-FUNC(void, MEM_EcuM_Init) EcuM_Init ( void )
-{
-
-	EcuM_AL_DriverInitZero();
-	EcuM_AL_DriverInitOne(NULL);
-
-	StartOS(OSDEFAULTAPPMODE);
-}
-
-FUNC(void,MEM_EcuM_StartupTwo) EcuM_StartupTwo ( void )
-{
-	EcuM_AL_DriverInitTwo(NULL);
-
-	EcuM_AL_DriverInitThree(NULL);
-}
-
+FUNC(void,MEM_Det_Init)  Det_Init ( void );
+FUNC(Std_ReturnType,MEM_Det_ReportError) Det_ReportError ( uint16 ModuleId , uint8 InstanceId , uint8 ApiId , uint8 ErrorId );
+FUNC(void,MEM_Det_Start) Det_Start ( void );
 #ifdef __cplusplus
-} /* namespace autosar */
+}}  /* name space */
 #endif
+#endif /* DET_H_ */

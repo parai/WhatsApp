@@ -22,18 +22,27 @@
 const UINT8	tnum_task    = TASK_NUM;
 const UINT8	tnum_exttask = TASK_NUM;
 	
+/* task initialize priority */
 const Priority	tinib_inipri[] =
 { 
     0, /* OsIdle */
     1, /* SchM_Startup */
     2  /* SchM_BswService */
 };
+/*
+ * task executing priority.
+ * If the task has internal resource, the priority should be set equal to the priority of the
+ * internal resource;
+ * If the task is non-preempt-able, the priority should be set to the highest;
+ * Else the priority should be the same with the initialize priority.
+ */
 const Priority	tinib_exepri[] = 
 {
     0, /* OsIdle */
     1, /* SchM_Startup */ 
     2  /* SchM_BswService */
 };
+/* task maximum activation counter */
 const UINT8		tinib_maxact[]=
 {
     1,  /* OsIdle */
@@ -41,13 +50,14 @@ const UINT8		tinib_maxact[]=
     1   /* SchM_BswService */
 
 };
+/* task auto-activate application modes */
 const AppModeType tinib_autoact[]=
 {
     0xFFFFFFFF,    		/* OsIdle */
     0xFFFFFFFF, 		/* SchM_Startup */ 
     0                   /* SchM_BswService */
-
 };
+/* task entry point */
 const FP			tinib_task[]=
 {
     TASKNAME(OsIdle),
@@ -55,7 +65,7 @@ const FP			tinib_task[]=
     TASKNAME(SchM_BswService)
 };
 
-
+/* task stack size. */
 static UINT8  SchM_BswService_stk[512];
 static UINT8  SchM_Startup_stk[512];
 static UINT8  OsIdle_stk[512];
@@ -72,10 +82,7 @@ const UINT16		tinib_stksz[]=
     512,
     512
 };
-const IPL		ipl_maxisr2 = 1;
 /*
- *  os_cfg.c
- *
  *  used to manage tasks < tasks queue, state, proority, activate count >
  */
 TaskType	    tcb_next[TASK_NUM];			/* task linker,indicate the next task in the queue */
@@ -129,12 +136,11 @@ const CounterType alminib_cntid[ALARM_NUM] =
 const FP			 alminib_cback[ALARM_NUM] =
 {
     ALARMCALLBACKNAME(SchM_BswService)
-    
 };	/* alarm call back routine */
 const AppModeType alminib_autosta[ALARM_NUM] =
 {
     0, /* SchM_BswService */
-};	/* alarm autostart mode */
+};	/* alarm auto-start mode */
 
 const TickType	 alminib_almval[ALARM_NUM] =
 {
@@ -150,7 +156,7 @@ const TickType	 alminib_cycle[ALARM_NUM] =
  */
 AlarmType		almcb_next[ALARM_NUM];		/* next alarm in queue */
 AlarmType		almcb_prev[ALARM_NUM];		/* previous alarm in queue */
-TickType		almcb_almval[ALARM_NUM];		/* expire time */
+TickType		almcb_almval[ALARM_NUM];	/* expire time */
 TickType		almcb_cycle[ALARM_NUM];		/* alarm cycle time */
 
 /* ======================= RESOURCE =========================================== */
@@ -158,8 +164,8 @@ const UINT8		tnum_resource = RES_NUM;
 
 const Priority	resinib_ceilpri[RES_NUM] =
 {
-    14,
-    8
+    14,	/* RES_SCHEDULER */
+    8	/* RES_CAN */
 };	
 
 /*
@@ -170,6 +176,7 @@ Priority			rescb_prevpri[RES_NUM];	/* previous priority of task which has acquir
 ResourceType		rescb_prevres[RES_NUM];
 
 /* ============= ISR resource ============= */
+const IPL		ipl_maxisr2 = 1; /* related parameter to ECU type */
 const UINT8		tnum_isr2 = 0;
 
 
@@ -180,13 +187,12 @@ const Priority	isrinib_intpri[] =
 
 ResourceType		isrcb_lastres[1];
 
-
-extern void	task_initialize(void);
-extern void alarm_initialize(void);
-extern void resource_initialize(void);
-void object_initialize(void)
+extern void task_initialize ( void );
+extern void alarm_initialize ( void );
+extern void resource_initialize ( void );
+void object_initialize ( void )
 {
-    task_initialize();
-    alarm_initialize();
-    resource_initialize();
+	task_initialize();
+	alarm_initialize();
+	resource_initialize();
 }

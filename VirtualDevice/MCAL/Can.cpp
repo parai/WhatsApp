@@ -13,9 +13,10 @@
  * for more details.
  */
 /* ============================ [ INCLUDES  ] ====================================================== */
+#include "entry.h"
+#include "virtualcan.h"
 #include "Can.h"
 #include "CanIf.h"
-#include "virtualcan.h"
 #ifdef __cplusplus
 namespace autosar {  extern "C" {
 #endif
@@ -31,15 +32,13 @@ FUNC(void,MEM_Can_Init) Can_Init ( const Can_ConfigType *Config )
 {
 	uint8 i;
 	canConfig = Config;
-	for (i=0;i<Config->CanControllerNumber;i++)
-	{
-		Can_InitController(Config->CanController[i].CanControllerId,&(Config->CanController[i]));
-	}
+
+    Entry::Self()->registerVirtualDevice(new VirtualCan(CAN_DEVICE_NAME,Config->CanControllerNumber,Entry::Self()));
 }
 
 FUNC(void,MEM_Can_DeInit) Can_DeInit ( void )
 {
-	// TODO
+	Entry::Self()->deleteVirtualDevice(CAN_DEVICE_NAME);
 }
 
 FUNC(void,MEM_Can_InitController) Can_InitController ( uint8 controller, const Can_ControllerConfigType *config )
@@ -51,10 +50,29 @@ FUNC(void,MEM_Can_InitController) Can_InitController ( uint8 controller, const C
 	}
 }
 
-FUNC(Can_ReturnType,MEM_Can_SetControllerMode) Can_SetControllerMode( uint8 Controller, Can_StateTransitionType transition )
+FUNC(Can_ReturnType,MEM_Can_SetControllerMode) Can_SetControllerMode ( uint8 Controller ,
+		Can_StateTransitionType transition )
 {
 	Can_ReturnType ercd = CAN_OK;
-
+	/* simulation implementation */
+	switch (transition)
+	{
+		case CAN_T_START:
+			CanIf_ControllerModeIndication(Controller,CANIF_CS_STARTED);
+			break;
+		case CAN_T_STOP:
+			CanIf_ControllerModeIndication(Controller,CANIF_CS_STOPPED);
+			break;
+		case CAN_T_SLEEP:
+			CanIf_ControllerModeIndication(Controller,CANIF_CS_SLEEP);
+			break;
+		case CAN_T_WAKEUP:
+			CanIf_ControllerModeIndication(Controller,CANIF_CS_STOPPED);
+			break;
+		default:
+			ercd = CAN_NOT_OK;
+			break;
+	}
 	return ercd;
 }
 
@@ -79,7 +97,16 @@ FUNC(Can_ReturnType,MEM_Can_Write) Can_Write( Can_HwHandleType hwh, Can_PduType 
 			break;
 	}
 
-	VirtualCan::GetInstance()->SendMessage(pduInfo->swPduHandle,&msg);
+    VirtualCan* can = (VirtualCan*)Entry::Self()->getVirtualDevice(CAN_DEVICE_NAME);
+
+	if ( NULL != can )
+	{
+		can->WriteMessage(pduInfo->swPduHandle,&msg);
+	}
+	else
+	{
+		ercd = CAN_NOT_OK;
+	}
 
 	return ercd;
 }

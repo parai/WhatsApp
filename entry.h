@@ -25,34 +25,35 @@
 #include "virtualcan.h"
 #include <QMap>
 
-typedef QMap<QString,VirtualDevice*> map_virtual_device_t;
+typedef QMap<QString, VirtualDevice*> map_virtual_device_t;
 // ====================== [ ICON RESOURCES ] =======================
 #define mRES_DIR   ":/res/"   /* Base Directory */
 #define mICON_SAVE  mRES_DIR "isave.bmp"
 #define mICON_PARAI mRES_DIR "iParai.png"
-class Entry : public QMainWindow
+class Entry: public QMainWindow
 {
-    Q_OBJECT
+Q_OBJECT
 private:
-    map_virtual_device_t map_virtual_device;
-    QMenu* menuBSW /* Basic Software Modules*/;
-    QMenu* menuVD  /* Virtual Device */;
+	map_virtual_device_t map_virtual_device;
+	QMenu* menuBSW /* Basic Software Modules*/;
+	QMenu* menuVD /* Virtual Device */;
 public:
-    explicit Entry(QWidget *parent = 0);
-    ~Entry();
+	explicit Entry ( QWidget *parent = 0 );
+	~Entry ( );
+	static class Entry* Self ( void );
 
-    void registerVirtualDevice(VirtualDevice* virtualDevice);
-
-signals:
+	void registerVirtualDevice ( VirtualDevice* virtualDevice );
+	void deleteVirtualDevice ( QString name );
+	VirtualDevice* getVirtualDevice ( QString name );signals:
 
 protected:
-    void timerEvent(QTimerEvent *Event);
+	void timerEvent ( QTimerEvent *Event );
 private slots:
-    void save(void);
-    void open(void);
+	void save ( void );
+	void open ( void );
 private:
-    void createMenuAndToolbar(void);
-    void createToolbar(void);
+	void createMenuAndToolbar ( void );
+	void createToolbar ( void );
 
 };
 

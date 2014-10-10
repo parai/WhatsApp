@@ -20,38 +20,8 @@
 namespace autosar {	extern "C" {
 #endif
 /* ============================ [ MACROS    ] ====================================================== */
-#define DeclareTask(Name,Autostart,AppMode)		\
-    {											\
-        .main = TaskMain##Name,					\
-        .priority = TASKID_##Name,				\
-        .autostart = Autostart,					\
-        .app_mode = AppMode						\
-    }
-
-#define DeclareAlarm(Name)						\
-    {											\
-        .main = AlarmMain##Name					\
-    }
 
 /* ============================ [ TYPES     ] ====================================================== */
-/*! extended OS types */
-typedef void         (*task_main_t)(void);
-typedef void         (*alarm_main_t)(void);
-typedef uint8 		   task_priority_t;
-
-typedef struct
-{
-    task_main_t    	main;
-    task_priority_t priority;	/*! priority also represent the task id, the same as TaskType */
-    BOOL            autostart;
-    AppModeType     app_mode;	/*! means task runnable modes */
-}task_declare_t;
-
-typedef struct
-{
-    alarm_main_t main;
-    /* No Autostart support */
-}alarm_declare_t;
 
 #ifdef __cplusplus
 }} /* namespace */

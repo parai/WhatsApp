@@ -136,9 +136,7 @@ OcStatus SimulationCan::setBaudRate(int baud)
     return OcSuccess;
 }
 
-static class VirtualCan* me;	// me should be only 1
-
-VirtualCan::VirtualCan(unsigned long channelNumber, QWidget *parent) : VirtualDevice("Can",parent)
+VirtualCan::VirtualCan(QString name,unsigned long channelNumber, QWidget *parent) : VirtualDevice(name,parent)
 {
     this->channelNumber = channelNumber;
     this->createGui();
@@ -151,11 +149,8 @@ VirtualCan::VirtualCan(unsigned long channelNumber, QWidget *parent) : VirtualDe
         connect(can,SIGNAL(messageReceived(OcMessage*,QTime)),this,SLOT(on_messageReceived(OcMessage*,QTime)));
     }
 
-    me = this;
-}
-class VirtualCan* VirtualCan::GetInstance(void)
-{
-    return me;
+
+    setVisible(true);
 }
 
 VirtualCan::~VirtualCan()
@@ -315,8 +310,9 @@ void VirtualCan::putMsg(OcMessage*msg)
     {
         tableTrace->setItem(index,4+i,new QTableWidgetItem(QString("%1").arg(data[i],0,16).toUpper()));
     }
+    tableTrace->setCurrentCell(index,0);
 }
-void VirtualCan::SendMessage(PduIdType swHandle,OcMessage *msg)
+void VirtualCan::WriteMessage(PduIdType swHandle,OcMessage *msg)
 {
 	putMsg(msg);
     int timer_id = startTimer(1);
@@ -333,8 +329,8 @@ void VirtualCan::timerEvent(QTimerEvent *Event)
 
 	Can_TxConfirmation( swHandle );
 
-	this->swHandle.pop_back();
-    this->timerId.pop_back();
+	this->swHandle.removeFirst();
+    this->timerId.removeFirst();
 }
 void VirtualCan::on_messageReceived(OcMessage *msg, const QTime &time)
 {

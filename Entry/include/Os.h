@@ -18,8 +18,7 @@
 #include "Std_Types.h"
 
 #ifdef __cplusplus
-namespace autosar {
-extern "C" {
+namespace autosar { extern "C" {
 #endif
 /* ============================ [ MACROS    ] ====================================================== */
 #define E_OS_ACCESS 			(StatusType)1
@@ -40,14 +39,6 @@ extern "C" {
 
 #define TICK_MAX       			(TickType)-1
 #define INVALID_TASK            (TaskType)-1
-/*
- *  Macros for declare a object 
- */
-//#define DeclareTask(TaskName)		extern const TaskType TaskName
-//#define DeclareResource(ResName)	extern const ResourceType ResName
-//#define DeclareEvent(EventName)		extern const EventMaskType EventName
-//#define DeclareAlarm(AlarmName)		extern const AlarmType AlarmName
-//#define DeclareCounter(CounterName)	extern const CounterType CounterName
 
 /*
  *  Macro for declare Task/Alarm/ISR Entry

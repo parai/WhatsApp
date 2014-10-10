@@ -30,6 +30,28 @@ namespace autosar { extern "C" {
 #define CANIF_AR_RELEASE_MAJOR_VERSION		0x00
 #define CANIF_AR_RELEASE_MINOR_VERSION		0x01
 #define CANIF_AR_RELEASE_REVISION_VERSION	0x00
+
+#define CANIF_E_PARAM_CANID		      		10
+#define CANIF_E_PARAM_DLC			      	11
+#define CANIF_E_PARAM_HRH			      	12
+#define CANIF_E_PARAM_LPDU			    	13
+#define CANIF_E_PARAM_CONTROLLER	  		14
+#define CANIF_E_PARAM_CONTROLLERID	  		15
+#define CANIF_E_PARAM_WAKEUPSOURCE			16
+#define CANIF_E_PARAM_TRCV             		17
+#define CANIF_E_PARAM_TRCVMODE         		18
+#define CANIF_E_PARAM_TRCVWAKEUPMODE        19
+
+#define CANIF_E_PARAM_POINTER 			  	20
+#define CANIF_E_UNINIT 				        30
+#define CANIF_E_NOK_NOSUPPORT			    40
+#define CANIF_E_INVALID_TXPDUID		    	50
+#define CANIF_E_INVALID_RXPDUID 		  	60
+/* Assigned by DEM:
+ * CANIF_E_INVALID_DLC
+ * CANIF_E_STOPPED
+ * CANIF_E_NOT_SLEEP
+ */
 /* ============================ [ TYPES     ] ====================================================== */
 typedef enum {
 	CANIF_CS_UNINIT = 0,
@@ -95,14 +117,14 @@ typedef struct
 typedef struct
 {
 	CanIf_ControllerConfigType *CanIfHthCanCtrlIdRef;
-	Can_HwObjectIdType CanIfHthIdSymRef;
+	Can_HwHandleType  CanIfHthIdSymRef;
 	Can_HandleType CanIfHthCanHandleTypeRef;	/* this attribute is derived from CAN HwObject */
 }CanIf_HthConfigType;
 
 typedef struct
 {
 	CanIf_ControllerConfigType *CanIfHrhCanCtrlIdRef;
-	Can_HwObjectIdType CanIfHrhIdSymRef;
+	Can_HwHandleType  CanIfHrhIdSymRef;
 	Can_HandleType CanIfHrhCanHandleTypeRef;	/* this attribute is derived from CAN HwObject */
 	bool CanIfHrhSoftwareFilter;
 }CanIf_HrhConfigType;
@@ -190,6 +212,7 @@ typedef struct
 	CanIf_InitHohConfigType* CanIfInitHohCfg;
 	CanIf_RxPduConfigType* CanIfRxPduCfg;
 	CanIf_TxPduConfigType* CanIfTxPduCfg;
+	CanIf_ControllerConfigType* CanIfCtrlCfg;
 }CanIf_InitConfigType;
 
 typedef struct
@@ -210,9 +233,14 @@ namespace autosar { extern "C" {
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
-FUNC(void,MEM_CanIf_Init) CanIf_Init(const CanIf_ConfigType* Config);
+FUNC(void,MEM_CanIf_Init) CanIf_Init ( const CanIf_ConfigType* ConfigPtr );
+FUNC(Std_ReturnType,MEM_CanIf_SetControllerMode) CanIf_SetControllerMode ( uint8 ControllerId ,
+		CanIf_ControllerModeType ControllerMode );
+FUNC(void,MEM_CanIf_ControllerModeIndication) CanIf_ControllerModeIndication ( uint8 Controller ,
+		CanIf_ControllerModeType ControllerMode );
 FUNC(void,MEM_CanIf_TxConfirmation) CanIf_TxConfirmation ( PduIdType canTxPduId );
-FUNC(void,MEM_CanIf_RxIndication)   CanIf_RxIndication   ( uint8 Hrh, Can_IdType CanId, uint8 CanDlc, const uint8 *CanSduPtr );
+FUNC(void,MEM_CanIf_RxIndication) CanIf_RxIndication ( uint8 Hrh , Can_IdType CanId , uint8 CanDlc ,
+		const uint8 *CanSduPtr );
 #ifdef __cplusplus
 }}  /* name space */
 #endif

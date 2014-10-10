@@ -19,12 +19,13 @@
 namespace autosar { extern "C" {
 #endif
 /* ============================ [ MACROS    ] ====================================================== */
+#define CAN_DEVICE_NAME   "Can"
 
-#define CAN0_OBJECT_RX   (Can_HwObjectIdType)0
-#define CAN1_OBJECT_RX   (Can_HwObjectIdType)1
+#define CAN0_OBJECT_RX   (Can_HwHandleType )0
+#define CAN1_OBJECT_RX   (Can_HwHandleType )1
 
-#define CAN0_OBJECT_TX   (Can_HwObjectIdType)0
-#define CAN1_OBJECT_TX   (Can_HwObjectIdType)1
+#define CAN0_OBJECT_TX   (Can_HwHandleType )0
+#define CAN1_OBJECT_TX   (Can_HwHandleType )1
 /* ============================ [ TYPES     ] ====================================================== */
 typedef enum {
     CAN_HANDE_TYPE_BASIC,
@@ -37,7 +38,6 @@ typedef enum {
     CAN_ID_TYPE_STANDARD
 } Can_IdTypeType;
 
-typedef uint16 Can_HwObjectIdType;
 typedef enum {
     CAN_OBJECT_TYPE_RECEIVE,
     CAN_OBJECT_TYPE_TRANSMIT
@@ -52,14 +52,14 @@ typedef struct Can_HardwareObjectStruct {
 	Can_HandleType CanHandleType;
     Can_IdTypeType CanIdType;
     Can_IdType CanIdValue;
-    Can_HwObjectIdType CanObjectId;
+    Can_HwHandleType  CanObjectId;
     Can_ObjectTypeType CanObjectType;
 } Can_HardwareObjectType;
 
 typedef enum {
     CAN_CTRL_0 = 0,
-    CAN_CTRL_1 = 1,
-    CAN_CONTROLLER_CNT = 2
+    CAN_CTRL_1,
+    CAN_CONTROLLER_CNT
 }Can_ControllerIdType;
 typedef enum {
     CAN_EVENT_PROCESS_TYPE_INTERRUPT,

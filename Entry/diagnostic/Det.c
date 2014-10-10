@@ -13,84 +13,39 @@
  * for more details.
  */
 /* ============================ [ INCLUDES  ] ====================================================== */
-#include "Os.h"
-#include "EcuM.h"
-#include "Can.h"
-#include "CanIf.h"
 #include "Det.h"
-
 #ifdef __cplusplus
 namespace autosar {
 #endif
+
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
 /* ============================ [ DATAS     ] ====================================================== */
+STATIC boolean detStarted;
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
-STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitZero (void)
-{
-	Det_Init();
-	Det_Start();
-}
-
-STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitOne ( const EcuM_ConfigType *ConfigPtr )
-{
-
-}
-
-STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitTwo ( const EcuM_ConfigType *ConfigPtr )
-{
-	Can_Init(&Can_Config);
-	CanIf_Init(&CanIf_Config);
-}
-
-STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitThree ( const EcuM_ConfigType *ConfigPtr )
-{
-
-}
 /* ============================ [ FUNCTIONS ] ====================================================== */
-void StartupHook(void)
+FUNC(void,MEM_Det_Init) Det_Init ( void )
 {
-
+	detStarted = FALSE;
 }
-void ShutdownHook(StatusType ercd)
+FUNC(Std_ReturnType,MEM_Det_ReportError) Det_ReportError ( uint16 ModuleId , uint8 InstanceId , uint8 ApiId ,
+		uint8 ErrorId )
 {
-    if( E_OK != ercd)
-    {
+	if ( detStarted )
+	{
+		fprintf(stderr,"ModuleId=%3d,InstanceId=%2d,ApiId=0x%0-2x,ErrorId=%2d\n",ModuleId,InstanceId,ApiId,ErrorId);
+		fflush(stderr);
+	}
+	else
+	{
 
-    }
+	}
+	return E_OK;
 }
-void PreTaskHook(void)
+FUNC(void,MEM_Det_Start) Det_Start ( void )
 {
-}
-void PostTaskHook(void)
-{
-}
-void ErrorHook(StatusType ercd)
-{
-    if( E_OK != ercd)
-    {
-    }
-    else
-    {
-
-    }
-}
-
-FUNC(void, MEM_EcuM_Init) EcuM_Init ( void )
-{
-
-	EcuM_AL_DriverInitZero();
-	EcuM_AL_DriverInitOne(NULL);
-
-	StartOS(OSDEFAULTAPPMODE);
-}
-
-FUNC(void,MEM_EcuM_StartupTwo) EcuM_StartupTwo ( void )
-{
-	EcuM_AL_DriverInitTwo(NULL);
-
-	EcuM_AL_DriverInitThree(NULL);
+	detStarted = TRUE;
 }
 
 #ifdef __cplusplus

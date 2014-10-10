@@ -73,6 +73,11 @@ STATIC CONST(CanIf_InitHohConfigType,MEM_CANIF_CONFIG) CanIf_InitHohConfig =
 	CanIf_HthConfig,
 	2
 };
+/*
+ * If a TxPdu is CANIF_PDU_TYPE_DYNAMIC,
+ * it must be put ahead firstly.
+ * That is the id must < CANIF_DYNAMIC_CAN_TX_PDUID_NUMBER
+ */
 STATIC CONST(CanIf_TxPduConfigType,MEM_CANIF_CONFIG) CanIf_TxPduConfig[] =
 {
 	{
@@ -136,7 +141,8 @@ STATIC CONST(CanIf_InitConfigType,MEM_CANIF_CONFIG) CanIf_InitConfig =
 	2,
 	&CanIf_InitHohConfig,
 	CanIf_RxPduConfig,
-	CanIf_TxPduConfig
+	CanIf_TxPduConfig,
+	CanIf_ControllerConfig
 };
 CONST(CanIf_ConfigType,MEM_CANIF_CONFIG) CanIf_Config =
 {

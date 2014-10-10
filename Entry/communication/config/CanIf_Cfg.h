@@ -22,26 +22,28 @@ namespace autosar { extern "C" {
 #endif
 /* ============================ [ MACROS    ] ====================================================== */
 /* by default: 0=Disable, 1=Enable */
-#define CANIF_PRIVATE_DLC_CHECK           		1
+#define CANIF_DLC_CHECK           		1
 /* 0=BINARY,1=INDEX,3=LINEAR,4=TABLE,others=NOT USED */
-#define CANIF_PRIVATE_SOFTWARE_FILTER_TYPE 		0
+#define CANIF_SOFTWARE_FILTER_TYPE 		0
 
-#define CANIF_PUBLIC_CANCEL_TRANSMIT_SUPPORT 	1
-#define CANIF_PUBLIC_CDD_HEADERFILE				32
-#define CANIF_PUBLIC_DEV_ERROR_DETECT			1
-#define CANIF_PUBLIC_MULTIPLE_DRV_SUPPORT		0
-#define CANIF_PUBLIC_NUMBER_OF_CAN_HW_UNITS     2	/* CAN0 and CAN1 */
-#define CANIF_PUBLIC_READRXPDU_DATA_API			1
-#define CANIF_PUBLIC_READRXPDU_NOTIFY_STATUS_API	1
-#define CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API	1
-#define CANIF_PUBLIC_SETDYNAMICTXID_API				1
-#define CANIF_PUBLIC_TX_BUFFERING					1
-#define CANIF_PUBLIC_VERSION_INFO_API				1
-#define CANIF_PUBLIC_WAKEUP_CHECK_VALIDATION_API	1
+#define CANIF_CANCEL_TRANSMIT_SUPPORT 	1
+#define CANIF_CDD_HEADERFILE			32
+#define CANIF_DEV_ERROR_DETECT			1
+#define CANIF_MULTIPLE_DRV_SUPPORT		0
+#define CANIF_NUMBER_OF_CAN_HW_UNITS    2	/* CAN0 and CAN1 */
+#define CANIF_READRXPDU_DATA_API			1
+#define CANIF_READRXPDU_NOTIFY_STATUS_API	1
+#define CANIF_READTXPDU_NOTIFY_STATUS_API	1
+#define CANIF_SETDYNAMICTXID_API			1
+#define CANIF_TX_BUFFERING					1
+#define CANIF_VERSION_INFO_API				1
+#define CANIF_WAKEUP_CHECK_VALIDATION_API	1
 
-#define CANIF_CHL_LS		(CanIf_ChannelIdType)0
-#define CANIF_CHL_HS		(CanIf_ChannelIdType)1
-#define CANIF_CHL_NUMBER	(CanIf_ChannelIdType)2
+#define CANIF_DYNAMIC_CAN_TX_PDUID_NUMBER	2
+
+#define CANIF_CHL_LS		(Can_HwHandleType )0
+#define CANIF_CHL_HS		(Can_HwHandleType )1
+#define CANIF_CHL_NUMBER	(Can_HwHandleType )2
 /* ============================ [ TYPES     ] ====================================================== */
 
 /* ============================ [ DATAS     ] ====================================================== */

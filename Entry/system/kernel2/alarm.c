@@ -492,7 +492,7 @@ StatusType SignalCounter ( CounterType cntid )
 	 *  process the already expiried one
 	 */
 	while ( ((almid = cntcb_almque[cntid]) != ALMID_NULL)
-			&& diff_tick(newval,almcb_almval[almid],cntinib_maxval2[cntid]) <= cntinib_maxval[cntid] )
+			&& (diff_tick(newval,almcb_almval[almid],cntinib_maxval2[cntid]) <= cntinib_maxval[cntid]) )
 	{
 		/*
 		 *  find one,first remove it from the counter queue

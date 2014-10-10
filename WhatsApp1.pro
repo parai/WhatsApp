@@ -31,7 +31,9 @@ SOURCES += main.cpp \
     VirtualDevice/OpenCAN/ocmessage.cpp \
     VirtualDevice/MCAL/config/Can_Cfg.c \
     VirtualDevice/MCAL/Can.cpp \
-    Entry/communication/CanIf.c
+    Entry/communication/CanIf.c \
+    Entry/communication/config/CanIf_Cfg.c \
+    Entry/diagnostic/Det.c
 
 HEADERS  += \
     entry.h \
@@ -54,7 +56,8 @@ HEADERS  += \
     Entry/include/Can.h \
     Entry/include/CanIf.h \
     Entry/include/ComStack_Types.h \
-    Entry/include/Modules.h
+    Entry/include/Modules.h \
+    Entry/communication/config/CanIf_Cfg.h
 
 FORMS    +=
 
@@ -66,7 +69,8 @@ INCLUDEPATH += Entry/system/kernel1
 INCLUDEPATH += Entry/system/kernel1/config
 INCLUDEPATH += Application/Configuration
 INCLUDEPATH += VirtualDevice/OpenCAN
-INCLUDEPATH += VirtualDevice/MCAL/config
+INCLUDEPATH += VirtualDevice/MCAL/config    \
+               Entry/communication/config
 
 RESOURCES += \
     WhatsApp.qrc
