@@ -14,63 +14,69 @@ TEMPLATE = app
 DEFINES = USE_KERNEL1 USE_OPENCAN_DIRECTLY
 
 
-SOURCES += main.cpp \
-    entry.cpp \
+SOURCES +=              \
     Entry/system/EcuM.c \
     Entry/system/SchM.c \
-    VirtualDevice/virtualdevice.cpp \
-    VirtualDevice/virtualcan.cpp \
     Entry/system/kernel1/config/os_cfg.c \
     Entry/system/kernel1/alarm.c \
     Entry/system/kernel1/bitop.c \
     Entry/system/kernel1/event.c \
     Entry/system/kernel1/resource.c \
     Entry/system/kernel1/task.c \
-    VirtualDevice/OpenCAN/ocdevice.cpp \
-    VirtualDevice/OpenCAN/ocdevicemanager.cpp \
-    VirtualDevice/OpenCAN/ocmessage.cpp \
-    VirtualDevice/MCAL/config/Can_Cfg.c \
-    VirtualDevice/MCAL/Can.cpp \
     Entry/communication/CanIf.c \
     Entry/communication/config/CanIf_Cfg.c \
-    Entry/diagnostic/Det.c
+    Entry/diagnostic/Det.c \
+    Entry/platform/qt/simul/MCAL/Can/Can.cpp \
+    Entry/platform/qt/simul/arcan.cpp \
+    Entry/platform/qt/entry.cpp \
+    Entry/platform/qt/main.cpp \
+    Entry/platform/qt/simul/MCAL/Can/config/Can_Cfg.c \
+    Entry/platform/qt/common/OpenCAN/ocdevice.cpp \
+    Entry/platform/qt/common/OpenCAN/ocdevicemanager.cpp \
+    Entry/platform/qt/common/OpenCAN/ocmessage.cpp \
+    Entry/platform/qt/common/ardevice.cpp
 
-HEADERS  += \
-    entry.h \
+HEADERS  +=             \
     Entry/include/Os.h \
     Entry/include/Std_Types.h \
     Entry/include/Compiler.h \
     Entry/include/EcuM.h \
     Entry/include/SchM.h \
-    VirtualDevice/virtualdevice.h \
-    VirtualDevice/virtualcan.h \
     Entry/system/kernel1/config/os_cfg.h \
     Entry/system/kernel1/os_i.h \
-    VirtualDevice/MCAL/config/Can_Cfg.h \
-    VirtualDevice/OpenCAN/occore.h \
-    VirtualDevice/OpenCAN/ocdevice.h \
-    VirtualDevice/OpenCAN/ocdeviceinterface.h \
-    VirtualDevice/OpenCAN/ocdevicemanager.h \
-    VirtualDevice/OpenCAN/ocmessage.h \
-    VirtualDevice/OpenCAN/ocplugininfo.h \
     Entry/include/Can.h \
     Entry/include/CanIf.h \
     Entry/include/ComStack_Types.h \
     Entry/include/Modules.h \
-    Entry/communication/config/CanIf_Cfg.h
+    Entry/communication/config/CanIf_Cfg.h \
+    Entry/platform/qt/simul/MCAL/Can/config/Can_Cfg.h \
+    Entry/platform/qt/simul/arcan.h \
+    Entry/platform/qt/entry.h \
+    Entry/platform/qt/common/OpenCAN/occore.h \
+    Entry/platform/qt/common/OpenCAN/ocdevice.h \
+    Entry/platform/qt/common/OpenCAN/ocdeviceinterface.h \
+    Entry/platform/qt/common/OpenCAN/ocdevicemanager.h \
+    Entry/platform/qt/common/OpenCAN/ocmessage.h \
+    Entry/platform/qt/common/OpenCAN/ocplugininfo.h \
+    Entry/platform/qt/common/ardevice.h \
+    Entry/include/CanTp.h \
+    Entry/include/Det.h
 
 FORMS    +=
 
-INCLUDEPATH += VirtualDevice
+INCLUDEPATH += Application/Configuration
 INCLUDEPATH += Entry
 INCLUDEPATH += Entry/include
 INCLUDEPATH += Entry/system/kernel1
 INCLUDEPATH += Entry/system/kernel1
 INCLUDEPATH += Entry/system/kernel1/config
-INCLUDEPATH += Application/Configuration
-INCLUDEPATH += VirtualDevice/OpenCAN
-INCLUDEPATH += VirtualDevice/MCAL/config    \
-               Entry/communication/config
+INCLUDEPATH += Entry/communication/config   \
+               Entry/platform/qt/simul/MCAL/Can \
+               Entry/platform/qt/simul/MCAL/Can/config  \
+               Entry/platform/qt/simul  \
+               Entry/platform/qt        \
+               Entry/platform/qt/common/OpenCAN \
+               Entry/platform/qt/common
 
 RESOURCES += \
     WhatsApp.qrc

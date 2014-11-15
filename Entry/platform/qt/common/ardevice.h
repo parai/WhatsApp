@@ -12,42 +12,39 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
+#ifndef ARDEVICE_H
+#define ARDEVICE_H
 /* ============================ [ INCLUDES  ] ====================================================== */
-#include "Det.h"
-#ifdef __cplusplus
-namespace autosar {
-#endif
-
+#include <QMainWindow>
+#include <QDebug>
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
+/* ============================ [ CLASS     ] ====================================================== */
+/* basic devices for QT platform, both for real devices and simulation devices. */
+class arDevice : public QMainWindow
+{
+    Q_OBJECT
+private:
+    QString name;
+public:
+    explicit arDevice(QString name,QWidget *parent = 0);
+    virtual ~arDevice();
+    QString Name(void) { return this->name; }
+
+signals:
+
+private slots:
+    virtual void wakeup(void) {
+        if(!this->isVisible())
+        {
+            this->show();
+        }
+    }
+};
 /* ============================ [ DATAS     ] ====================================================== */
-STATIC boolean detStarted;
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
-FUNC(void,MEM_Det_Init) Det_Init ( void )
-{
-	detStarted = FALSE;
-}
-FUNC(Std_ReturnType,MEM_Det_ReportError) Det_ReportError ( uint16 ModuleId , uint8 InstanceId , uint8 ApiId ,
-		uint8 ErrorId )
-{
-	if ( detStarted )
-	{
-        fprintf(stderr,"ModuleId=%3d,InstanceId=%2d,ApiId=0x%02x,ErrorId=%2d\n",ModuleId,InstanceId,ApiId,ErrorId);
-		fflush(stderr);
-	}
-	else
-	{
 
-	}
-	return E_OK;
-}
-FUNC(void,MEM_Det_Start) Det_Start ( void )
-{
-	detStarted = TRUE;
-}
 
-#ifdef __cplusplus
-} /* namespace autosar */
-#endif
+#endif // DEVICE_H

@@ -17,6 +17,8 @@ the requirement, so kernel2 is absolutely needed.
     But that my ability is not enough to run the kernel2 by simulation method on Qt5.3, so I dropped it. 
 But it is OK to run it on a lot of ECUs, such as 9s12 and ARM CM.
     In fact, kernel2 is TOPPERS OSEK.
+    For simulation, kernel2 is a shit, use kernel1 for simulation only. For kernel2, it needs a real platform 
+to run it.
 ### Communication
 * For applications on Automotive Industries, communication is the most important thing, which is the most 
 important part of VFB(Virtual Function Bus).

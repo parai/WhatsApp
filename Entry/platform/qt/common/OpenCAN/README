@@ -1,0 +1,81 @@
+OpenCAN v0.7 - Open software platform for controlling CAN devices
+
+Copyright (C) 2005-2011 Code of Intelligence, LLC.
+(http://www.codeofintelligence.com)
+Contact: opencan@codeofintelligence.com
+
+== What is OpenCAN? ==
+OpenCAN is a software platform for interacting with various Controller Area Network (CAN) devices. It provides an abstract C++ interface that can be used to control any CAN device. Support for specific devices can be written as plugins, and then loaded through a simple API call. Each component is cross-platform, enabling the efficient development of CAN software on Windows, Linux and Mac OS X.  And you are free to use and extend it according to the GNU Lesser General Public License (LGPL).
+
+== Benefits ==
+Simplifies adding CAN support to software
+Add new CAN devices without changing application code or recompiling
+Write one set of code for multiple devices and/or OSes
+Reduces maintenance time and cost
+Enables backward and forward compatibility with CAN devices and APIs
+OpenCAN is LGPL so you can use free and proprietary CAN drivers together
+
+== Features ==
+Supports Windows, Linux and Mac OS X
+Light-weight and simple API encapsulation
+API documentation using Doxygen
+Device support can be compiled in or as dynamically-loaded plugins
+Includes plugins for LinCAN and PCAN devices
+Includes a simple cross-platform GUI called Testbench
+
+== Requirements ==
+Qt 4.6+ (http://qt.nokia.com)
+   The OpenCAN library only requires Qt's QtCore component
+   Testbench requires the additional Qt QtGui component
+CAN device with installed driver (support for LinCAN and PCAN devices included)
+Windows XP/Vista/7, Linux or Mac OS X (32/64-bit)
+
+== Testbench ==
+Testbench is a GUI for monitoring and sending messages on a CAN network. Testbench is distributed mainly as an example of using OpenCAN.
+
+== Conditions of Use ==
+OpenCAN and the accompanying device plugins are distributed under the GNU Lesser General Public License version 2.1.
+
+Testbench is distributed under the GNU General Public License version 3.0.
+
+OpenCAN and Testbench are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+== Build ==
+Projects are built using QMake and an installed C++ compiler.
+
+Specific build instructions can be found at docs/index.html
+
+== Install ==
+Currently, there is no installation method. Simply copy the compiled files to the desired location or leave them where they are.
+
+== Mac OS X Support ==
+OpenCAN and Testbench compile and run properly on Mac OS X, however no OpenCAN drivers are distributed for CAN devices with support for Mac OS X.
+
+== History ==
+09132011 v0.7	Added runtime support for switching between CAN 2.0b extended and standard
+				Autonomous message polling now completely empties the receive queue every poll
+				Fixed Windows PCAN plugin continually sending CAN messages
+				Fixed a compiler warning when using MingW on Windows
+02162011 v0.6	Improved drawing speed of Testbench receive message windows
+				Fixed Testbench crash when no plugin is loaded
+				Fixed PEAK PCAN plugin not setting baud rate in Windows
+				Fixed PEAK PCAN plugin connect status in Windows
+				Clarified plugin loading and added troubleshooting tips
+02012011 v0.5	Improved support for multiple devices
+				Improved plugin and device information
+				Added support for changing baud rate in Testbench
+				Show CAN message timestamps in Testbench receive windows
+				Improved string processing efficieny by using Qt fast string concat
+				Testbench UI polish
+				Updated documentation and added compile documentation
+08302010 v0.4	Added support for providing device and plugin information
+				Added a method for retrieving the version of OpenCAN during runtime
+				Testbench UI overhaul adding filters to receive messages
+				Added a plugin dialog to Testbench
+07292010 v0.3	Added support for user-friendly device descriptions
+				Small increase in performance from a change of data structures
+				Made Win32/64 QMake project files more general
+				Minor documentation updates
+07162010 v0.2	Removed delay in startup of PEAK PCAN Linux device to prevent crash on device startup (crash fixed in driver v6.20)
+				Minor documentation updates
+06182010 v0.1	Initial release
