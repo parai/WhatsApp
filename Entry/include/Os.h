@@ -44,7 +44,11 @@ namespace autosar { extern "C" {
  *  Macro for declare Task/Alarm/ISR Entry
  */
 #define TASKNAME(TaskName)	TaskMain##TaskName
+#if defined(USE_KERNEL3)
+#define TASK(TaskName)		void TaskMain##TaskName(TaskType TaskID)
+#else
 #define TASK(TaskName)		void TaskMain##TaskName(void)
+#endif /* USE_KERNEL3 */
 #define ISRNAME(ISRName)	ISRMain##ISRName
 #define ISR(ISRName)		void ISRMain##ISRName(void)
 #define ALARMCALLBACKNAME(AlarmCallBackName) 	\
@@ -172,10 +176,15 @@ extern void SuspendOSInterrupts(void);
 extern AppModeType GetActiveApplicationMode(void);
 extern void ShutdownOS(StatusType ercd);
 
-extern StatusType SetEvent(TaskType tskid, EventMaskType mask);
+extern StatusType SetEvent(TaskType TaskID, EventMaskType mask);
+extern StatusType GetEvent(TaskType TaskID, EventMaskRefType p_mask);
+#if defined(USE_KERNEL3)
+extern StatusType ClearEvent(TaskType TaskID,EventMaskType mask);
+extern StatusType WaitEvent (TaskType TaskID,EventMaskType mask);
+#else
 extern StatusType ClearEvent(EventMaskType mask);
-extern StatusType GetEvent(TaskType tskid, EventMaskRefType p_mask);
 extern StatusType WaitEvent(EventMaskType mask);
+#endif /* USE_KERNEL3 */
 
 extern StatusType SignalCounter(CounterType cntid);
 

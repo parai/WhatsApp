@@ -139,5 +139,5 @@ void Entry::createMenuAndToolbar ( void )
 
 	this->menuBSW = this->menuBar()->addMenu(tr("BSW"));
 
-	this->menuVD = menuBSW->addMenu(tr("Virtual Device"));
+	this->menuVD = menuBSW->addMenu(tr("Device"));
 }

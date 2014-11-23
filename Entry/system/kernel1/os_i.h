@@ -16,7 +16,6 @@
 #define OS_I_H
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Os.h"
-#include "os_i.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {

@@ -15,6 +15,7 @@
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Os.h"
 #include "EcuM.h"
+#include "Rte.h"
 
 #ifdef __cplusplus
 namespace autosar {

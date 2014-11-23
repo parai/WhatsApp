@@ -68,7 +68,6 @@ INCLUDEPATH += Application/Configuration
 INCLUDEPATH += Entry
 INCLUDEPATH += Entry/include
 INCLUDEPATH += Entry/system/kernel1
-INCLUDEPATH += Entry/system/kernel1
 INCLUDEPATH += Entry/system/kernel1/config
 INCLUDEPATH += Entry/communication/config   \
                Entry/platform/qt/simul/MCAL/Can \

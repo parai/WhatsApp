@@ -250,7 +250,6 @@ void arCan::on_load_trace(void)
     static QRegularExpression reComment("^\\s*//");
     static QRegularExpression reEntry("^\\s*(\\d)\\s+(\\d+)\\s+(RX|TX)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)");
     QString filename = QFileDialog::getOpenFileName(this,"Load CAN Trace",".",tr("CAN Trace (*.rec *.txt)"));
-    qDebug() <<"Load Trace: " << filename;
 
     clear();    // clear history log information
     QFile file(filename);
@@ -267,7 +266,6 @@ void arCan::on_load_trace(void)
                 QRegularExpressionMatch match = reComment.match(entry);
                 if (match.hasMatch())
                 {
-                    qDebug() << "File Comment:" << match;
                 }
                 else
                 {
@@ -275,7 +273,6 @@ void arCan::on_load_trace(void)
                     if(match.hasMatch())
                     {
                         quint32 bus;
-                        qDebug() << "File Entry:" << match;
                         OcMessage* msg = entry2msg(match);
                         bus = msg->busid();
                         if(NULL != msg)
@@ -284,7 +281,6 @@ void arCan::on_load_trace(void)
                         }
                     }
                 }
-                qDebug() << "File:" << buf;
             }
         } while(lineLength != -1);
     }

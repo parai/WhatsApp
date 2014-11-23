@@ -35,12 +35,11 @@ STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitZero (void)
 
 STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitOne ( const EcuM_ConfigType *ConfigPtr )
 {
-
+    Can_Init(&Can_Config);
 }
 
 STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitTwo ( const EcuM_ConfigType *ConfigPtr )
 {
-	Can_Init(&Can_Config);
 	CanIf_Init(&CanIf_Config);
 }
 
@@ -91,6 +90,8 @@ FUNC(void,MEM_EcuM_StartupTwo) EcuM_StartupTwo ( void )
 	EcuM_AL_DriverInitTwo(NULL);
 
 	EcuM_AL_DriverInitThree(NULL);
+
+	Rte_Start();
 }
 
 #ifdef __cplusplus

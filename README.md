@@ -10,7 +10,8 @@ So I decided to just implement the OSEK BCC1.
 these Real-Time and Multiply-Task operating system takes a lot of resources, especially for automotive industry,
 16 bit CPU is still in use, RAM resource is very limited.
 * OSEK BCC1 is good, it is fast and use very little resource.
-#### kernel1 & kernel2
+
+#### kernel1 & kernel2 & kernel3
 * Yes, OSEK BCC1 is kernel1; OSEK ECC2 is kernel2.
     By a lot of thinking, I still think that for a lot of complex applications, kernel1 will not fulfill
 the requirement, so kernel2 is absolutely needed.
@@ -19,6 +20,9 @@ But it is OK to run it on a lot of ECUs, such as 9s12 and ARM CM.
     In fact, kernel2 is TOPPERS OSEK.
     For simulation, kernel2 is a shit, use kernel1 for simulation only. For kernel2, it needs a real platform 
 to run it.
+    As kernel2 for simulation is a shit, so I try to start kernel3 base on QThread on Win7 only, no 
+guarantee for OSEK ECC2 ability, just a small environment for multiply tasks.
+
 ### Communication
 * For applications on Automotive Industries, communication is the most important thing, which is the most 
 important part of VFB(Virtual Function Bus).
@@ -28,7 +32,8 @@ is not good,period.
     So this part of WhatsApp may be a long time work, put it away temporarily.
     ......
     Time is money, my ability is not strong, and I am also very lazy, I will implement a small rough one.
-And then make it better if I want to do it.    
+And then make it better if I want to do it.  
+  
 ### TOOLS
 * Any one else who want to use AUTOSAR platform, he must use the tool to do configuration for the application,
 such as BSW things and RTE.
