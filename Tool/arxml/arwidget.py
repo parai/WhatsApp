@@ -156,7 +156,7 @@ class arMain(QMainWindow):
         tMenu.addAction(sItem)
         # WahtsApp Module
         tMenu=self.menuBar().addMenu(self.tr('Module'))
-        for name in self.arxml.get_package_name_list():
+        for name in self.arxml.get_module_def_name_list():
             sItem=arMenuAction(self.tr(name),self) 
             sItem.setStatusTip('Open %s Module.'%(name)) 
             tMenu.addAction(sItem)      

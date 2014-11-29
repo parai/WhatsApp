@@ -1,3 +1,4 @@
 *.pyc
 *.o
 *.out
+Tool/arxml/types
