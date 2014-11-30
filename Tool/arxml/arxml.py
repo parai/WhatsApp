@@ -102,7 +102,10 @@ class arXML():
             result = ''
         return result
     def type_name(self,module_name,name):
-        result =  '%s_%sType'%(module_name,name[len(module_name):])  
+        if(name.upper().find(module_name.upper()) > -1):
+            result =  '%s_%sType'%(module_name,name[len(module_name):]) 
+        else:
+            result =  '%s_%sType'%(module_name,name) 
         return result
     ''' Is it possible to Generate the basic types for each module,
         Let me have a try..
@@ -150,7 +153,10 @@ class arXML():
                 if(liter_name.upper().find(module_name.upper())>-1):
                     parameter_type2 += ('\t%s,\n'%(liter_name)).upper()
                 else:
-                    parameter_type2 += ('\t%s_%s_%s,\n'%(module_name,name[len(module_name):],liter_name)).upper()
+                    if(name.upper().find(module_name.upper())>-1):
+                        parameter_type2 += ('\t%s_%s_%s,\n'%(module_name,name[len(module_name):],liter_name)).upper()
+                    else:
+                        parameter_type2 += ('\t%s_%s_%s,\n'%(module_name,name,liter_name)).upper()
             if(bHasLiter==False):parameter_type2 +='\tTODO: maybe specific to vendor as no LITERALS in arxml.\n'
             parameter_type2 += '} %s ;\n\n'%(self.type_name(module_name, name))
             if(bHasLiter):
@@ -273,4 +279,4 @@ class arXML():
     
     
 if __name__ == '__main__':
-    arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml')
+    arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml').generate_basic_type_header_files()
