@@ -103,6 +103,8 @@ typedef	signed long	    	INT32;		/* 32 bit integer */
 typedef	unsigned long	    UINT32;		/* 32 bit unsigned integer */
 typedef	signed long long	INT64;		/* 64 bit unsigned intege */
 typedef	unsigned long long  UINT64;		/* 64 bit unsigned intege */
+
+typedef void(*function_t)(void);
 /* ============================ [ DATAS     ] ====================================================== */
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
