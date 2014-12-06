@@ -46,19 +46,81 @@ class arSelectList(QDialog):
         self.close()
     def on_qTree_itemSelectionChanged(self):
         self.select = self.qTree.currentItem().text(0)
+
+class arPackage(QMainWindow):
+    def __init__(self,name):
+        super(QMainWindow,self).__init__()
+        qSplitter = QSplitter(Qt.Horizontal,self)
         
-class arCmp(QTreeWidgetItem):
-    def __init__(self,cmp_name,parent):
-        self.arproject = parent
+        self.qTree = QTreeWidget()
+        self.qTree.setHeaderLabel(name)
+        
+        qButtonBox = QWidget()
+        vbox = QVBoxLayout()
+        qBtnAdd = QPushButton('Add')
+        qBtnAdd.setStatusTip('add a AUTOSAR component')
+        qBtnRemove = QPushButton('Remove')
+        qBtnRemove.setStatusTip('remove a AUTOSAR component')
+        qBtnEdit = QPushButton('Edit')
+        qBtnEdit.setStatusTip('edit a AUTOSAR component')
+        
+        self.connect(qBtnAdd, SIGNAL('clicked()'),self.on_qBtnAdd_clicked)
+        self.connect(qBtnRemove, SIGNAL('clicked()'),self.on_qBtnRemove_clicked)
+        self.connect(qBtnEdit, SIGNAL('clicked()'),self.on_qBtnEdit_clicked)
+        vbox.addWidget(qBtnAdd)
+        vbox.addWidget(qBtnRemove)
+        vbox.addWidget(qBtnEdit)
+        qButtonBox.setLayout(vbox)
+        
+        qInfo = QWidget()
+        vbox = QVBoxLayout()
+        self.qPTEInformation = QPlainTextEdit()
+        self.qPTEInformation.setReadOnly(True)
+        vbox.addWidget(self.qPTEInformation)
+        qInfo.setLayout(vbox)
+        
+        qSplitter.insertWidget(0,self.qTree)
+        qSplitter.insertWidget(1,qButtonBox)
+        qSplitter.insertWidget(2,qInfo)
+
+        self.setCentralWidget(qSplitter)
+    def on_qBtnAdd_clicked(self):
+        pass
+    def on_qBtnRemove_clicked(self):
+        pass
+    def on_qBtnEdit_clicked(self): 
+        pass       
+        
+class arDockWidget(QDockWidget): 
+    def __init__(self,name,parent=None):
+        QDockWidget.__init__(self,name,parent)
+        self.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)  
+        #self.setFeatures(QDockWidget.DockWidgetClosable|QDockWidget.DockWidgetMovable)
+        self.isClosed = False
+    def closeEvent(self,event):
+        self.isClosed = True        
+        
+class arCmpItem(QTreeWidgetItem):
+    def __init__(self,cmp_name,module_cfg=None):
         super(QTreeWidgetItem,self).__init__()
         self.setText(0,cmp_name)
+        if(module_cfg==None):
+            self.module_cfg = ARXML().new_module_cfg(str(cmp_name))
+        else:
+            self.module_cfg = module_cfg
+    
+    def remove(self):
+        uuid = self.module_cfg.attrib['UUID']
+        ARXML().remove(uuid)
 
 class arProject(QDockWidget):
     def __init__(self,project_name,parent):
+        global __arxml__
         self.armain =  parent;
         super(QDockWidget,self).__init__(project_name,parent)
         
-        self.arxml = arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml')
+        #self.arxml = arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml')
+        self.arxml = arXML('.config/ecuc_cfg.arxml')
         
         self.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
         
@@ -78,7 +140,7 @@ class arProject(QDockWidget):
         
         self.connect(qBtnAdd, SIGNAL('clicked()'),self.on_qBtnAdd_clicked)
         self.connect(qBtnRemove, SIGNAL('clicked()'),self.on_qBtnRemove_clicked)
-        self.connect(qBtnEdit, SIGNAL('clicked()'),self.on_qBtnEditclicked)
+        self.connect(qBtnEdit, SIGNAL('clicked()'),self.on_qBtnEdit_clicked)
         vbox.addWidget(qBtnAdd)
         vbox.addWidget(qBtnRemove)
         vbox.addWidget(qBtnEdit)
@@ -96,7 +158,11 @@ class arProject(QDockWidget):
         qSplitter.insertWidget(2,qInfo)
 
         self.setWidget(qSplitter)
-    def isNotAdded(self,package_name):
+        
+        for module_cfg in ARXML().get_module_cfg_list():
+            name = arxml_short_name(module_cfg)
+            self.qTree.addTopLevelItem(arCmpItem(name,module_cfg))
+    def is_module_not_added(self,package_name):
         for i in range(0,self.qTree.topLevelItemCount()):
             item = self.qTree.topLevelItem(i)
             if(str(item.text(0)) == package_name):
@@ -104,20 +170,25 @@ class arProject(QDockWidget):
         return True
     
     def on_qBtnAdd_clicked(self):
-        package_names = self.arxml.get_package_name_list()
+        package_names = self.arxml.get_module_def_name_list()
         select_list = []
         for name in package_names:
-            if(self.isNotAdded(name)):
+            if(self.is_module_not_added(name)):
                 select_list.append(name)
         ar_select = arSelectList(select_list)
         ar_select.exec_()
         if(ar_select.result):
-            self.qTree.addTopLevelItem(arCmp(ar_select.result,self))
+            self.qTree.addTopLevelItem(arCmpItem(ar_select.result))
     def on_qBtnRemove_clicked(self):
-        pass
-    def on_qBtnEditclicked(self):
-        pass
-    
+        cmp = self.qTree.currentItem()
+        if(cmp != None):
+            self.qTree.takeTopLevelItem(self.qTree.indexOfTopLevelItem(cmp))
+            cmp.remove()
+    def on_qBtnEdit_clicked(self):
+        cmp = self.qTree.currentItem()
+        if(cmp != None):
+            self.armain.show_package(cmp.text(0))
+
 class arMain(QMainWindow):
     def __init__(self):
         
@@ -125,13 +196,17 @@ class arMain(QMainWindow):
         self.setWindowTitle('WhatsApp Configuration Studio (parai@foxmail.com ^_^)');
         self.showMaximized()
         self.setMinimumSize(800, 400)
+        #self.arxml = arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml')
         self.arxml = arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml')
         
         # Gui init
         self.creStatusBar()
         self.creMenu()
-        arproject = arProject('WhatsApp',self)
-        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, arproject)
+        self.arproject = arProject('WhatsApp',self)
+        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.arproject)
+        
+        self.ardocks = {}
+        self.arpackages = {}
         
     def creMenu(self):
         # File
@@ -154,23 +229,32 @@ class arMain(QMainWindow):
         sItem.setStatusTip('Convert the WhatsApp configure file to C Code.')
         self.connect(sItem,SIGNAL('triggered()'),self.on_menu_action_gen)  
         tMenu.addAction(sItem)
-        # WahtsApp Module
-        tMenu=self.menuBar().addMenu(self.tr('Module'))
-        for name in self.arxml.get_module_def_name_list():
-            sItem=arMenuAction(self.tr(name),self) 
-            sItem.setStatusTip('Open %s Module.'%(name)) 
-            tMenu.addAction(sItem)      
+    
     def creStatusBar(self):
         self.statusBar = QStatusBar()
         self.setStatusBar(self.statusBar)
         self.statusBar.showMessage('WhatsApp Configuration Studio',0)
-        
+    def show_package(self,package_name):
+        package_name = str(package_name)
+        try:
+            arpackage = self.arpackages[package_name]
+        except:
+            self.arpackages[package_name] = arpackage = arPackage(package_name)
+        try:
+            ardock = self.ardocks[package_name]
+            if(ardock.isClosed==True):ardock = None   
+        except KeyError:
+            ardock = None
+        if(ardock==None):
+            self.ardocks[package_name] = ardock= arDockWidget(package_name)
+            ardock.setWidget(arpackage)
+        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, ardock) 
+        self.tabifyDockWidget(self.arproject,ardock) 
     # actions
     def on_menu_action_open(self):
         pass
     def on_menu_action_save(self):
-        pass
+        ARXML().save()
+        QMessageBox(QMessageBox.Information, 'Info', 'Save WhatsApp Configuration arxml Successfully !').exec_();
     def on_menu_action_gen(self):
-        pass
-    def on_menu_action(self,module_name):
         pass

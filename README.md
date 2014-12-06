@@ -2,6 +2,7 @@
 * For a trip to understand what is application and how to develop a good application, 
 also know how to build a good platform for application.
 * Entry platform according to AUTOSAR 4.0
+* What's Automotive Platform Application
 
 ### OS
 * For OS, I don't know how to simulate a perfect OS with all the features should be supported by AUTOSAR OS. 
