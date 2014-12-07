@@ -112,15 +112,54 @@ class arXML():
                     result = self.search_from(sub1,url)
                     if(result != None):return result
         return None
+    def NAME(self,which):
+        return arxml_short_name(which)
+    def TAG(self,which):
+        return which.tag.replace('{%s}'%(__namespace__),'')
+    def FIND(self,which,what):
+        return which.find('{%s}%s'%(__namespace__,what))
     def URL(self,url=''):
         ''' Uniform Resource Locator'''
         result = self.__arxml__
-        url = url.split('/')
-        for url1 in url:
+        url_list = url.split('/')
+        for url1 in url_list:
             if(url1==''):continue
             result = self.search_from(result,url1)
-            if(result==None):break   
+            print url1,result
+            if(result==None):break  
         return result
+    def new_from(self,From,Next):
+        DEF_URL = '%s/%s'%(From.replace('EcucCfgs','EcucDefs'),Next)
+        DEF = self.URL(DEF_URL)
+        pCFG = self.URL(From)
+        CFG = ET.Element(self.TAG(DEF).replace('DEF','CFG'))
+        UUID = uuid.uuid1()
+        CFG.attrib['UUID'] = str(UUID)
+        short_name = ET.Element('SHORT-NAME')
+        short_name.text = self.NAME(DEF)
+        CFG.append(short_name)
+        pCFG.append(CFG)
+        return CFG
+    def get_cfg_by_url(self,url):
+        url = url.replace('EcucDefs','EcucCfgs')
+        result = self.URL(url)
+        if(result != None):
+            return result.attrib['UUID']
+        else:
+            return None
+    def new_cfg_by_url(self,url):
+        result = self.__arxml__
+        url_list = url.split('/')
+        url_now = url_p =  ''
+        for url1 in url_list:
+            if(url1==''):continue
+            if(url1=='EcucDefs'):url1='EcucCfgs'
+            url_now +='/%s'%(url1)
+            result = self.URL(url_now)
+            if(result==None):result =self.new_from(url_p,url1)
+            url_p = url_now
+            result = result
+        return result.attrib['UUID']
     def remove(self,uuid,starter = None,parent = None):
         if(starter == None):
             starter = self.URL('/AUTOSAR/EcucCfgs')
