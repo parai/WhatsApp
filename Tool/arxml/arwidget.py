@@ -76,11 +76,8 @@ class arContainerItem(QTreeWidgetItem):
         self.url = url
         assert(self.DEF != None)
         if(uuid == None): 
-            
             self.uuid = ARXML().new_cfg_by_url(url)
-            print 'new',url,self.uuid
         else:
-            print 'reload',url,uuid
             self.uuid = uuid
         super(QTreeWidgetItem,self).__init__()
         self.setText(0,url) 

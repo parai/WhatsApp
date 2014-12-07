@@ -35,6 +35,11 @@ __all__ = ['arXML','ARXML', \
 
 __arxml_global_instance__ = None
 __namespace__ = None
+
+__ardebug__ = False
+def ARDEBUG(ss):
+    if(__ardebug__):
+        print(ss)
  
 def arxml_short_name(element):
     return element.find('{%s}SHORT-NAME'%(__namespace__)).text
@@ -86,6 +91,7 @@ class arXML():
     reNameSpace  = re.compile(r'{(.*)}')
     def __init__(self,arxml_file):
         global __namespace__,__arxml_global_instance__
+        self.arxml_file = arxml_file
         self.__arxml__ =  ET.parse(arxml_file).getroot()
         __namespace__ = self.__namespace__ = self.reNameSpace.match(self.__arxml__.tag).groups()[0]
         ET.register_namespace('', __namespace__)
@@ -94,23 +100,34 @@ class arXML():
         self.init_uuid_map()
         __arxml_global_instance__ = self
     def search_from(self,root,url):
+        no_sub_search_tag_list = ['ADMIN-DATA','MODULE-REFS','SHORT-NAME','DESC','ECUC-DEFINITION-COLLECTION']
+        tag = self.TAG(root)
+        try:
+            index = no_sub_search_tag_list.index(tag)
+            return None
+        except:
+            pass 
+        ARDEBUG('  search_from(%s,%s)'%(root,url))   
         try:
             if(arxml_short_name(root)==url):
                 return root
+            else:
+                pass
         except:
             pass
+        bNext = True
         for sub in root:
             try:
                 if(arxml_short_name(sub)==url):
                     return sub
                 else:
-                    for sub1 in sub:
-                        result = self.search_from(sub1,url)
-                        if(result != None):return result
+                    bNext = False
             except:
-                for sub1 in sub:
-                    result = self.search_from(sub1,url)
-                    if(result != None):return result
+                pass
+        if(bNext):
+            for sub in root:
+                result = self.search_from(sub,url)
+                if(result != None):return result
         return None
     def NAME(self,which):
         return arxml_short_name(which)
@@ -120,15 +137,18 @@ class arXML():
         return which.find('{%s}%s'%(__namespace__,what))
     def URL(self,url=''):
         ''' Uniform Resource Locator'''
+        ARDEBUG('URL(%s)'%(url))
         result = self.__arxml__
         url_list = url.split('/')
         for url1 in url_list:
             if(url1==''):continue
             result = self.search_from(result,url1)
-            print url1,result
-            if(result==None):break  
+            ARDEBUG('  Next:URL(%s)=%s'%(result,url1))
+            if(result==None):break 
+        ARDEBUG('URL(%s)=%s'%(url,result)) 
         return result
     def new_from(self,From,Next):
+        ARDEBUG('  new_from(%s,%s)'%(From,Next))
         DEF_URL = '%s/%s'%(From.replace('EcucCfgs','EcucDefs'),Next)
         DEF = self.URL(DEF_URL)
         pCFG = self.URL(From)
@@ -148,6 +168,8 @@ class arXML():
         else:
             return None
     def new_cfg_by_url(self,url):
+        # TODO: bug here when new
+        ARDEBUG('new_cfg_by_url(%s)'%(url))
         result = self.__arxml__
         url_list = url.split('/')
         url_now = url_p =  ''
@@ -156,7 +178,7 @@ class arXML():
             if(url1=='EcucDefs'):url1='EcucCfgs'
             url_now +='/%s'%(url1)
             result = self.URL(url_now)
-            if(result==None):result =self.new_from(url_p,url1)
+            if(result==None):result=self.new_from(url_p,url1)
             url_p = url_now
             result = result
         return result.attrib['UUID']
@@ -408,9 +430,15 @@ class arXML():
         module_cfg = ET.Element('ECUC-MODULE-CFG')
         module_cfg.attrib['UUID'] = 'ECUC:%s'%(UUID)
         short_name = ET.Element('SHORT-NAME')
-        short_name.text = name
         module_cfg.append(short_name)
+        short_name.text = name
         self.get_cfg_elements().append(module_cfg)
+        # TODO: why I need to save it and then reload
+        self.save()
+        self.__arxml__ =  ET.parse(self.arxml_file).getroot()
+        # TODO: here is the thing strange, 
+#         for each in self.get_cfg_elements():
+#             print each,arxml_short_name(each)
         return module_cfg
     def get_module_cfg_list(self):
         elements = self.get_cfg_elements()
