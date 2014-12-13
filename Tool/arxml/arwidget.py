@@ -4,7 +4,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from arxml import *
-import re
+import re,os
 
 __all__ = ['arMain']
 
@@ -68,19 +68,36 @@ class arSelectList(QDialog):
         self.select = self.qTree.currentItem().text(0)
 
 class arContainerItem(QTreeWidgetItem):
-    def __init__(self,url,uuid=None):
+    def __init__(self,url,cfg=None):
         '''url: refer the ECUC-PARAM-CONF-CONTAINER-DEF
-           uuid: refer the ECUC-PARAM-CONF-CONTAINER-CFG
+           cfg: refer the ECUC-PARAM-CONF-CONTAINER-CFG
         '''
         self.DEF = ARXML().URL(url)
         self.url = url
         assert(self.DEF != None)
-        if(uuid == None): 
-            self.uuid = ARXML().new_cfg_by_url(url)
+        if(cfg == None): 
+            self.cfg = ARXML().new_cfg_by_url(url)
         else:
-            self.uuid = uuid
+            self.cfg = cfg
         super(QTreeWidgetItem,self).__init__()
-        self.setText(0,url) 
+        self.setText(0,os.path.basename(url))
+
+    def get_displayer(self): 
+        container_def = ARXML().URL(self.url)
+        self.qDisplayer = QScrollArea()
+        self.grid = QGridLayout()
+        self.qDisplayer.setLayout(self.grid)
+        return self.qDisplayer
+
+    def get_sub_container_urls(self):
+        container_def = ARXML().URL(self.url)
+        sub_containers = []
+        for sub_container in ARXML().FIND(container_def,'SUB-CONTAINERS'):
+            sub_containers.append('%s/%s'%(self.url,ARXML().NAME(sub_container)))
+        return sub_containers
+    
+    def get_url(self):
+        return self.url
  
 class arPackage(QMainWindow):
     reAdd = re.compile(r'Add\s+(\w+)')
@@ -91,7 +108,7 @@ class arPackage(QMainWindow):
         
         self.qTree = QTreeWidget()
         self.qTree.setHeaderLabel(name)
-        self.connect(self.qTree, SIGNAL('itemClicked(QTreeWidgetItem,int)'),self.on_qTree_itemClicked)
+        self.connect(self.qTree, SIGNAL('itemSelectionChanged()'),self.on_qTree_itemSelectionChanged)
         
         qButtonBox = QWidget()
         vbox = QVBoxLayout()
@@ -123,14 +140,28 @@ class arPackage(QMainWindow):
         self.setCentralWidget(qSplitter)
     def on_button_clicked(self,text):
         text = str(text)
+        p_item = self.qTree.currentItem()
         if(self.reAdd.match(text)):
-            pass
+            item = arContainerItem('%s/%s'%(p_item.get_url(),self.reAdd.match(text).groups()[0]))
+            p_item.addChild(item)
         elif(self.reRemove.match(text)):
             pass
         else:
             assert(0)     
-    def on_qTree_itemClicked(self,item,column): 
-        print item,   column
+    def on_qTree_itemSelectionChanged(self): 
+        item = self.qTree.currentItem()
+        print item
+        self.qDisplayer.setCentralWidget(item.get_displayer())
+        I = 0
+        for sub_container_url in item.get_sub_container_urls():
+            self.arbuttons[I].setText2('Add %s'%(os.path.basename(sub_container_url))) 
+            I = I + 1
+        if(self.qTree.indexOfTopLevelItem(item) == -1):
+            self.arbuttons[I].setText2('Remove %s'%(str(item.text(0)))) 
+            I = I + 1
+        for i in range(I,cButtonNumber):
+            self.arbuttons[i].setText2('')
+            
         
 class arDockWidget(QDockWidget): 
     def __init__(self,name,parent=None):

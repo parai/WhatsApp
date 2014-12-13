@@ -84,10 +84,11 @@ typedef enum {
 	CAN_NOT_OK,
 	CAN_BUSY
 } Can_ReturnType;
+
 #ifdef __cplusplus
 }}
 #endif
-
+#include "Can_Types.h"
 #include "Can_Cfg.h"
 
 #ifdef __cplusplus

@@ -37,6 +37,7 @@ __arxml_global_instance__ = None
 __namespace__ = None
 
 __ardebug__ = False
+
 def ARDEBUG(ss):
     if(__ardebug__):
         print(ss)
@@ -75,6 +76,10 @@ def arxml_parameter_list(element):
     reslut_list = element.find('{%s}PARAMETERS'%(__namespace__))
     if(reslut_list==None):reslut_list = []
     return reslut_list
+def arxml_reference_list(element):
+    reslut_list = element.find('{%s}REFERENCES'%(__namespace__))
+    if(reslut_list==None):reslut_list = []
+    return reslut_list
 def arxml_LITERALS(element):
     return element.find('{%s}LITERALS'%(__namespace__))
 
@@ -86,6 +91,12 @@ def arxml_MIN(element):
     min = element.find('{%s}MIN'%(__namespace__)).text
     min = int(min,10)
     return min
+
+def arxml_DESTINATION_REF(element):
+    return element.find('{%s}DESTINATION-REF'%(__namespace__))
+
+def arElement(name):
+    return ET.Element('{%s}%s'%(__namespace__,name))
 
 class arXML():
     reNameSpace  = re.compile(r'{(.*)}')
@@ -135,6 +146,8 @@ class arXML():
         return which.tag.replace('{%s}'%(__namespace__),'')
     def FIND(self,which,what):
         return which.find('{%s}%s'%(__namespace__,what))
+    def FINDALL(self,which,what):
+        return which.findall('{%s}%s'%(__namespace__,what))    
     def URL(self,url=''):
         ''' Uniform Resource Locator'''
         ARDEBUG('URL(%s)'%(url))
@@ -162,11 +175,8 @@ class arXML():
         return CFG
     def get_cfg_by_url(self,url):
         url = url.replace('EcucDefs','EcucCfgs')
-        result = self.URL(url)
-        if(result != None):
-            return result.attrib['UUID']
-        else:
-            return None
+        return self.URL(url)
+
     def new_cfg_by_url(self,url):
         # TODO: bug here when new
         ARDEBUG('new_cfg_by_url(%s)'%(url))
@@ -181,7 +191,7 @@ class arXML():
             if(result==None):result=self.new_from(url_p,url1)
             url_p = url_now
             result = result
-        return result.attrib['UUID']
+        return result
     def remove(self,uuid,starter = None,parent = None):
         if(starter == None):
             starter = self.URL('/AUTOSAR/EcucCfgs')
@@ -285,7 +295,10 @@ class arXML():
                         parameter_type2 += ('\t%s_%s_%s,\n'%(module_name,name[len(module_name):],liter_name)).upper()
                     else:
                         parameter_type2 += ('\t%s_%s_%s,\n'%(module_name,name,liter_name)).upper()
-            if(bHasLiter==False):parameter_type2 +='\tTODO: maybe specific to vendor as no LITERALS in arxml.\n'
+            if(bHasLiter==False):
+                parameter_type2 +='\tTODO: maybe specific to vendor as no LITERALS in arxml.\n'
+            else:
+                parameter_type2 = parameter_type2[:-2]+'\n'
             parameter_type2 += '} %s ;\n\n'%(self.type_name(module_name, name))
             if(bHasLiter):
                 parameter_type += parameter_type2
@@ -339,6 +352,40 @@ class arXML():
             else:
                 # in this case, parameter_type is a comment
                 container_type += '%s\t%s %s ;\n'%(parameter_type,basic_type,parameter_name)
+        for referrence in arxml_reference_list(container):
+            referrence_name = arxml_short_name(referrence)
+            basic_type = self.comment_str(arxml_desc(referrence))
+            basic_type += self.comment_str(arxml_introduction(referrence))
+            if(referrence.tag=='{%s}ECUC-REFERENCE-DEF'%(self.__namespace__) or 
+               referrence.tag=='{%s}ECUC-SYMBOLIC-NAME-REFERENCE-DEF'%(self.__namespace__)):
+                dest = arxml_DESTINATION_REF(referrence)
+                if(dest.attrib['DEST']=='ECUC-PARAM-CONF-CONTAINER-DEF'):
+                    grp = dest.text.split('/')
+                    basic_type += self.comment_str(dest.text)
+                    basic_type += '\t%s*'%(self.type_name(grp[3], grp[len(grp)-1]))
+                else:
+                    print dest
+            elif(referrence.tag=='{%s}ECUC-CHOICE-REFERENCE-DEF'%(self.__namespace__)):
+                basic_type += '\tuint8 %sWhich;\n'%(referrence_name)
+                basic_type += '\tunion\n\t{\n'
+                for dest in self.FIND(referrence,'DESTINATION-REFS'):
+                    if(dest.attrib['DEST']=='ECUC-PARAM-CONF-CONTAINER-DEF'):
+                        grp = dest.text.split('/')
+                        basic_type += self.comment_str(dest.text)
+                        basic_type += '\t\t%s* %s;\n'%(self.type_name(grp[3], grp[len(grp)-1]),grp[len(grp)-1])
+                    else:
+                        print dest  
+                basic_type += '\t}'
+            elif(referrence.tag=='{%s}ECUC-FOREIGN-REFERENCE-DEF'%(self.__namespace__)):
+                dest = self.FIND(referrence,'DESTINATION-TYPE')
+                basic_type += '\t/*TODO:%s*/void*'%(dest.text) 
+            elif(referrence.tag=='{%s}ECUC-INSTANCE-REFERENCE-DEF'%(self.__namespace__)):
+                dest = self.FIND(referrence,'DESTINATION-TYPE')
+                basic_type += '\t/*TODO:%s*/void*'%(dest.text)                                
+            else:
+                print referrence
+                basic_type += 'uint32'
+            container_type += '%s %s ;\n'%(basic_type,referrence_name)
         container_type += '} %s ;\n\n'%(self.type_name(module_name, name))
         if(self.is_type_there(name, module_name)):
             return '' # already generated
@@ -353,12 +400,12 @@ class arXML():
             fp = codecs.open('%s/%s_Types.h'%(directory,module_name),'w','utf-16')
             fp.write(__copy_right__ % (self.get_version()))
             fp.write('#ifndef %s_TYPES_H\n#define %s_TYPES_H\n\n'%(module_name.upper(),module_name.upper()))
+            fp.write('/* ============================ [ INCLUDES  ] ====================================================== */\n')
+            fp.write('#include "Std_Types.h"\n')
             fp.write('#ifdef __cplusplus\n')
             fp.write('namespace autosar {\n')
             fp.write('extern "C" {\n')
             fp.write('#endif\n')
-            fp.write('/* ============================ [ INCLUDES  ] ====================================================== */\n')
-            fp.write('#include "Std_Types.h"\n')
             fp.write('/* ============================ [ MACROS    ] ====================================================== */\n')
             fp.write('/* ============================ [ TYPES     ] ====================================================== */\n')
             container_types = ''
@@ -370,7 +417,7 @@ class arXML():
             fp.write('/* ============================ [ LOCALS    ] ====================================================== */\n')
             fp.write('/* ============================ [ FUNCTIONS ] ====================================================== */\n')
             fp.write('#ifdef __cplusplus\n')
-            fp.write('}}  /* name space */\n')
+            fp.write('}}  /* name space */\n#endif\n')
             fp.write('#endif /* %s_TYPES_H */\n\n'%(module_name.upper()))
             fp.close()
 ## } ================ [ FOR TYPES END ] =========================================        
@@ -427,18 +474,12 @@ class arXML():
         tree.write(arxml, encoding="utf-8", xml_declaration=True)
     def new_module_cfg(self,name):
         UUID = uuid.uuid1()
-        module_cfg = ET.Element('ECUC-MODULE-CFG')
+        module_cfg = arElement('ECUC-MODULE-CFG')
         module_cfg.attrib['UUID'] = 'ECUC:%s'%(UUID)
-        short_name = ET.Element('SHORT-NAME')
+        short_name = arElement('SHORT-NAME')
         module_cfg.append(short_name)
         short_name.text = name
         self.get_cfg_elements().append(module_cfg)
-        # TODO: why I need to save it and then reload
-        self.save()
-        self.__arxml__ =  ET.parse(self.arxml_file).getroot()
-        # TODO: here is the thing strange, 
-#         for each in self.get_cfg_elements():
-#             print each,arxml_short_name(each)
         return module_cfg
     def get_module_cfg_list(self):
         elements = self.get_cfg_elements()
@@ -449,4 +490,4 @@ def ARXML():
     return __arxml_global_instance__ 
     
 if __name__ == '__main__':
-    arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml')
+    arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml').generate_basic_type_header_files('.types')

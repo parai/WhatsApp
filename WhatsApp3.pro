@@ -68,7 +68,7 @@ FORMS    +=
 
 INCLUDEPATH += Application/Configuration
 INCLUDEPATH += Entry
-INCLUDEPATH += Entry/include
+INCLUDEPATH += Entry/include Entry/include/types
 INCLUDEPATH += Entry/platform/qt/kernel3
 INCLUDEPATH += Entry/platform/qt/kernel3/config
 INCLUDEPATH += Entry/communication/config   \
