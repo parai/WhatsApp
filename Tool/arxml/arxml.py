@@ -338,7 +338,7 @@ class arXML():
         for sub_containters in arxml_sub_containers_def_list(container):
             for sub_containter in sub_containters:
                 sub_container_type = self.generate_contariner_types(fp,module_name,sub_containter)
-                fp.write(sub_container_type)
+                fp.write(sub_container_type.encode('ascii','ignore'))
                 container_type += self.comment_str(arxml_introduction(sub_containter))
                 sub_container_name = arxml_short_name(sub_containter)
                 container_type += '\t%s* %s ;\n'%(self.type_name(module_name, sub_container_name),sub_container_name)
@@ -397,7 +397,7 @@ class arXML():
         self.__type_marker = {}
         for module_def in self.get_module_def_list():
             module_name = arxml_short_name(module_def)
-            fp = codecs.open('%s/%s_Types.h'%(directory,module_name),'w','utf-16')
+            fp = open('%s/%s_Types.h'%(directory,module_name),'w')
             fp.write(__copy_right__ % (self.get_version()))
             fp.write('#ifndef %s_TYPES_H\n#define %s_TYPES_H\n\n'%(module_name.upper(),module_name.upper()))
             fp.write('/* ============================ [ INCLUDES  ] ====================================================== */\n')
@@ -411,7 +411,7 @@ class arXML():
             container_types = ''
             for container in arxml_containers(module_def):
                 container_types += self.generate_contariner_types(fp,module_name,container)
-            fp.write(container_types)
+            fp.write(container_types.encode('ascii','ignore'))
             fp.write('/* ============================ [ DATAS     ] ====================================================== */\n')
             fp.write('/* ============================ [ DECLARES  ] ====================================================== */\n')
             fp.write('/* ============================ [ LOCALS    ] ====================================================== */\n')
@@ -490,4 +490,4 @@ def ARXML():
     return __arxml_global_instance__ 
     
 if __name__ == '__main__':
-    arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml').generate_basic_type_header_files('.types')
+    arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml').generate_basic_type_header_files()
