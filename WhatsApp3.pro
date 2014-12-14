@@ -62,7 +62,76 @@ HEADERS  +=             \
     Entry/include/CanTp.h \
     Entry/include/Det.h \
     Entry/platform/qt/kernel3/task.h \
-    Entry/include/Rte.h
+    Entry/include/Rte.h \
+    Entry/include/types/Adc_Types.h \
+    Entry/include/types/BswM_Types.h \
+    Entry/include/types/Cal_Types.h \
+    Entry/include/types/Can_Types.h \
+    Entry/include/types/CanIf_Types.h \
+    Entry/include/types/CanNm_Types.h \
+    Entry/include/types/CanSM_Types.h \
+    Entry/include/types/CanTp_Types.h \
+    Entry/include/types/CanTrcv_Types.h \
+    Entry/include/types/Cdd_Types.h \
+    Entry/include/types/Com_Types.h \
+    Entry/include/types/ComM_Types.h \
+    Entry/include/types/CorTst_Types.h \
+    Entry/include/types/Crc_Types.h \
+    Entry/include/types/Csm_Types.h \
+    Entry/include/types/Dbg_Types.h \
+    Entry/include/types/Dcm_Types.h \
+    Entry/include/types/Dem_Types.h \
+    Entry/include/types/Det_Types.h \
+    Entry/include/types/Dio_Types.h \
+    Entry/include/types/Dlt_Types.h \
+    Entry/include/types/Ea_Types.h \
+    Entry/include/types/EcuC_Types.h \
+    Entry/include/types/EcuM_Types.h \
+    Entry/include/types/Eep_Types.h \
+    Entry/include/types/Eth_Types.h \
+    Entry/include/types/EthIf_Types.h \
+    Entry/include/types/EthSm_Types.h \
+    Entry/include/types/EthTrcv_Types.h \
+    Entry/include/types/Fee_Types.h \
+    Entry/include/types/FiM_Types.h \
+    Entry/include/types/Fls_Types.h \
+    Entry/include/types/FlsTst_Types.h \
+    Entry/include/types/Fr_Types.h \
+    Entry/include/types/FrArTp_Types.h \
+    Entry/include/types/FrIf_Types.h \
+    Entry/include/types/FrNm_Types.h \
+    Entry/include/types/FrSM_Types.h \
+    Entry/include/types/FrTp_Types.h \
+    Entry/include/types/FrTrcv_Types.h \
+    Entry/include/types/Gpt_Types.h \
+    Entry/include/types/Icu_Types.h \
+    Entry/include/types/IpduM_Types.h \
+    Entry/include/types/J1939Tp_Types.h \
+    Entry/include/types/Lin_Types.h \
+    Entry/include/types/LinIf_Types.h \
+    Entry/include/types/LinNm_Types.h \
+    Entry/include/types/LinSM_Types.h \
+    Entry/include/types/LinTp_Types.h \
+    Entry/include/types/LinTrcv_Types.h \
+    Entry/include/types/Mcu_Types.h \
+    Entry/include/types/MemIf_Types.h \
+    Entry/include/types/MemMap_Types.h \
+    Entry/include/types/Nm_Types.h \
+    Entry/include/types/NvM_Types.h \
+    Entry/include/types/Os_Types.h \
+    Entry/include/types/PduR_Types.h \
+    Entry/include/types/Port_Types.h \
+    Entry/include/types/Pwm_Types.h \
+    Entry/include/types/RamTst_Types.h \
+    Entry/include/types/Rte_Types.h \
+    Entry/include/types/SoAd_Types.h \
+    Entry/include/types/Spi_Types.h \
+    Entry/include/types/StbM_Types.h \
+    Entry/include/types/UdpNm_Types.h \
+    Entry/include/types/Wdg_Types.h \
+    Entry/include/types/WdgIf_Types.h \
+    Entry/include/types/WdgM_Types.h \
+    Entry/include/types/Xcp_Types.h
 
 FORMS    +=
 

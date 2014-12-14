@@ -19,21 +19,28 @@
 
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
+#include "NvM.h"
+#include "FiM.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
 #endif
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
+// TODO: following unknown types
+typedef int Dem_ExternalCSDataElementClassType;
+typedef int Dem_ExternalSRDataElementClassType;
+typedef int Dem_InternalDataElementClassType;
+
 /* Function name of prototype "InitMonitorForFunction". */
-/* TODO: 
- * typedef void (*Dem_CallbackInitMForFFncType)(void);
- */
+/* TODO: */
+typedef void (*Dem_CallbackInitMForFFncType)(void);
+
 
 /* The presence of this container indicates, that the Dem has access to an "InitMonitorForFunction"
  *  callback, which the Dem will call to initialize a monitor.
  */
-typedef struct
+typedef struct Dem_CallbackInitMForFType_tag
 {
 	Dem_CallbackInitMForFFncType DemCallbackInitMForFFnc ;
 } Dem_CallbackInitMForFType ;
@@ -48,7 +55,7 @@ typedef enum
 } Dem_DTCSeverityType ;
 
 /* This container contains the configuration (parameters) for DTCClass. */
-typedef struct
+typedef struct Dem_DTCClassType_tag
 {
 /* In case the container has a DemCallbackInitMForFFnc, this parameter defines the name of the
  *  function that the Dem will call. 
@@ -80,58 +87,55 @@ typedef struct
 } Dem_DTCClassType ;
 
 /* Function name of prototype "ClearEventAllowed". */
-/* TODO: 
- * typedef void (*Dem_CallbackClearEventAllowedFncType)(void);
- */
+/* TODO: */
+typedef void (*Dem_CallbackClearEventAllowedFncType)(void);
+
 
 /* The presence of this container indicates that the Dem has access to a "ClearEventAllowed" callback.
  */
-typedef struct
+typedef struct Dem_CallbackClearEventAllowedType_tag
 {
 	Dem_CallbackClearEventAllowedFncType DemCallbackClearEventAllowedFnc ;
 } Dem_CallbackClearEventAllowedType ;
 
 /* Function name of prototype "EventDataChanged" */
-/* TODO: 
- * typedef void (*Dem_CallbackEventDataChangedFncType)(void);
- */
+/* TODO: */
+typedef void (*Dem_CallbackEventDataChangedFncType)(void);
 
 /* The presence of this container indicates that the Dem has access to an "EventDataChanged" callback.
  */
-typedef struct
+typedef struct Dem_CallbackEventDataChangedType_tag
 {
 	Dem_CallbackEventDataChangedFncType DemCallbackEventDataChangedFnc ;
 } Dem_CallbackEventDataChangedType ;
 
 /* Function name of prototype "EventStatusChanged" */
-/* TODO: 
- * typedef void (*Dem_CallbackEventStatusChangedFncType)(void);
- */
+/* TODO:  */
+typedef void (*Dem_CallbackEventStatusChangedFncType)(void);
 
 /* The presence of this container indicates, that the Dem has access to an "EventStatusChanged"
  *  callback, which the Dem will call to notify other components about the change in the status
  *  of an event.
  */
-typedef struct
+typedef struct Dem_CallbackEventStatusChangedType_tag
 {
 	Dem_CallbackEventStatusChangedFncType DemCallbackEventStatusChangedFnc ;
 } Dem_CallbackEventStatusChangedType ;
 
 /* Function name of prototype "InitMonitorForEvent". */
-/* TODO: 
- * typedef void (*Dem_CallbackInitMForEFncType)(void);
- */
+/* TODO:  */
+typedef void (*Dem_CallbackInitMForEFncType)(void);
 
 /* The presence of this container indicates, that the Dem has access to an "InitMonitorForEvent"
  *  callback, which the Dem will call to initialize a monitor.
  */
-typedef struct
+typedef struct Dem_CallbackInitMForEType_tag
 {
 	Dem_CallbackInitMForEFncType DemCallbackInitMForEFnc ;
 } Dem_CallbackInitMForEType ;
 
 /* Debounce algorithm class: counter based, time based, or monitor internal. */
-typedef struct
+typedef struct Dem_DebounceAlgorithmClassType_tag
 {
 } Dem_DebounceAlgorithmClassType ;
 
@@ -151,7 +155,7 @@ typedef enum
 } Dem_IndicatorFailureCycleSourceType ;
 
 /* This container contains the event specific configuration of Indicators. */
-typedef struct
+typedef struct Dem_IndicatorAttributeType_tag
 {
 	Dem_IndicatorBehaviourType DemIndicatorBehaviour ;
 /* Defines the number of failure cycles for the WarningIndicatorOnCriteria. */
@@ -162,14 +166,14 @@ typedef struct
 /* Kind of failure cycle for the indicator controlled by the according event used for the WarningIndicatorOnCriteria.
  */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemOperationCycle */
-	Dem_OperationCycleType* DemIndicatorFailureCycleRef ;
+    struct Dem_OperationCycleType_tag* DemIndicatorFailureCycleRef ;
 /* Kind of healing cycle for the indicator controlled by the according event used for the WarningIndicatorOffCriteria.
  */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemOperationCycle */
-	Dem_OperationCycleType* DemIndicatorHealingCycleRef ;
+    struct Dem_OperationCycleType_tag* DemIndicatorHealingCycleRef ;
 /* Reference to the used indicator. */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemIndicator */
-	Dem_IndicatorType* DemIndicatorRef ;
+    struct Dem_IndicatorType_tag* DemIndicatorRef ;
 } Dem_IndicatorAttributeType ;
 
 /* The event destination assigns events to none, one or multiple origins. */
@@ -212,7 +216,7 @@ typedef enum
 } Dem_EventSignificanceType ;
 
 /* This container contains the configuaration (parameters) for EventClass */
-typedef struct
+typedef struct Dem_EventClassType_tag
 {
 	Dem_DebounceAlgorithmClassType* DemDebounceAlgorithmClass ;
 	Dem_IndicatorAttributeType* DemIndicatorAttribute ;
@@ -254,22 +258,22 @@ typedef struct
 	union
 	{
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemAgingCycle */
-		Dem_AgingCycleType* DemAgingCycle;
+        struct Dem_AgingCycleType_tag* DemAgingCycle;
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemOperationCycle */
-		Dem_OperationCycleType* DemOperationCycle;
+        struct Dem_OperationCycleType_tag* DemOperationCycle;
 	} DemAgingCycleRef ;
 /* References an enable condition group. */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemEnableConditionGroup */
-	Dem_EnableConditionGroupType* DemEnableConditionGroupRef ;
+    struct Dem_EnableConditionGroupTyp_tage* DemEnableConditionGroupRef ;
 /* Kind of failure cycle for the event based fault confirmation. */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemOperationCycle */
-	Dem_OperationCycleType* DemEventFailureCycleRef ;
+    struct Dem_OperationCycleType_tag* DemEventFailureCycleRef ;
 /* Kind of operation cycle for the event (e.g. power cycle, driving cycle, ...) */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemOperationCycle */
-	Dem_OperationCycleType* DemOperationCycleRef ;
+    struct Dem_OperationCycleType_tag* DemOperationCycleRef ;
 /* References a storage condition group. */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemStorageConditionGroup */
-	Dem_StorageConditionGroupType* DemStorageConditionGroupRef ;
+    struct Dem_StorageConditionGroupType_tag* DemStorageConditionGroupRef ;
 } Dem_EventClassType ;
 
 /* This parameter is used to distinguish between SW-C and BSW events. SW-C events are reported
@@ -282,7 +286,7 @@ typedef enum
 } Dem_EventKindType ;
 
 /* This container contains the configuaration (parameters) for events. */
-typedef struct
+typedef struct Dem_EventParameterType_tag
 {
 /* In case there is a DemCallbackClearEventAllowedFnc, this parameter defines the name of the function
  *  that the Dem will call. 
@@ -339,10 +343,10 @@ typedef struct
 	Dem_DTCClassType* DemDTCClassRef ;
 /* This reference defines the link to an extended data class sampler. */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemExtendedDataClass */
-	Dem_ExtendedDataClassType* DemExtendedDataClassRef ;
+    struct Dem_ExtendedDataClassType_tag* DemExtendedDataClassRef ;
 /* These references define the links to a freeze frame class sampler. */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemFreezeFrameClass */
-	Dem_FreezeFrameClassType* DemFreezeFrameClassRef ;
+    struct Dem_FreezeFrameClassType_tag* DemFreezeFrameClassRef ;
 /* This parameter defines the list of dedicated freeze frame record numbers associated with the
  *  diagnostic event. These record numbers are assigned to the freeze frame records (instead of
  *  calculated record numbers).
@@ -350,11 +354,11 @@ typedef struct
 /* This parameter is only required for configured record numeration (refer to DemTypeOfFreezeFrameRecordNumeration).
  */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemFreezeFrameRecNumClass */
-	Dem_FreezeFrameRecNumClassType* DemFreezeFrameRecNumClassRef ;
+    struct Dem_FreezeFrameRecNumClassType_tag* DemFreezeFrameRecNumClassRef ;
 } Dem_EventParameterType ;
 
 /* This container contains the different data elements contained in the specific PID. */
-typedef struct
+typedef struct Dem_PidDataElementType_tag
 {
 /* This reference contains the link to a data element class. */
 	uint8 DemPidDataElementClassRefWhich;
@@ -372,7 +376,7 @@ typedef struct
 /* This container contains the different PIDs for the single global OBD relevant freeze frame class.
  *  It is assembled out of one or several data elements.
  */
-typedef struct
+typedef struct Dem_PidClassType_tag
 {
 	Dem_PidDataElementType* DemPidDataElement ;
 /* identifier of the PID */
@@ -384,19 +388,18 @@ typedef struct
  *  the symbolic name of the aging cycle name. These aging cycles are reported via API Dem_SetAgingCycleState
  *  only.
  */
-typedef struct
+typedef struct Dem_AgingCycleType_tag
 {
 } Dem_AgingCycleType ;
 
 /* Function name of prototype "DTCStatusChanged". */
-/* TODO: 
- * typedef void (*Dem_CallbackDTCStatusChangedFncType)(void);
- */
+/* TODO: */
+typedef void (*Dem_CallbackDTCStatusChangedFncType)(void);
 
 /* The presence of this container indicates, that the Dem has access to a "DTCStatusChanged" callback,
  *  which the Dem will call to notify other components about the change in the status of a DTC.
  */
-typedef struct
+typedef struct Dem_CallbackDTCStatusChangedType_tag
 {
 /* Note: If the parameter DemTriggerDcmReports is enabled, this parameter shall not be "Dcm_DemTriggerOnDTCStatus".
  */
@@ -406,14 +409,14 @@ typedef struct
 /* This container contains the configuration (parameters) for an internal/external data element
  *  class.
  */
-typedef struct
+typedef struct Dem_DataElementClassType_tag
 {
 } Dem_DataElementClassType ;
 
 /* This container contains the configuration (parameters) for a data Id class. It is assembled
  *  out of one or several data elements.
  */
-typedef struct
+typedef struct Dem_DidClassType_tag
 {
 /* Identifier of the Data ID. */
 	uint16 DemDidIdentifier ;
@@ -431,7 +434,7 @@ typedef struct
 } Dem_DidClassType ;
 
 /* This container contains the configuration (parameters) for enable conditions. */
-typedef struct
+typedef struct Dem_EnableConditionType_tag
 {
 /* This parameter should not be changeable by user, because the Id should be generated by Dem itself
  *  to prevent gaps and multiple use of an Id. The enable conditions should be sequentially ordered
@@ -452,7 +455,7 @@ typedef struct
 } Dem_EnableConditionType ;
 
 /* This container contains the configuration (parameters) for enable condition groups. */
-typedef struct
+typedef struct Dem_EnableConditionGroupType_tag
 {
 /* References an enable condition. */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemEnableCondition */
@@ -460,11 +463,11 @@ typedef struct
 } Dem_EnableConditionGroupType ;
 
 /* This class contains the combinations of extended data records for an extended data class. */
-typedef struct
+typedef struct Dem_ExtendedDataClassType_tag
 {
 /* This reference contains the link to an extended data class record. */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemExtendedDataRecordClass */
-	Dem_ExtendedDataRecordClassType* DemExtendedDataRecordClassRef ;
+    struct Dem_ExtendedDataRecordClassType_tag* DemExtendedDataRecordClassRef ;
 } Dem_ExtendedDataClassType ;
 
 /* This parameter defines the case, when the extended data record is stored/updated. */
@@ -475,7 +478,7 @@ typedef enum
 } Dem_ExtendedDataRecordUpdateType ;
 
 /* This container contains the configuration (parameters) for an extended data record class. */
-typedef struct
+typedef struct Dem_ExtendedDataRecordClassType_tag
 {
 /* One or more extended data records can be assigned to one diagnostic event/DTC.
  * 
@@ -499,7 +502,7 @@ typedef struct
 } Dem_ExtendedDataRecordClassType ;
 
 /* This container contains the combinations of DIDs for a non OBD relevant freeze frame class. */
-typedef struct
+typedef struct Dem_FreezeFrameClassType_tag
 {
 /* For OBD relevant data */
 /* Multiple PIDs can be relevant per freeze frame. */
@@ -511,7 +514,7 @@ typedef struct
  *  to an event. The order of record numbers in this list is assigned to the chronological order
  *  of the according freeze frame records.
  */
-typedef struct
+typedef struct Dem_FreezeFrameRecNumClassType_tag
 {
 /* The range of this value is defined by ISO 14229-1 (0x01 .. 0xFE). */
 /* This parameter defines a record number for a freeze frame record. This record number is unique
@@ -521,7 +524,7 @@ typedef struct
 } Dem_FreezeFrameRecNumClassType ;
 
 /* This container contains the general OBD-specific configuration (parameters) of the Dem module. */
-typedef struct
+typedef struct Dem_GeneralOBDType_tag
 {
 /* Input variable for the accelerator paddle information, which is assigned to a specific data
  *  element used as interface for the Dem-internal PID calculations.
@@ -614,7 +617,7 @@ typedef struct
 } Dem_GeneralOBDType ;
 
 /* This container contains the configuaration (parameters) for DTC groups. */
-typedef struct
+typedef struct Dem_GroupOfDTCType_tag
 {
 /* (Range: 3 byte, 0x000000 is only available for the emission-related DTC group, 0xFFFFFF is reserved
  *  for 'all DTCs', according to ISO14229-1 Annex D.1,)
@@ -626,7 +629,7 @@ typedef struct
 } Dem_GroupOfDTCType ;
 
 /* This container contains the configuration (parameters) for Indicators. */
-typedef struct
+typedef struct Dem_IndicatorType_tag
 {
 /* Unique identifier of an indicator. */
 	uint8 DemIndicatorID ;
@@ -636,7 +639,7 @@ typedef struct
  *  is used from the Dem. If no permanent storage of event memory entries is required, no block
  *  needs to be configured.
  */
-typedef struct
+typedef struct Dem_NvRamBlockIdType_tag
 {
 /* This reference contains the link to a non-volatile memory block. For post build time configurations
  *  worst case szenario shall be used.
@@ -660,7 +663,7 @@ typedef enum
  *  the short name of the container will be used in the Ecu Configuration Description to specify
  *  the symbolic name of the operation cycle name.
  */
-typedef struct
+typedef struct Dem_OperationCycleType_tag
 {
 /* Further cycle types can be specified as part of the Dem delivery. */
 	Dem_OperationCycleTypeType DemOperationCycleType ;
@@ -697,7 +700,7 @@ typedef enum
 /* This container contains the OBD specific ratio Id configuraiton. It is related to a specific
  *  event, a FID, and an IUMPR group.
  */
-typedef struct
+typedef struct Dem_RatioIdType_tag
 {
 	Dem_IUMPRGroupType DemIUMPRGroup ;
 	Dem_RatioIdTypeType DemRatioIdType ;
@@ -718,7 +721,7 @@ typedef struct
 } Dem_RatioIdType ;
 
 /* This container contains the configuration (parameters) for storage conditions. */
-typedef struct
+typedef struct Dem_StorageConditionType_tag
 {
 /* Defines a unique storage condition Id. This parameter should not be changeable by user, because
  *  the Id should be generated by Dem itself to prevent gaps and multiple use of an Id. The storage
@@ -736,7 +739,7 @@ typedef struct
 } Dem_StorageConditionType ;
 
 /* This container contains the configuration (parameters) for storage condition groups. */
-typedef struct
+typedef struct Dem_StorageConditionGroupType_tag
 {
 /* References an enable condition. */
 /* /AUTOSAR/EcucDefs/Dem/DemGeneral/DemStorageCondition */
@@ -772,21 +775,22 @@ typedef enum
 
 /* This parameter defines the point in time, when the extended data collection is done for the
  *  initial event memory entry.
- */
+ */ /* TODO */
 typedef enum
 {
 	DEM_TRIGGER_EVENT_MEMORY_STORAGE,
 	DEM_TRIGGER_TESTFAILED
-} Dem_ExtendedDataCaptureType ;
+} Dem_CaptureType ;
 
 /* This parameter defines the point in time, when the freeze frame data collection is done for
  *  the initial event memory entry.
  */
+/*
 typedef enum
 {
-	DEM_TRIGGER_EVENT_MEMORY_STORAGE,
-	DEM_TRIGGER_TESTFAILED
-} Dem_FreezeFrameCaptureType ;
+    DEM_TRIGGER_EVENT_MEMORY_STORAGE,
+    DEM_TRIGGER_TESTFAILED
+} Dem_FreezeFrameCaptureType ;*/
 
 /* This configuration switch defines the consideration of the fault confirmation process for the
  *  occurrence counter. For OBD and mixed systems (OBD/non OBD, refer to DemOBDSupport) the fault
@@ -840,7 +844,7 @@ typedef enum
  *  multiple configuration sets. This container is a MultipleConfigurationContainer, i.e. this
  *  container and its sub-containers exist once per configuration set.
  */
-typedef struct
+typedef struct Dem_ConfigSetType_tag
 {
 	Dem_DTCClassType* DemDTCClass ;
 /* Note that this container definition does not explicitly define a symbolic name parameter. Instead,
@@ -852,7 +856,7 @@ typedef struct
 } Dem_ConfigSetType ;
 
 /* This container contains the configuration (parameters) of the BSW Dem */
-typedef struct
+typedef struct Dem_GeneralType_tag
 {
 	Dem_AgingCycleType* DemAgingCycle ;
 /* In case there is a DemCallbackDTCStatusChangedFnc, this parameter defines the name of the function
@@ -930,8 +934,8 @@ typedef struct
  */
 /* This configuration switch defines, whether support for event displacement is enabled or not. */
 	boolean DemEventDisplacementSupport ;
-	Dem_ExtendedDataCaptureType DemExtendedDataCapture ;
-	Dem_FreezeFrameCaptureType DemFreezeFrameCapture ;
+    Dem_CaptureType DemExtendedDataCapture ;
+    Dem_CaptureType DemFreezeFrameCapture ;
 /* Name of the header file(s) to be included by the Dem module containing the used C-callback declarations.
  */
 	char* DemHeaderFileInclusion ;

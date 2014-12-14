@@ -19,6 +19,8 @@
 
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
+#include "Gpt.h"
+#include "EcuC.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
@@ -26,8 +28,9 @@ extern "C" {
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
 /* This container defines which type of notification is used when the alarm expires. */
-typedef struct
+typedef struct Os_AlarmActionType_tag
 {
+    int TODO; // TODO
 } Os_AlarmActionType ;
 
 /* This specifies the type of autostart for the alarm.. */
@@ -40,7 +43,7 @@ typedef enum
 /* If present this container defines if an alarm is started automatically at system start-up depending
  *  on the application mode.
  */
-typedef struct
+typedef struct Os_AlarmAutostartType_tag
 {
 /* The relative or absolute tick value when the alarm expires for the first time. Note that for
  *  an alarm which is RELATIVE the value must be at bigger than 0.
@@ -51,11 +54,11 @@ typedef struct
 	uint64 OsAlarmCycleTime ;
 /* Reference to the application modes for which the AUTOSTART shall be performed */
 /* /AUTOSAR/EcucDefs/Os/OsAppMode */
-	Os_AppModeType* OsAlarmAppModeRef ;
+    struct Os_AppModeType_tag* OsAlarmAppModeRef ;
 } Os_AlarmAutostartType ;
 
 /* Container to structure the OS-Application-specific hooks */
-typedef struct
+typedef struct Os_ApplicationHooksType_tag
 {
 /* true: Hook is called
                                                 false: Hook is not called */
@@ -75,18 +78,17 @@ typedef struct
  *  also supersedes the OSEK OIL attribute TRUSTED in APPLICATION because the optionality of this
  *  parameter is describing that already.
  */
-/* TODO: 
- * typedef void (*Os_TrustedFunctionNameType)(void);
- */
+/* TODO: */
+typedef void (*Os_TrustedFunctionNameType)(void);
 
 /* Container to structure the configration parameters of trusted functions */
-typedef struct
+typedef struct Os_ApplicationTrustedFunctionType_tag
 {
 	Os_TrustedFunctionNameType OsTrustedFunctionName ;
 } Os_ApplicationTrustedFunctionType ;
 
 /* This Container contains the information who will drive the counter. */
-typedef struct
+typedef struct Os_DriverType_tag
 {
 /* Reference to the GPT channel. */
 /* /AUTOSAR/EcucDefs/Gpt/GptChannelConfigSet/GptChannelConfiguration */
@@ -96,7 +98,7 @@ typedef struct
 /* Allows the user to define constants which can be e.g. used to compare time values with timer
  *  tick values.
  */
-typedef struct
+typedef struct Os_TimeConstantType_tag
 {
 /* This parameter contains the value of the constant in seconds. */
 /* in fact, it should be type <float> according to arxml, but only supported in tool side*/
@@ -111,7 +113,7 @@ typedef enum
 } Os_CounterTypeType ;
 
 /* Data properties of the data to be transferred on the IOC communication channel. */
-typedef struct
+typedef struct Os_IocDataPropertiesType_tag
 {
 /* This parameter is used to define in which order the data is send, e.g. whether IocSendGroup(A,B)
  *  or IocSendGroup(B,A) shall be used.
@@ -145,14 +147,13 @@ typedef enum
 /* This attribute defines the name of a callback function that the IOC shall call on the receiving
  *  core for each data reception.
  */
-/* TODO: 
- * typedef void (*Os_IocReceiverPullCBType)(void);
- */
+/* TODO: */
+typedef void (*Os_IocReceiverPullCBType)(void);
 
 /* Representation of receiver properties for one communication. For each OsIocCommunication (1:1
  *  or N:1) one receiver has to be defined. This container should be instanciated within an OsIocCommunication.
  */
-typedef struct
+typedef struct Os_IocReceiverPropertiesType_tag
 {
 	Os_IocFunctionImplementationKindType OsIocFunctionImplementationKind ;
 /* In case of non existence of this attribute no ReceiverPullCB notification shall be applied by
@@ -180,14 +181,14 @@ typedef struct
  *  core notification to realize over IRQs
  */
 /* /AUTOSAR/EcucDefs/Os/OsApplication */
-	Os_ApplicationType* OsIocReceivingOsApplicationRef ;
+    struct Os_ApplicationType_tag* OsIocReceivingOsApplicationRef ;
 } Os_IocReceiverPropertiesType ;
 
 /* Representation of sender properties for one communication. For each OsIocCommunication one (1:1)
  *  or many senders (N:1) have to be defined. Multiplicity > 1 (N:1 communication) is only allowed
  *  for Multiplicity of OsIocDataTypeRef = 1.
  */
-typedef struct
+typedef struct Os_IocSenderPropertiesType_tag
 {
 	Os_IocFunctionImplementationKindType OsIocFunctionImplementationKind ;
 /* This parameter does not exist in 1:1 communication. */
@@ -206,13 +207,13 @@ typedef struct
  *  core notification to realize over IRQs
  */
 /* /AUTOSAR/EcucDefs/Os/OsApplication */
-	Os_ApplicationType* OsIocSendingOsApplicationRef ;
+    struct Os_ApplicationType_tag* OsIocSendingOsApplicationRef ;
 } Os_IocSenderPropertiesType ;
 
 /* Representation of a 1:1 or N:1 communication between software parts located in different OS-Applications
  *  that are bound to the same or to different cores.
  */
-typedef struct
+typedef struct Os_IocCommunicationType_tag
 {
 	Os_IocDataPropertiesType* OsIocDataProperties ;
 	Os_IocReceiverPropertiesType* OsIocReceiverProperties ;
@@ -227,7 +228,7 @@ typedef struct
 } Os_IocCommunicationType ;
 
 /* This container contains a list of times the interrupt uses resources. */
-typedef struct
+typedef struct Os_IsrResourceLockType_tag
 {
 /* This parameter contains the maximum time the interrupt is allowed to hold the given resource
  *  (in seconds).
@@ -236,11 +237,11 @@ typedef struct
 	uint64 OsIsrResourceLockBudget ;
 /* Reference to the resource the locking time is depending on */
 /* /AUTOSAR/EcucDefs/Os/OsResource */
-	Os_ResourceType* OsIsrResourceLockResourceRef ;
+    struct Os_ResourceType_tag* OsIsrResourceLockResourceRef ;
 } Os_IsrResourceLockType ;
 
 /* This container contains all parameters which are related to timing protection */
-typedef struct
+typedef struct Os_IsrTimingProtectionType_tag
 {
 	Os_IsrResourceLockType* OsIsrResourceLock ;
 /* This parameter contains the maximum time for which the ISR is allowed to lock all interrupts
@@ -269,7 +270,7 @@ typedef enum
 } Os_IsrCategoryType ;
 
 /* Container to structure all hooks belonging to the OS */
-typedef struct
+typedef struct Os_HooksType_tag
 {
 /* true: Hook is called
                                                 false: Hook is not called */
@@ -339,7 +340,7 @@ typedef enum
  *  System. The options to start a schedule table correspond to the API calls to start schedule
  *  tables during runtime.
  */
-typedef struct
+typedef struct Os_ScheduleTableAutostartType_tag
 {
 	Os_ScheduleTableAutostartTypeType OsScheduleTableAutostartType ;
 /* Relative offset in ticks when the schedule table starts. Only used if the OsScheduleTableAutostartType
@@ -351,29 +352,29 @@ typedef struct
 	uint64 OsScheduleTableStartValue ;
 /* Reference in which application modes the schedule table should be started during startup */
 /* /AUTOSAR/EcucDefs/Os/OsAppMode */
-	Os_AppModeType* OsScheduleTableAppModeRef ;
+    struct Os_AppModeType_tag* OsScheduleTableAppModeRef ;
 } Os_ScheduleTableAutostartType ;
 
 /* Event that is triggered by that schedule table. */
-typedef struct
+typedef struct Os_ScheduleTableEventSettingType_tag
 {
 /* Reference to event that will be set by action */
 /* /AUTOSAR/EcucDefs/Os/OsEvent */
-	Os_EventType* OsScheduleTableSetEventRef ;
+    struct Os_EventType_tag* OsScheduleTableSetEventRef ;
 /* /AUTOSAR/EcucDefs/Os/OsTask */
-	Os_TaskType* OsScheduleTableSetEventTaskRef ;
+    struct Os_TaskType_tag* OsScheduleTableSetEventTaskRef ;
 } Os_ScheduleTableEventSettingType ;
 
 /* Task that is triggered by that schedule table. */
-typedef struct
+typedef struct Os_ScheduleTableTaskActivationType_tag
 {
 /* Reference to task that will be activated by action */
 /* /AUTOSAR/EcucDefs/Os/OsTask */
-	Os_TaskType* OsScheduleTableActivateTaskRef ;
+    struct Os_TaskType_tag* OsScheduleTableActivateTaskRef ;
 } Os_ScheduleTableTaskActivationType ;
 
 /* Adjustable expiry point */
-typedef struct
+typedef struct Os_ScheduleTblAdjustableExpPointType_tag
 {
 /* The maximum positive adjustment that can be made to the expiry point offset (in ticks). */
 	uint64 OsScheduleTableMaxLengthen ;
@@ -382,7 +383,7 @@ typedef struct
 } Os_ScheduleTblAdjustableExpPointType ;
 
 /* The point on a Schedule Table at which the OS activates tasks and/or sets events */
-typedef struct
+typedef struct Os_ScheduleTableExpiryPointType_tag
 {
 	Os_ScheduleTableEventSettingType* OsScheduleTableEventSetting ;
 	Os_ScheduleTableTaskActivationType* OsScheduleTableTaskActivation ;
@@ -400,7 +401,7 @@ typedef enum
 } Os_ScheduleTblSyncStrategyType ;
 
 /* This container specifies the synchronization parameters of the schedule table. */
-typedef struct
+typedef struct Os_ScheduleTableSyncType_tag
 {
 /* This configuration is only valid if the explicit synchronisation is used. */
 	uint64 OsScheduleTblExplicitPrecision ;
@@ -410,28 +411,28 @@ typedef struct
 /* This container determines whether the task is activated during the system start-up procedure
  *  or not for some specific application modes.
  */
-typedef struct
+typedef struct Os_TaskAutostartType_tag
 {
 /* Reference to application modes in which that task is activated on startup of the OS */
 /* /AUTOSAR/EcucDefs/Os/OsAppMode */
-	Os_AppModeType* OsTaskAppModeRef ;
+    struct Os_AppModeType_tag* OsTaskAppModeRef ;
 } Os_TaskAutostartType ;
 
 /* This container contains the worst case time between getting and releasing a given resource (in
  *  seconds).
  */
-typedef struct
+typedef struct Os_TaskResourceLockType_tag
 {
 /* This parameter contains the maximum time the task is allowed to lock the resource (in seconds) */
 /* in fact, it should be type <float> according to arxml, but only supported in tool side*/
 	uint64 OsTaskResourceLockBudget ;
 /* Reference to the resource used by the task */
 /* /AUTOSAR/EcucDefs/Os/OsResource */
-	Os_ResourceType* OsTaskResourceLockResourceRef ;
+    struct Os_ResourceType_tag* OsTaskResourceLockResourceRef ;
 } Os_TaskResourceLockType ;
 
 /* This container contains all parameters regarding timing protection of the task. */
-typedef struct
+typedef struct Os_TaskTimingProtectionType_tag
 {
 	Os_TaskResourceLockType* OsTaskResourceLock ;
 /* This parameter contains the maximum time for which the task is allowed to lock all interrupts
@@ -462,27 +463,28 @@ typedef enum
 /* An OsAlarm may be used to asynchronously inform or activate a specific task. It is possible
  *  to start alarms automatically at system start-up depending on the application mode.
  */
-typedef struct
+typedef struct Os_AlarmType_tag
 {
 	Os_AlarmActionType* OsAlarmAction ;
 	Os_AlarmAutostartType* OsAlarmAutostart ;
 /* Reference to applications which have an access to this object. */
 /* /AUTOSAR/EcucDefs/Os/OsApplication */
-	Os_ApplicationType* OsAlarmAccessingApplication ;
+    struct Os_ApplicationType_tag* OsAlarmAccessingApplication ;
 /* Reference to the assigned counter for that alarm */
 /* /AUTOSAR/EcucDefs/Os/OsCounter */
-	Os_CounterType* OsAlarmCounterRef ;
+    struct Os_CounterType_tag* OsAlarmCounterRef ;
 } Os_AlarmType ;
 
 /* OsAppMode is the object used to define OSEK OS properties for an OSEK OS application mode. */
-typedef struct
+typedef struct Os_AppModeType_tag
 {
+    AppModeType AppMode;
 } Os_AppModeType ;
 
 /* An AUTOSAR OS must be capable of supporting a collection of OS objects (tasks, interrupts, alarms,
  *  hooks etc.) that form a cohesive functional unit. This collection of objects is termed an OS-Application.
  */
-typedef struct
+typedef struct Os_ApplicationType_tag
 {
 	Os_ApplicationHooksType* OsApplicationHooks ;
 	Os_ApplicationTrustedFunctionType* OsApplicationTrustedFunction ;
@@ -498,19 +500,19 @@ typedef struct
 	Os_AlarmType* OsAppAlarmRef ;
 /* References the OsCounters that belong to the OsApplication. */
 /* /AUTOSAR/EcucDefs/Os/OsCounter */
-	Os_CounterType* OsAppCounterRef ;
+    struct Os_CounterType_tag* OsAppCounterRef ;
 /* Denotes which "EcucPartition" is implemented by this "OSApplication". */
 /* /AUTOSAR/EcucDefs/EcuC/EcucPartitionCollection/EcucPartition */
 	EcuC_PartitionType* OsAppEcucPartitionRef ;
 /* references which OsIsrs belong to the OsApplication */
 /* /AUTOSAR/EcucDefs/Os/OsIsr */
-	Os_IsrType* OsAppIsrRef ;
+    struct Os_IsrType_tag* OsAppIsrRef ;
 /* References the OsScheduleTables that belong to the OsApplication. */
 /* /AUTOSAR/EcucDefs/Os/OsScheduleTable */
-	Os_ScheduleTableType* OsAppScheduleTableRef ;
+    struct Os_ScheduleTableType_tag* OsAppScheduleTableRef ;
 /* references which OsTasks belong to the OsApplication */
 /* /AUTOSAR/EcucDefs/Os/OsTask */
-	Os_TaskType* OsAppTaskRef ;
+    struct Os_TaskType_tag* OsAppTaskRef ;
 /* Optionally one task of an OS-Application may be defined as Restart Task. */
 /* Multiplicity = 1: Restart Task is activated by the Operating System if the protection hook requests
  *  it.
@@ -519,11 +521,11 @@ typedef struct
  *  a protection error happened.
  */
 /* /AUTOSAR/EcucDefs/Os/OsTask */
-	Os_TaskType* OsRestartTask ;
+    struct Os_TaskType_tag* OsRestartTask ;
 } Os_ApplicationType ;
 
 /* Configuration information for the counters that belong to the OsApplication. */
-typedef struct
+typedef struct Os_CounterType_tag
 {
 /* This configuration is only valid if the counter has OsCounterType set to HARDWARE.
  * 
@@ -562,14 +564,14 @@ typedef struct
 } Os_CounterType ;
 
 /* Representation of OS events in the configuration context. Adopted from the OSEK OIL specification. */
-typedef struct
+typedef struct Os_EventType_tag
 {
 /* If event mask would be set to AUTO in OIL, this parameter should be omitted here. */
 	uint64 OsEventMask ;
 } Os_EventType ;
 
 /* Configuration of the IOC (Inter OS Application Communicator). */
-typedef struct
+typedef struct Os_IocType_tag
 {
 /* The name shall begin with the name of the sending software service and be followed by a unique
  *  identifier delivered by the sending software service. In the case of RTE as user attention
@@ -584,7 +586,7 @@ typedef struct
 } Os_IocType ;
 
 /* The OsIsr container represents an OSEK interrupt service routine. */
-typedef struct
+typedef struct Os_IsrType_tag
 {
 /* If the container exists, the timing protection is used for this interrupt. If the container
  *  does not exist, the interrupt is not supervised regarding timing violations.
@@ -593,11 +595,11 @@ typedef struct
 	Os_IsrCategoryType OsIsrCategory ;
 /* This reference defines the resources accessed by this ISR. */
 /* /AUTOSAR/EcucDefs/Os/OsResource */
-	Os_ResourceType* OsIsrResourceRef ;
+    struct Os_ResourceType_tag * OsIsrResourceRef ;
 } Os_IsrType ;
 
 /* OS is the object used to define OSEK OS properties for an OSEK application. */
-typedef struct
+typedef struct Os_OSType_tag
 {
 	Os_HooksType* OsHooks ;
 /* The OS uses the value internally. It depends on the ECU HW. */
@@ -623,7 +625,7 @@ typedef struct
 /* An OsResource object is used to co-ordinate the concurrent access by tasks and ISRs to a shared
  *  resource, e.g. the scheduler, any program sequence, memory or any hardware area.
  */
-typedef struct
+typedef struct Os_ResourceType_tag
 {
 	Os_ResourcePropertyType OsResourceProperty ;
 /* Reference to applications which have an access to this object. */
@@ -633,13 +635,13 @@ typedef struct
  *  is not LINKED the value is ignored.
  */
 /* /AUTOSAR/EcucDefs/Os/OsResource */
-	Os_ResourceType* OsResourceLinkedResourceRef ;
+    struct Os_ResourceType_tag* OsResourceLinkedResourceRef ;
 } Os_ResourceType ;
 
 /* An OsScheduleTable addresses the synchronization issue by providing an encapsulation of a statically
  *  defined set of alarms that cannot be modified at runtime.
  */
-typedef struct
+typedef struct Os_ScheduleTableType_tag
 {
 	Os_ScheduleTableAutostartType* OsScheduleTableAutostart ;
 	Os_ScheduleTableExpiryPointType* OsScheduleTableExpiryPoint ;
@@ -662,7 +664,7 @@ typedef struct
 /* An OsSpinlock object is used to co-ordinate concurrent access by TASKs/ISR2s on different cores
  *  to a shared resource.
  */
-typedef struct
+typedef struct Os_SpinlockType_tag
 {
 /* Reference to OsApplications that have an access to this object. */
 /* /AUTOSAR/EcucDefs/Os/OsApplication */
@@ -676,11 +678,11 @@ typedef struct
  *  nested.
  */
 /* /AUTOSAR/EcucDefs/Os/OsSpinlock */
-	Os_SpinlockType* OsSpinlockSuccessor ;
+    struct Os_SpinlockType_tag* OsSpinlockSuccessor ;
 } Os_SpinlockType ;
 
 /* This container represents an OSEK task. */
-typedef struct
+typedef struct Os_TaskType_tag
 {
 /* If the task shall be activated during the system start-up, this container is present and holds
  *  the references to the application modes in which the task is auto-started.

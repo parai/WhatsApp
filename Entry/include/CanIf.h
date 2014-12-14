@@ -67,7 +67,7 @@ typedef enum {
 	CANIF_SET_RX_ONLINE,
 	CANIF_SET_TX_OFFLINE,
 	CANIF_SET_TX_OFFLINE_ACTIVE,
-	CANIF_SET_TX_ONLINE,
+	CANIF_SET_TX_ONLINE
 } CanIf_ChannelSetModeType;
 
 typedef enum {
@@ -76,7 +76,7 @@ typedef enum {
 	CANIF_GET_OFFLINE_ACTIVE_RX_ONLINE,
 	CANIF_GET_ONLINE,
 	CANIF_GET_RX_ONLINE,
-	CANIF_GET_TX_ONLINE,
+	CANIF_GET_TX_ONLINE
 } CanIf_ChannelGetModeType;
 
 typedef enum {
@@ -96,47 +96,16 @@ typedef enum {
 	CANIF_TRCV_WU_INTERNALLY,
 	CANIF_TRCV_WU_NOT_SUPPORTED,
 	CANIF_TRCV_WU_POWER_ON,
-	CANIF_TRCV_WU_RESET,
+	CANIF_TRCV_WU_RESET
 } CanIf_TrcvWakeupReasonType;
 
 typedef enum {
 	CANIF_TRCV_WU_ENABLE = 0,
 	CANIF_TRCV_WU_CLEAR,
-	CANIF_TRCV_WU_DISABLE,
+	CANIF_TRCV_WU_DISABLE
 } CanIf_TrcvWakeupModeType;
 
 typedef uint16 CanIf_ChannelIdType;
-
-typedef struct
-{
-	CanIf_ChannelIdType CanIfCtrlId;
-	BOOL	CanIfCtrlWakeupSupport;
-	const Can_ControllerConfigType* CanIfCtrlCanCtrlIdRef;
-}CanIf_ControllerConfigType;
-
-typedef struct
-{
-	CanIf_ControllerConfigType *CanIfHthCanCtrlIdRef;
-	Can_HwHandleType  CanIfHthIdSymRef;
-	Can_HandleType CanIfHthCanHandleTypeRef;	/* this attribute is derived from CAN HwObject */
-}CanIf_HthConfigType;
-
-typedef struct
-{
-	CanIf_ControllerConfigType *CanIfHrhCanCtrlIdRef;
-	Can_HwHandleType  CanIfHrhIdSymRef;
-	Can_HandleType CanIfHrhCanHandleTypeRef;	/* this attribute is derived from CAN HwObject */
-	bool CanIfHrhSoftwareFilter;
-}CanIf_HrhConfigType;
-
-typedef struct
-{
-  const Can_ConfigType   *CanConfig;
-  const CanIf_HrhConfigType *CanIfHrhConfig;
-  uint16	CanIfHrhNumber;
-  const CanIf_HthConfigType *CanIfHthConfig;
-  uint16	CanIfHthNumber;
-} CanIf_InitHohConfigType;
 
 typedef enum
 {
@@ -176,54 +145,10 @@ typedef enum
 	CANIF_RXINDICATION_UL_XCP
 }CanIf_RxIndicationULType;
 
-typedef struct
-{
-	Can_IdType 		  CanIfTxPduCanId;
-	CanIf_IdTypeType  CanIfTxPduCanIdType;
-	uint8  CanIfTxPduDlc;
-	PduIdType CanIfTxPduId;
-	bool CanIfTxPduReadNotifyStatus;
-	CanIf_PduTypeType CanIfTxPduType;
-	CanIf_TxConfirmationULType CanIfTxPduUserTxConfirmationUL;
-	void (*CanIfTxPduUserTxConfirmationName )(PduIdType);
-	const CanIf_HthConfigType *CanIfTxPduHthIdRef;
-}CanIf_TxPduConfigType;
-
-typedef struct
-{
-	Can_IdType 		CanIfRxPduCanId;
-	CanIf_IdTypeType  CanIfRxPduCanIdType;
-	uint8  CanIfRxPduDlc ;
-	PduIdType CanIfRxPduId;
-	bool CanIfRxPduReadData;
-	bool CanIfRxPduReadNotifyStatus;
-	CanIf_PduTypeType CanIfTxPduType;
-	CanIf_RxIndicationTypeType CanIfRxPduUserRxIndicationType;
-	CanIf_RxIndicationULType  CanIfRxPduUserRxIndicationUL;
-	void (*CanIfRxPduUserRxIndicationName )(PduIdType,const PduInfoType*/* uint8 */);
-	const CanIf_HrhConfigType *CanIfRxPduHrhIdRef ;
-}CanIf_RxPduConfigType;
-
-typedef struct
-{
-	uint32 CanIfInitNumberOfCanRxPduIds;
-	uint32 CanIfInitNumberOfDynamicCanTxPduIds;
-	uint32 CanIfInitNumberOfStaticCanTXPduIds;
-	CanIf_InitHohConfigType* CanIfInitHohCfg;
-	CanIf_RxPduConfigType* CanIfRxPduCfg;
-	CanIf_TxPduConfigType* CanIfTxPduCfg;
-	CanIf_ControllerConfigType* CanIfCtrlCfg;
-}CanIf_InitConfigType;
-
-typedef struct
-{
-	CanIf_InitConfigType* CanIfInitConfig;
-}CanIf_ConfigType;
-
 #ifdef __cplusplus
 }}  /* name space */
 #endif
-
+#include "CanIf_Types.h"
 #include "CanIf_Cfg.h"
 
 #ifdef __cplusplus

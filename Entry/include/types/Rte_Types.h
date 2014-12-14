@@ -19,6 +19,7 @@
 
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
+#include "Os.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
@@ -37,7 +38,7 @@ typedef enum
 } Rte_OsSchedulePointType ;
 
 /* Maps a BswSchedulableEntity onto one OsTask based on the activating BswEvent. */
-typedef struct
+typedef struct Rte_BswEventToTaskMappingType_tag
 {
 /* Activation offset in seconds. */
 /* in fact, it should be type <float> according to arxml, but only supported in tool side*/
@@ -73,22 +74,22 @@ typedef struct
  *  is executed in the context of the caller.
  */
 /* /AUTOSAR/EcucDefs/Os/OsTask */
-	Os_TaskType* RteBswMappedToTaskRef ;
+    struct Os_TaskType_tag* RteBswMappedToTaskRef ;
 /* If an OsAlarm is used to activate the OsTask this BswEvent is mapped to it shall be referenced
  *  here.
  */
 /* /AUTOSAR/EcucDefs/Os/OsAlarm */
-	Os_AlarmType* RteBswUsedOsAlarmRef ;
+    struct Os_AlarmType_tag* RteBswUsedOsAlarmRef ;
 /* If an OsEvent is used to activate the OsTask this BswEvent is mapped to it shall be referenced
  *  here.
  */
 /* /AUTOSAR/EcucDefs/Os/OsEvent */
-	Os_EventType* RteBswUsedOsEventRef ;
+    struct Os_EventType_tag* RteBswUsedOsEventRef ;
 /* If an OsScheduleTableExpiryPoint is used to activate the OsTask this BswEvent is mapped to it
  *  shall be referenced here.
  */
 /* /AUTOSAR/EcucDefs/Os/OsScheduleTable/OsScheduleTableExpiryPoint */
-	Os_ScheduleTableExpiryPointType* RteBswUsedOsSchTblExpiryPointRef ;
+    struct Os_ScheduleTableExpiryPointType_tag* RteBswUsedOsSchTblExpiryPointRef ;
 } Rte_BswEventToTaskMappingType ;
 
 /* To be used implementation mechanism for the specified ExclusiveArea. */
@@ -103,7 +104,7 @@ typedef enum
 /* Represents one ExclusiveArea of one BswImplementation. Used to specify the implementation means
  *  of this ExclusiveArea.
  */
-typedef struct
+typedef struct Rte_BswExclusiveAreaImplType_tag
 {
 	Rte_ExclusiveAreaImplMechanismType RteExclusiveAreaImplMechanism ;
 /* Reference to the ExclusiveArea for which the implementation mechanism shall be specified. */
@@ -112,11 +113,11 @@ typedef struct
  *  for this ExclusiveArea.
  */
 /* /AUTOSAR/EcucDefs/Os/OsResource */
-	Os_ResourceType* RteBswExclusiveAreaOsResourceRef ;
+    struct Os_ResourceType_tag* RteBswExclusiveAreaOsResourceRef ;
 } Rte_BswExclusiveAreaImplType ;
 
 /* Defines the configuration of Inter Basic Software Module Entity Triggering */
-typedef struct
+typedef struct Rte_BswExternalTriggerConfigType_tag
 {
 /* The queue is implemented by the RTE. A value greater or equal to 1 requests an queued behavior.
  *  
@@ -136,7 +137,7 @@ typedef struct
 } Rte_BswExternalTriggerConfigType ;
 
 /* Defines the configuration of internal Basic Software Module Entity Triggering */
-typedef struct
+typedef struct Rte_BswInternalTriggerConfigType_tag
 {
 /* The queue is implemented by the RTE. A value greater or equal to 1 requests an queued behavior.
  *  
@@ -157,7 +158,7 @@ typedef struct
 /* Defines the connection between one requiredModeGroup of this BSW Module instance and one providedModeGroup
  *  instance.
  */
-typedef struct
+typedef struct Rte_BswRequiredModeGroupConnectionType_tag
 {
 /* References the providedModeGroupPrototype to which this requiredModeGroup shall be connected. */
 	/*TODO:MODE-DECLARATION-GROUP-PROTOTYPE*/void* RteBswProvidedModeGroupRef ;
@@ -170,13 +171,13 @@ typedef struct
  *  instance.
  */
 /* /AUTOSAR/EcucDefs/Rte/RteBswModuleInstance */
-	Rte_BswModuleInstanceType* RteBswProvidedModeGrpModInstRef ;
+    struct Rte_BswModuleInstanceType_tag* RteBswProvidedModeGrpModInstRef ;
 } Rte_BswRequiredModeGroupConnectionType ;
 
 /* Defines the connection between one requiredTrigger of this BSW Module instance and one releasedTrigger
  *  instance.
  */
-typedef struct
+typedef struct Rte_BswRequiredTriggerConnectionType_tag
 {
 /* References the releasedTrigger to which this requiredTrigger shall be connected. */
 	/*TODO:TRIGGER*/void* RteBswReleasedTriggerRef ;
@@ -187,7 +188,7 @@ typedef struct
  */
 /* Used with the RteBswReleasedTriggerRef to unambiguously identify the Trigger instance. */
 /* /AUTOSAR/EcucDefs/Rte/RteBswModuleInstance */
-	Rte_BswModuleInstanceType* RteBswReleasedTriggerModInstRef ;
+    struct Rte_BswModuleInstanceType_tag* RteBswReleasedTriggerModInstRef ;
 } Rte_BswRequiredTriggerConnectionType ;
 
 /* The RTE generator shall have the option to switch off support for calibration for generated
@@ -226,9 +227,8 @@ typedef enum
 /* The RTE generator shall enable VFB tracing for a given hook function when there is a #define
  *  in the RTE configuration header file for the hook function name and tracing is globally enabled.
  */
-/* TODO: 
- * typedef void (*Rte_VfbTraceFunctionType)(void);
- */
+/* TODO: */
+typedef void (*Rte_VfbTraceFunctionType)(void);
 
 /* Definition of the initialization strategy applicable for the SectionInitializationPolicys selected
  *  by RteSectionInitializationPolicy.
@@ -242,29 +242,29 @@ typedef enum
 } Rte_InitializationStrategyType ;
 
 /* Specifies an instance of a ModeDeclarationGroupPrototype of a Bsw-Module. */
-typedef struct
+typedef struct Rte_ModeSchtblMapBswType_tag
 {
 /* Reference to an instance of a ModeDeclarationGroupPrototype of a Bsw-Module. */
 	/*TODO:MODE-DECLARATION-GROUP-PROTOTYPE*/void* RteModeSchtblMapBswProvidedModeGroupRef ;
 /* Reference to an instance specification of a Bsw-Module. */
 /* /AUTOSAR/EcucDefs/Rte/RteBswModuleInstance */
-	Rte_BswModuleInstanceType* RteModeSchtblMapBswInstanceRef ;
+    struct Rte_BswModuleInstanceType_tag* RteModeSchtblMapBswInstanceRef ;
 } Rte_ModeSchtblMapBswType ;
 
 /* Specifies an instance of a ModeDeclarationGroupPrototype of a SwComponentPrototype. */
-typedef struct
+typedef struct Rte_ModeSchtblMapSwcType_tag
 {
 /* Reference to the PPortPrototype of a SwComponentPrototype. */
 	/*TODO:P-PORT-PROTOTYPE*/void* RteModeSchtblMapSwcPortRef ;
 /* Reference to an instance specification of a SwComponentPrototype. */
 /* /AUTOSAR/EcucDefs/Rte/RteSwComponentInstance */
-	Rte_SwComponentInstanceType* RteModeSchtblMapSwcInstanceRef ;
+    struct Rte_SwComponentInstanceType_tag* RteModeSchtblMapSwcInstanceRef ;
 } Rte_ModeSchtblMapSwcType ;
 
 /* Provides configuration input in which Modes of a ModeDeclarionGroupPrototype of a Mode Manager
  *  a OsScheudleTable shall be active.
  */
-typedef struct
+typedef struct Rte_ModeToScheduleTableMappingType_tag
 {
 	Rte_ModeSchtblMapBswType* RteModeSchtblMapBsw ;
 	Rte_ModeSchtblMapSwcType* RteModeSchtblMapSwc ;
@@ -273,11 +273,11 @@ typedef struct
 /* Reference to the OsScheduleTable which shall be active in the specified RteModeSchblMapModeDeclarationRefs.
  */
 /* /AUTOSAR/EcucDefs/Os/OsScheduleTable */
-	Os_ScheduleTableType* RteModeScheduleTableRef ;
+    struct Os_ScheduleTableType_tag* RteModeScheduleTableRef ;
 } Rte_ModeToScheduleTableMappingType ;
 
 /* Attributes used in the activation of OsTasks and Runnable Entities. */
-typedef struct
+typedef struct Rte_UsedOsActivationType_tag
 {
 /* Important: This is a requirement from the Rte towards the Os/Mcu setup. The Rte Generator shall
  *  assume this activation offset to be fulfilled.
@@ -295,17 +295,17 @@ typedef struct
 	uint64 RteExpectedTickDuration ;
 /* Reference to an OsAlarm. */
 /* /AUTOSAR/EcucDefs/Os/OsAlarm */
-	Os_AlarmType* RteActivationOsAlarmRef ;
+    struct Os_AlarmType_tag* RteActivationOsAlarmRef ;
 /* Reference to an OsScheduleTable. */
 /* /AUTOSAR/EcucDefs/Os/OsScheduleTable */
-	Os_ScheduleTableType* RteActivationOsSchTblRef ;
+    struct Os_ScheduleTableType_tag* RteActivationOsSchTblRef ;
 /* Reference to an OsTask. */
 /* /AUTOSAR/EcucDefs/Os/OsTask */
-	Os_TaskType* RteActivationOsTaskRef ;
+    struct Os_TaskType_tag* RteActivationOsTaskRef ;
 } Rte_UsedOsActivationType ;
 
 /* Maps a RunnableEntity onto one OsTask based on the activating RTEEvent. */
-typedef struct
+typedef struct Rte_EventToTaskMappingType_tag
 {
 /* Activation offset in seconds. */
 /* in fact, it should be type <float> according to arxml, but only supported in tool side*/
@@ -339,31 +339,31 @@ typedef struct
  *  function call.
  */
 /* /AUTOSAR/EcucDefs/Os/OsTask */
-	Os_TaskType* RteMappedToTaskRef ;
+    struct Os_TaskType_tag* RteMappedToTaskRef ;
 /* If an OsAlarm is used to activate the OsTask this RteEvent is mapped to it shall be referenced
  *  here.
  */
 /* /AUTOSAR/EcucDefs/Os/OsAlarm */
-	Os_AlarmType* RteUsedOsAlarmRef ;
+    struct Os_AlarmType_tag* RteUsedOsAlarmRef ;
 /* If an OsEvent is used to activate the OsTask this RteEvent is mapped to it shall be referenced
  *  here.
  */
 /* /AUTOSAR/EcucDefs/Os/OsEvent */
-	Os_EventType* RteUsedOsEventRef ;
+    struct Os_EventType_tag* RteUsedOsEventRef ;
 /* If an OsScheduleTableExpiryPoint is used to activate the OsTask this RteEvent is mapped to it
  *  shall be referenced here.
  */
 /* /AUTOSAR/EcucDefs/Os/OsScheduleTable/OsScheduleTableExpiryPoint */
-	Os_ScheduleTableExpiryPointType* RteUsedOsSchTblExpiryPointRef ;
+    struct Os_ScheduleTableExpiryPointType_tag* RteUsedOsSchTblExpiryPointRef ;
 /* Optional reference to an OsTask where the activation of this RteEvent shall be evaluated. The
  *  actual execution of the Runnable Entity shall happen in the OsTask referenced by RteMappedToTaskRef.
  */
 /* /AUTOSAR/EcucDefs/Os/OsTask */
-	Os_TaskType* RteVirtuallyMappedToTaskRef ;
+    struct Os_TaskType_tag* RteVirtuallyMappedToTaskRef ;
 } Rte_EventToTaskMappingType ;
 
 /* Specifies the implementation to be used for the data consistency of this ExclusiveArea. */
-typedef struct
+typedef struct Rte_ExclusiveAreaImplementationType_tag
 {
 	Rte_ExclusiveAreaImplMechanismType RteExclusiveAreaImplMechanism ;
 /* Reference to the ExclusiveArea. */
@@ -372,11 +372,11 @@ typedef struct
  *  for this ExclusiveArea.
  */
 /* /AUTOSAR/EcucDefs/Os/OsResource */
-	Os_ResourceType* RteExclusiveAreaOsResourceRef ;
+    struct Os_ResourceType_tag* RteExclusiveAreaOsResourceRef ;
 } Rte_ExclusiveAreaImplementationType ;
 
 /* Defines the configuration of External Trigger Event Communication for Software Components */
-typedef struct
+typedef struct Rte_ExternalTriggerConfigType_tag
 {
 /* The queue is implemented by the RTE. A value greater or equal to 1 requests an queued behavior.
  *  
@@ -396,7 +396,7 @@ typedef struct
 } Rte_ExternalTriggerConfigType ;
 
 /* Defines the configuration of Inter Runnable Triggering for Software Components */
-typedef struct
+typedef struct Rte_InternalTriggerConfigType_tag
 {
 /* The queue is implemented by the RTE. A value greater or equal to 1 requests an queued behavior.
  *  
@@ -417,7 +417,7 @@ typedef struct
 /* Specifies the relationship between the AtomicSwComponentType's NVRAMMapping / NVRAM needs and
  *  the NvM module configuration.
  */
-typedef struct
+typedef struct Rte_NvRamAllocationType_tag
 {
 /* This symbol will be resolved into the parameter "NvmRamBlockDataAddress" from the "NvmBlockDescriptor".
  */
@@ -439,7 +439,7 @@ typedef struct
 /* Specifies for each ParameterSwComponentType or AtomicSwComponentType whether calibration is
  *  enabled.
  */
-typedef struct
+typedef struct Rte_ComponentTypeCalibrationType_tag
 {
 /* Enables calibration support for the specified ParameterSwComponentType or AtomicSwComponentType. */
 	boolean RteCalibrationSupportEnabled ;
@@ -448,7 +448,7 @@ typedef struct
 } Rte_ComponentTypeCalibrationType ;
 
 /* General configuration parameters of the Bsw Scheduler section. */
-typedef struct
+typedef struct Rte_BswGeneralType_tag
 {
 /* Enables the generation of the SchM_GetVersionInfo() API. */
 	boolean RteSchMVersionInfoApi ;
@@ -464,7 +464,7 @@ typedef struct
 } Rte_BswGeneralType ;
 
 /* Represents one instance of a Bsw-Module configured on one ECU. */
-typedef struct
+typedef struct Rte_BswModuleInstanceType_tag
 {
 	Rte_BswEventToTaskMappingType* RteBswEventToTaskMapping ;
 	Rte_BswExclusiveAreaImplType* RteBswExclusiveAreaImpl ;
@@ -479,7 +479,7 @@ typedef struct
 } Rte_BswModuleInstanceType ;
 
 /* This container holds the parameters for the configuration of the RTE Generation. */
-typedef struct
+typedef struct Rte_GenerationType_tag
 {
 	Rte_CalibrationSupportType RteCalibrationSupport ;
 /* Holds the vendor ID of the generated Rte code. */
@@ -520,7 +520,7 @@ typedef struct
 } Rte_GenerationType ;
 
 /* Configuration of the Implicit Communication behavior to be generated. */
-typedef struct
+typedef struct Rte_ImplicitCommunicationType_tag
 {
 /* Data values for Coherent Implicit Read Access'es are read before the first reading RunnbaleEntity
  *  starts and are stable during the execution of all the reading RunnableEntitys; except Coherent
@@ -554,7 +554,7 @@ typedef struct
 /* Specifies the initialization strategy for variables allocated by RTE with the purpose to implement
  *  VariableDataPrototypes.
  */
-typedef struct
+typedef struct Rte_InitializationBehaviorType_tag
 {
 	Rte_InitializationStrategyType RteInitializationStrategy ;
 /* The SectionInitializationPolicy describes the intended initialization of MemorySections. 
@@ -580,7 +580,7 @@ typedef struct
 } Rte_InitializationBehaviorType ;
 
 /* Interaction of the Rte with the Os. */
-typedef struct
+typedef struct Rte_OsInteractionType_tag
 {
 /* The Mode Manager is either specified as a SwComponentPrototype (RteModeSchtblMapSwc) or as a
  *  BSW-Module (RteModeSchtblMapBsw).
@@ -590,7 +590,7 @@ typedef struct
 } Rte_OsInteractionType ;
 
 /* Specifies the PostbuildVariantSets for each of the PostBuild configurations of the RTE. */
-typedef struct
+typedef struct Rte_PostBuildVariantConfigurationType_tag
 {
 /* Reference to the PredefinedVariant element which defines the values for PostBuildVariationCriterion
  *  elements.
@@ -601,7 +601,7 @@ typedef struct
 /* Representation of one SwComponentPrototype located on the to be configured ECU. All subcontainer
  *  configuration aspects are in relation to this SwComponentPrototype.
  */
-typedef struct
+typedef struct Rte_SwComponentInstanceType_tag
 {
 /* Even if a RunnableEntity shall be executed via a direct function call this RteEventToTaskMapping
  *  shall be specified, but no RteMappedToTask and RtePositionInTask elements given.
@@ -618,7 +618,7 @@ typedef struct
 /* Representation of one SwComponentType for the base of all configuration parameter which are
  *  affecting the whole type and not a specific instance.
  */
-typedef struct
+typedef struct Rte_SwComponentTypeType_tag
 {
 /* If references to SwAddrMethod are provided in RteCalibrationSwAddrMethodRef only ParameterDataPrototypes
  *  with the referenced SwAddrMethod shall have software calibration support enabled.

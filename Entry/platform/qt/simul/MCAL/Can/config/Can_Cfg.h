@@ -29,8 +29,8 @@ namespace autosar { extern "C" {
 /* ============================ [ TYPES     ] ====================================================== */
 
 /* ============================ [ DATAS     ] ====================================================== */
-extern CONST(Can_ControllerType,MEM_CAN_CONFIG) Can_ControllerConfig[];
-extern CONST(Can_ConfigSetType,MEM_CAN_CONFIG) Can_Config;
+extern CONST(Can_ControllerConfigType,MEM_CAN_CONFIG) Can_ControllerConfig[];
+extern CONST(Can_ConfigType,MEM_CAN_CONFIG) Can_Config;
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */

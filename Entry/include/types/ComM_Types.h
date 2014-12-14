@@ -19,6 +19,7 @@
 
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
+#include "Com.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
@@ -35,7 +36,7 @@ typedef enum
 } ComM_NmVariantType ;
 
 /* This container contains the configuration parameters of the networkmanagement. */
-typedef struct
+typedef struct ComM_NetworkManagementType_tag
 {
 /* The range shall be greater than 0.0 and less or equal to 255.0. */
 /* Defines the timeout (in seconds) after COMM_FULL_COMMUNICATION sub-state COMM_FULL_COM_READY_SLEEP
@@ -54,12 +55,12 @@ typedef struct
 /* This container contains a list of identifiers that are needed to refer to a user in the system
  *  which is linked to a channel.
  */
-typedef struct
+typedef struct ComM_UserPerChannelType_tag
 {
 /* Reference to the ComMUser that corresponds to this channel user. */
 /* ImplementationType: COMM_UserHandleType */
 /* /AUTOSAR/EcucDefs/ComM/ComMConfigSet/ComMUser */
-	ComM_UserType* ComMUserChannel ;
+    struct ComM_UserType_tag* ComMUserChannel ;
 } ComM_UserPerChannelType ;
 
 /* Identifies the bus type of the channel. */
@@ -82,7 +83,7 @@ typedef enum
 /* This container contains the configuration (parameters) of the bus channel(s). The channel parameters
  *  shall be harmonized within the whole communication stack.
  */
-typedef struct
+typedef struct ComM_ChannelType_tag
 {
 	ComM_NetworkManagementType* ComMNetworkManagement ;
 	ComM_UserPerChannelType* ComMUserPerChannel ;
@@ -143,7 +144,7 @@ typedef enum
 } ComM_PncComSignalKindType ;
 
 /* Represents the PncComSignals which are used to communicate the EIRA and ERA status of this PNC. */
-typedef struct
+typedef struct ComM_PncComSignalType_tag
 {
 	ComM_PncComSignalDirectionType ComMPncComSignalDirection ;
 	ComM_PncComSignalKindType ComMPncComSignalKind ;
@@ -160,7 +161,7 @@ typedef struct
 } ComM_PncComSignalType ;
 
 /* This container contains the configuration of the partial network cluster (PNC). */
-typedef struct
+typedef struct ComM_PncType_tag
 {
 	ComM_PncComSignalType* ComMPncComSignal ;
 /* Partial network cluster identification number. */
@@ -172,13 +173,13 @@ typedef struct
 /* Reference to the ComMUsers that correspond to this PNC. */
 /* ImplementationType: COMM_UserHandleType */
 /* /AUTOSAR/EcucDefs/ComM/ComMConfigSet/ComMUser */
-	ComM_UserType* ComMUserPerPnc ;
+    struct ComM_UserType_tag* ComMUserPerPnc ;
 } ComM_PncType ;
 
 /* This container contains a list of identifiers that are needed to refer to a user in the system
  *  which is designated to request Communication modes.
  */
-typedef struct
+typedef struct ComM_UserType_tag
 {
 /* ImplementationType: ComM_UserHandleType */
 /* An identifier that is needed to refer to a user in the system which is designated to request
@@ -195,7 +196,7 @@ typedef struct
 } ComM_UserType ;
 
 /* This container is the base for a multiple configuration set. */
-typedef struct
+typedef struct ComM_ConfigSetType_tag
 {
 	ComM_ChannelType* ComMChannel ;
 	ComM_PncType* ComMPnc ;
@@ -207,7 +208,7 @@ typedef struct
 } ComM_ConfigSetType ;
 
 /* General configuration parameters of the Communication Manager. */
-typedef struct
+typedef struct ComM_GeneralType_tag
 {
 /* true: Enabled
                                         false: Disabled */

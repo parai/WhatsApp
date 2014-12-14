@@ -26,16 +26,16 @@ extern "C" {
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
 /* The summarized EventId definition record consists of a summarized event ID and a specific EventId. */
-typedef struct
+typedef struct FiM_EventSummaryType_tag
 {
 /* /AUTOSAR/EcucDefs/Dem/DemConfigSet/DemEventParameter */
-	Dem_EventParameterType* FiMInputSumEventRef ;
+    struct Dem_EventParameterType_tag* FiMInputSumEventRef ;
 /* /AUTOSAR/EcucDefs/FiM/FiMConfigSet/FiMSummaryEventId */
-	FiM_SummaryEventIdType* FiMOutputSumEventRef ;
+    struct FiM_SummaryEventIdType_tag* FiMOutputSumEventRef ;
 } FiM_EventSummaryType ;
 
 /* This container includes symbolic names of all FIDs. */
-typedef struct
+typedef struct FiM_FIDType_tag
 {
 /* Implementation Type: FiM_FunctionIdType. */
 /* The configuration parameter is used as an ID which represents a functionality. FiMFunctionId
@@ -44,12 +44,12 @@ typedef struct
 	uint16 FiMFunctionId ;
 } FiM_FIDType ;
 
-typedef struct
+typedef struct FiM_InhRefChoiceType_tag
 {
 } FiM_InhRefChoiceType ;
 
 /* The configuration parameter is used for an existing DEM event and summarized events as well. */
-typedef struct
+typedef struct FiM_InhEventIdType_tag
 {
 	FiM_InhRefChoiceType* FiMInhRefChoice ;
 } FiM_InhEventIdType ;
@@ -66,7 +66,7 @@ typedef enum
 /* This container includes all configuration parameters concerning the relationship between event
  *  and FID.
  */
-typedef struct
+typedef struct FiM_InhibitionConfigurationType_tag
 {
 	FiM_InhEventIdType* FiMInhEventId ;
 	FiM_InhInhibitionMaskType FiMInhInhibitionMask ;
@@ -75,7 +75,7 @@ typedef struct
 } FiM_InhibitionConfigurationType ;
 
 /* This container defines the name of a summarized event. */
-typedef struct
+typedef struct FiM_SummaryEventIdType_tag
 {
 /* The summarized EventId definition record defines the existence of a summarized event with a
  *  specific name. This summarized event can be referenced in the EventSummary (as FimSummaryEventId)
@@ -87,7 +87,7 @@ typedef struct
 /* This container contains the configuration parameters and sub containers of the FiM module supporting
  *  multiple configuration sets.
  */
-typedef struct
+typedef struct FiM_ConfigSetType_tag
 {
 /* This record means that a particular FID that has to be disabled in case of summarized event
  *  (defined above) is to be disabled in any of the specific events. A possible solution could
@@ -105,7 +105,7 @@ typedef struct
 	FiM_SummaryEventIdType* FiMSummaryEventId ;
 } FiM_ConfigSetType ;
 
-typedef struct
+typedef struct FiM_GeneralType_tag
 {
 /* Enable or disable calibration of inhibit relations The scope of the parameter is to meet the
  *  requirement (FIM008) to have the option to calibrate inhibit data on the one hand side and

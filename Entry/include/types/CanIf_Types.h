@@ -19,6 +19,8 @@
 
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
+#include "Rte.h"
+#include "CanTrcv.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
@@ -28,7 +30,7 @@ extern "C" {
 /* This container contains the configuration (parameters) of an adressed CAN controller by an underlying
  *  CAN Driver module. This container is configurable per CAN controller.
  */
-typedef struct
+typedef struct CanIf_CtrlCfgType_tag
 {
 /* Range: 0..number of configured controllers of all CAN Driver modules */
 /* This parameter abstracts from the CAN Driver specific parameter Controller. Each controller
@@ -47,13 +49,13 @@ typedef struct
  */
 /* Range: 0..max. number of underlying supported CAN controllers */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanController */
-	Can_ControllerType* CanIfCtrlCanCtrlRef ;
+    struct Can_ControllerConfigType_tag* CanIfCtrlCanCtrlRef ;
 } CanIf_CtrlCfgType ;
 
 /* This parameter defines the name of <User_ClearTrcvWufFlagIndication>. */
-/* TODO: 
- * typedef void (*CanIf_DispatchUserCheckTrcvWakeFlagIndicationNameType)(void);
- */
+/* TODO: */
+typedef void (*CanIf_DispatchUserCheckTrcvWakeFlagIndicationNameType)(void);
+
 
 /* This parameter defines the upper layer module to which the CheckTrcvWakeFlagIndication from
  *  the Driver modules have to be routed.
@@ -65,9 +67,9 @@ typedef enum
 } CanIf_DispatchUserCheckTrcvWakeFlagIndicationULType ;
 
 /* This parameter defines the name of <User_ClearTrcvWufFlagIndication>. */
-/* TODO: 
- * typedef void (*CanIf_DispatchUserClearTrcvWufFlagIndicationNameType)(void);
- */
+/* TODO: */
+typedef void (*CanIf_DispatchUserClearTrcvWufFlagIndicationNameType)(void);
+
 
 /* This parameter defines the upper layer module to which the ClearTrcvWufFlagIndication from the
  *  Driver modules have to be routed.
@@ -82,9 +84,8 @@ typedef enum
  *  equals CAN_SM the name of <User_ConfirmPnAvailability> is fixed. If it equals CDD, the name
  *  is selectable. If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurable.
  */
-/* TODO: 
- * typedef void (*CanIf_DispatchUserConfirmPnAvailabilityNameType)(void);
- */
+/* TODO:*/
+typedef void (*CanIf_DispatchUserConfirmPnAvailabilityNameType)(void);
 
 /* This parameter defines the upper layer module to which the ConfirmPnAvailability notification
  *  from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter
@@ -97,9 +98,8 @@ typedef enum
 } CanIf_DispatchUserConfirmPnAvailabilityULType ;
 
 /* This parameter defines the name of <User_ControllerBusOff>. */
-/* TODO: 
- * typedef void (*CanIf_DispatchUserCtrlBusOffNameType)(void);
- */
+/* TODO:*/
+typedef void (*CanIf_DispatchUserCtrlBusOffNameType)(void);
 
 /* This parameter defines the upper layer (UL) module to which the notifications of all ControllerBusOff
  *  events from the CAN Driver modules have to be routed via <User_ControllerBusOff>.
@@ -111,9 +111,9 @@ typedef enum
 } CanIf_DispatchUserCtrlBusOffULType ;
 
 /* This parameter defines the name of <User_ControllerModeIndication>. */
-/* TODO: 
- * typedef void (*CanIf_DispatchUserCtrlModeIndicationNameType)(void);
- */
+/* TODO: */
+typedef void (*CanIf_DispatchUserCtrlModeIndicationNameType)(void);
+
 
 /* This parameter defines the upper layer (UL) module to which the notifications of all ControllerTransition
  *  events from the CAN Driver modules have to be routed
@@ -125,9 +125,9 @@ typedef enum
 } CanIf_DispatchUserCtrlModeIndicationULType ;
 
 /* This parameter defines the name of <User_TrcvModeIndication>. */
-/* TODO: 
- * typedef void (*CanIf_DispatchUserTrcvModeIndicationNameType)(void);
- */
+/* TODO: */
+typedef void (*CanIf_DispatchUserTrcvModeIndicationNameType)(void);
+
 
 /* This parameter defines the upper layer (UL) module to which the notifications of all TransceiverTransition
  *  events from the CAN Transceiver Driver modules have to be routed via <User_TrcvModeIndication>.
@@ -140,9 +140,9 @@ typedef enum
 } CanIf_DispatchUserTrcvModeIndicationULType ;
 
 /* This parameter defines the name of <User_ValidateWakeupEvent>. This */
-/* TODO: 
- * typedef void (*CanIf_DispatchUserValidateWakeupEventNameType)(void);
- */
+/* TODO: */
+typedef void (*CanIf_DispatchUserValidateWakeupEventNameType)(void);
+
 
 /* This parameter defines the upper layer (UL) module to which the notifications about positive
  *  former requested wake up sources have to be routed via <User_ValidateWakeupEvent>. If parameter
@@ -158,7 +158,7 @@ typedef enum
  *  be configured. If CanIfBufferSize (CANIF834_Conf) equals 0, the CanIf Tx L-PDU only refers
  *  via this CanIfBufferCfg the corresponding CanIfHthCfg.
  */
-typedef struct
+typedef struct CanIf_BufferCfgType_tag
 {
 /* This parameter defines the number of CanIf Tx L-PDUs which can be buffered in one Txbuffer.
  *  If this value equals 0, the CanIf does not perform Txbuffering for the CanIf Tx L-PDUs which
@@ -173,7 +173,7 @@ typedef struct
  */
 /* Each HTH shall not be assigned to more than one buffer. */
 /* /AUTOSAR/EcucDefs/CanIf/CanIfInitCfg/CanIfInitHohCfg/CanIfHthCfg */
-	CanIf_HthCfgType* CanIfBufferHthRef ;
+    struct CanIf_HthCfgType_tag* CanIfBufferHthRef ;
 } CanIf_BufferCfgType ;
 
 /* Specifies whether a configured Range of CAN Ids shall only consider standard CAN Ids or extended
@@ -186,7 +186,7 @@ typedef enum
 } CanIf_HrhRangeRxPduRangeCanIdTypeType ;
 
 /* Defines the parameters required for configurating multiple CANID ranges for a given same HRH. */
-typedef struct
+typedef struct CanIf_HrhRangeCfgType_tag
 {
 /* Lower CAN Identifier of a receive CAN L-PDU for identifier range definition, in which all CAN
  *  Ids shall pass the software filtering.
@@ -200,7 +200,7 @@ typedef struct
 } CanIf_HrhRangeCfgType ;
 
 /* This container contains configuration parameters for each hardware receive object (HRH). */
-typedef struct
+typedef struct CanIf_HrhCfgType_tag
 {
 	CanIf_HrhRangeCfgType* CanIfHrhRangeCfg ;
 /* True: Software filtering is enabled
@@ -223,7 +223,7 @@ typedef struct
  *  In the next major release this reference will be deleted.
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanHardwareObject */
-	Can_HardwareObjectType* CanIfHrhCanHandleTypeRef ;
+    struct Can_HardwareObjectType_tag* CanIfHrhCanHandleTypeRef ;
 /* The parameter refers to a particular HRH object in the CanDrv configuration (see CanHardwareObject
  *  CAN324_Conf).
  */
@@ -232,11 +232,11 @@ typedef struct
  *                                                         - CanObjectId (see CAN326_Conf)
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanHardwareObject */
-	Can_HardwareObjectType* CanIfHrhIdSymRef ;
+    struct Can_HardwareObjectType_tag* CanIfHrhIdSymRef ;
 } CanIf_HrhCfgType ;
 
 /* This container contains parameters related to each HTH. */
-typedef struct
+typedef struct CanIf_HthCfgType_tag
 {
 /* Reference to controller Id to which the HTH belongs to. A controller can contain one or more HTHs. */
 /* /AUTOSAR/EcucDefs/CanIf/CanIfCtrlDrvCfg/CanIfCtrlCfg */
@@ -250,7 +250,7 @@ typedef struct
  *  In the next major release this reference will be deleted.
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanHardwareObject */
-	Can_HardwareObjectType* CanIfHthCanHandleTypeRef ;
+    struct Can_HardwareObjectType_tag* CanIfHthCanHandleTypeRef ;
 /* The parameter refers to a particular HTH object in the CanDrv configuration (see CanHardwareObject
  *  CAN324_Conf).
  */
@@ -259,11 +259,11 @@ typedef struct
  *                                                         - CanObjectId (see CAN326_Conf)
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanHardwareObject */
-	Can_HardwareObjectType* CanIfHthIdSymRef ;
+    struct Can_HardwareObjectType_tag* CanIfHthIdSymRef ;
 } CanIf_HthCfgType ;
 
 /* This container contains the references to the configuration setup of each underlying CAN Driver. */
-typedef struct
+typedef struct CanIf_InitHohCfgType_tag
 {
 	CanIf_HrhCfgType* CanIfHrhCfg ;
 	CanIf_HthCfgType* CanIfHthCfg ;
@@ -272,11 +272,11 @@ typedef struct
  *  Drivers.
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet */
-	Can_ConfigSetType* CanIfInitRefCfgSet ;
+    struct Can_ConfigSetType_tag* CanIfInitRefCfgSet ;
 } CanIf_InitHohCfgType ;
 
 /* Optional container that allows to map a range of CAN Ids to one PduId. */
-typedef struct
+typedef struct CanIf_RxPduCanIdRangeType_tag
 {
 /* Lower CAN Identifier of a receive CAN L-PDU for identifier range definition, in which all CAN
  *  Ids are mapped to one PduId.
@@ -289,7 +289,7 @@ typedef struct
 } CanIf_RxPduCanIdRangeType ;
 
 /* This container is only included and valid if TTCAN Interface SWS is used and TTCAN is enabled. */
-typedef struct
+typedef struct CanIf_TTRxFrameTriggeringType_tag
 {
 /* Defines the point in time, when the joblist execution funciton (JLEF) shall be called for the
  *  referenced rx trigger. Value is given in cycle time. This parameter is only configurable if
@@ -301,7 +301,7 @@ typedef struct
  *  This parameter is only configurable if a joblist is enabled by parameter CanIfTTJobList.
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanHardwareObject/CanTTHardwareObjectTrigger */
-	Can_TTHardwareObjectTriggerType* CanIfTTRxHwObjectTriggerIdRef ;
+    struct Can_TTHardwareObjectTriggerType_tag* CanIfTTRxHwObjectTriggerIdRef ;
 } CanIf_TTRxFrameTriggeringType ;
 
 /* CAN Identifier of receive CAN L-PDUs used by the CAN Driver for CAN L-PDU reception. */
@@ -312,9 +312,9 @@ typedef enum
 } CanIf_RxPduCanIdTypeType ;
 
 /* This parameter defines the name of the <User_RxIndication>. */
-/* TODO: 
- * typedef void (*CanIf_RxPduUserRxIndicationNameType)(void);
- */
+/* TODO: */
+typedef void (*CanIf_RxPduUserRxIndicationNameType)(void);
+
 
 /* This parameter defines the upper layer (UL) module to which the indication */
 typedef enum
@@ -328,7 +328,7 @@ typedef enum
 } CanIf_RxPduUserRxIndicationULType ;
 
 /* This container contains the configuration (parameters) of each receive CAN L-PDU. */
-typedef struct
+typedef struct CanIf_RxPduCfgType_tag
 {
 	CanIf_RxPduCanIdRangeType* CanIfRxPduCanIdRange ;
 /* Frame trigger for TTCAN reception.
@@ -366,7 +366,7 @@ typedef struct
  *  equals CAN_TP, CAN_NM, PDUR, XCP or J1939TP, the name of the <User_RxIndication> is fixed.
  *  If CANIF_RXPDU_USERRXINDICATION_UL equals CDD, the name of the <User_RxIndication> is selectable.
  */
-	CanIf_RxPduUserRxIndicationNameType CanIfRxPduUserRxIndicationName ;
+    CanIf_RxPduUserRxIndicationNameType CanIfRxPduUserRxIndicationName ;
 /* of the successfully received CANRXPDUID has to be routed via <User_RxIndication>. This <User_RxIndication>
  *  has to be invoked when the 
  *                                                 indication of the configured CANRXPDUID will
@@ -390,7 +390,7 @@ typedef struct
 } CanIf_RxPduCfgType ;
 
 /* This container is only included and valid if TTCAN Interface SWS is used and TTCAN is enabled. */
-typedef struct
+typedef struct CanIf_TTTxFrameTriggeringType_tag
 {
 /* Value is given in cycle time. This parameter is only configurable if a joblist is enabled by
  *  parameter CanIfTTJobList.
@@ -406,7 +406,7 @@ typedef struct
  *  if a joblist is enabled by parameter CanIfTTJobList.
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanHardwareObject/CanTTHardwareObjectTrigger */
-	Can_TTHardwareObjectTriggerType* CanIfTTTxHwObjectTriggerIdRef ;
+    struct Can_TTHardwareObjectTriggerType_tag* CanIfTTTxHwObjectTriggerIdRef ;
 } CanIf_TTTxFrameTriggeringType ;
 
 /* Type of CAN Identifier of the transmit CAN L-PDU used by the CAN Driver module for CAN L-PDU
@@ -426,9 +426,8 @@ typedef enum
 } CanIf_TxPduTypeType ;
 
 /* This parameter defines the name of the <User_TxConfirmation>. This */
-/* TODO: 
- * typedef void (*CanIf_TxPduUserTxConfirmationNameType)(void);
- */
+/* TODO: */
+typedef void (*CanIf_TxPduUserTxConfirmationNameType)(void);
 
 /* This parameter defines the upper layer (UL) module to which the confirmation of the successfully
  *  transmitted CANTXPDUID has to be routed via the <User_TxConfirmation>.
@@ -446,7 +445,7 @@ typedef enum
 /* This container contains the configuration (parameters) of a transmit CAN L-PDU. It has to be
  *  configured as often as a transmit CAN L-PDU is needed.
  */
-typedef struct
+typedef struct CanIf_TxPduCfgType_tag
 {
 /* Frame trigger for TTCAN transmission.
  * 
@@ -506,7 +505,7 @@ typedef struct
 } CanIf_TxPduCfgType ;
 
 /* This container is only included and valid if TTCAN Interface SWS is used and TTCAN is enabled. */
-typedef struct
+typedef struct CanIf_TTGeneralType_tag
 {
 /* TRUE: Joblist is used. 
  *                                                 FALSE: No joblist is used.
@@ -545,7 +544,7 @@ typedef enum
  *  underlying CAN Transceiver Driver module. For each CAN transceiver a seperate instance of this
  *  container has to be provided.
  */
-typedef struct
+typedef struct CanIf_TrcvCfgType_tag
 {
 /* Range: 0..number of configured transceivers of all CAN Transceiver Driver modules */
 /* This parameter abstracts from the CAN Transceiver Driver specific parameter Transceiver. Each
@@ -572,7 +571,7 @@ typedef struct
 /* Configuration parameters for all the underlying CAN Driver modules are aggregated under this
  *  container. For each CAN Driver module a seperate instance of this container has to be provided.
  */
-typedef struct
+typedef struct CanIf_CtrlDrvCfgType_tag
 {
 	CanIf_CtrlCfgType* CanIfCtrlCfg ;
 /* True: Enabled
@@ -592,13 +591,13 @@ typedef struct
  *  of the CAN driver module.
  */
 /* /AUTOSAR/EcucDefs/Can/CanGeneral */
-	Can_GeneralType* CanIfCtrlDrvNameRef ;
+    struct Can_GeneralType_tag* CanIfCtrlDrvNameRef ;
 } CanIf_CtrlDrvCfgType ;
 
 /* Callback functions provided by upper layer modules of the CanIf. The callback functions defined
  *  in this container are common to all configured CAN Driver / CAN Transceiver Driver modules.
  */
-typedef struct
+typedef struct CanIf_DispatchCfgType_tag
 {
 /* If CANIF_DISPATCH_USERCHECKTRCVWAKEFLAGINDICATION_UL equals CAN_SM the name of <User_CheckTrcvWakeFlagIndication>
  *  is fixed. If it equals CDD, the name is selectable. If CANIF_PUBLIC_PN_SUPPORT equals False,
@@ -649,7 +648,7 @@ typedef struct
 } CanIf_DispatchCfgType ;
 
 /* This container contains the init parameters of the CAN Interface. */
-typedef struct
+typedef struct CanIf_InitCfgType_tag
 {
 	CanIf_BufferCfgType* CanIfBufferCfg ;
 	CanIf_InitHohCfgType* CanIfInitHohCfg ;
@@ -667,8 +666,10 @@ typedef struct
 	char* CanIfInitCfgSet ;
 } CanIf_InitCfgType ;
 
+typedef CanIf_InitCfgType CanIf_ConfigType;
+
 /* This container contains the private configuration (parameters) of the CAN Interface. */
-typedef struct
+typedef struct CanIf_PrivateCfgType_tag
 {
 /* This container contains the parameters, which define if and in which way TTCAN is supported.
  * 
@@ -694,7 +695,7 @@ typedef struct
 } CanIf_PrivateCfgType ;
 
 /* This container contains the public configuration (parameters) of the CAN Interface. */
-typedef struct
+typedef struct CanIf_PublicCfgType_tag
 {
 /* Configuration parameter to enable/disable dummy API for upper layer modules which allows to
  *  request the cancellation of an I-PDU.
@@ -772,7 +773,7 @@ typedef struct
  *  each underlying CAN Transceiver Driver module. For each CAN transceiver Driver a seperate instance
  *  of this container shall be provided.
  */
-typedef struct
+typedef struct CanIf_TrcvDrvCfgType_tag
 {
 	CanIf_TrcvCfgType* CanIfTrcvCfg ;
 } CanIf_TrcvDrvCfgType ;

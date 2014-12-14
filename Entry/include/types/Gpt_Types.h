@@ -19,6 +19,7 @@
 
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
+#include "EcuM.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
@@ -26,12 +27,12 @@ extern "C" {
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
 /* Function pointer to callback function (for non-wakeup notification). */
-typedef struct
+typedef struct Gpt_WakeupConfigurationType_tag
 {
 /* In case the wakeup-capability is true this value is transmitted to the Ecu State Manager. */
 /* Implementation Type: reference to EcuM_WakeupSourceType */
 /* /AUTOSAR/EcucDefs/EcuM/EcuMConfiguration/EcuMCommonConfiguration/EcuMWakeupSource */
-	EcuM_WakeupSourceType* GptWakeupSourceRef ;
+    struct EcuM_WakeupSourceType_tag* GptWakeupSourceRef ;
 } Gpt_WakeupConfigurationType ;
 
 /* Specifies the behaviour of the timer channel after the target time is reached. */
@@ -42,12 +43,11 @@ typedef enum
 } Gpt_ChannelModeType ;
 
 /* Function pointer to callback function (for non-wakeup notification) */
-/* TODO: 
- * typedef void (*Gpt_NotificationType)(void);
- */
+/* TODO: */
+typedef void (*Gpt_NotificationType)(void);
 
 /* Configuration of an individual GPT channel. */
-typedef struct
+typedef struct Gpt_ChannelConfigurationType_tag
 {
 	Gpt_WakeupConfigurationType* GptWakeupConfiguration ;
 /* Channel Id of the GPT channel. This value will be assigned to the symbolic name derived of the
@@ -68,13 +68,13 @@ typedef struct
 /* Reference to the GptClockReferencePoint from which the channel */
 /* clock is derived. */
 /* /AUTOSAR/EcucDefs/Gpt/GptDriverConfiguration/GptClockReferencePoint */
-	Gpt_ClockReferencePointType* GptChannelClkSrcRef ;
+    struct Gpt_ClockReferencePointType_tag* GptChannelClkSrcRef ;
 } Gpt_ChannelConfigurationType ;
 
 /* This container contains a parameter, which represents a reference to a container of the type
  *  McuClockReferencePoint (defined in module MCU).
  */
-typedef struct
+typedef struct Gpt_ClockReferencePointType_tag
 {
 /* Reference to a container of the type McuClockReferencePoint, to select an input clock. */
 /* The configuration editor for the GPT module can support the integrator by only allowing a selection
@@ -90,7 +90,7 @@ typedef struct
 /* This container is the base of a Configuration Set which contains the configured GPT channels.
  *  This way, different configuration sets can be defined for post-build process.
  */
-typedef struct
+typedef struct Gpt_ChannelConfigSetType_tag
 {
 	Gpt_ChannelConfigurationType* GptChannelConfiguration ;
 } Gpt_ChannelConfigSetType ;
@@ -98,7 +98,7 @@ typedef struct
 /* This container contains all configuration switches for configuring optional API services of
  *  the GPT driver.
  */
-typedef struct
+typedef struct Gpt_ConfigurationOfOptApiServicesType_tag
 {
 /* Adds / removes the service Gpt_DeInit() from the code. */
 	boolean GptDeinitApi ;
@@ -117,7 +117,7 @@ typedef struct
 } Gpt_ConfigurationOfOptApiServicesType ;
 
 /* This container contains the module-wide configuration (parameters) of the GPT Driver */
-typedef struct
+typedef struct Gpt_DriverConfigurationType_tag
 {
 /* A container is needed to support multiple clock references (hardware dependent). */
 	Gpt_ClockReferencePointType* GptClockReferencePoint ;

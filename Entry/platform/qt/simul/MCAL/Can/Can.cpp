@@ -33,7 +33,7 @@ FUNC(void,MEM_Can_Init) Can_Init ( const Can_ConfigType *Config )
 	uint8 i;
 	canConfig = Config;
 
-    Entry::Self()->registerDevice(new arCan(CAN_DEVICE_NAME,Config->CanControllerNumber,Entry::Self()));
+    //Entry::Self()->registerDevice(new arCan(CAN_DEVICE_NAME,Config->CanControllerNumber,Entry::Self()));
 }
 
 FUNC(void,MEM_Can_DeInit) Can_DeInit ( void )
@@ -44,10 +44,10 @@ FUNC(void,MEM_Can_DeInit) Can_DeInit ( void )
 FUNC(void,MEM_Can_InitController) Can_InitController ( uint8 controller, const Can_ControllerConfigType *config )
 {
 	uint8 i;
-	for(i=0;i<config->CanHardwareObjectNumber;i++)
-	{
-		// TODO: Initialize each HW object
-	}
+//	for(i=0;i<config->CanHardwareObjectNumber;i++)
+//	{
+//		// TODO: Initialize each HW object
+//	}
 }
 
 FUNC(Can_ReturnType,MEM_Can_SetControllerMode) Can_SetControllerMode ( uint8 Controller ,

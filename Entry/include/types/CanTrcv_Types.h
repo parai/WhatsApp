@@ -19,6 +19,7 @@
 
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
+#include "EcuM.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
@@ -26,14 +27,14 @@ extern "C" {
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
 /* Container gives CanTrcv Driver information about access to a single CAN transceiver. */
-typedef struct
+typedef struct CanTrcv_AccessType_tag
 {
 } CanTrcv_AccessType ;
 
 /* Defines data payload mask to be used on the received payload in order to determine if the transceiver
  *  must be woken up by the received Wake-up Frame (WUF).
  */
-typedef struct
+typedef struct CanTrcv_PnFrameDataMaskSpecType_tag
 {
 /* Defines the n byte (Byte0 = LSB) of the data payload mask to be used on the received payload
  *  in order to determine if the transceiver must be woken up by the received Wake-up Frame (WUF).
@@ -46,7 +47,7 @@ typedef struct
 /* Container gives CAN transceiver driver information about the configuration of Partial Networking
  *  functionality.
  */
-typedef struct
+typedef struct CanTrcv_PartialNetworkType_tag
 {
 	CanTrcv_PnFrameDataMaskSpecType* CanTrcvPnFrameDataMaskSpec ;
 /* Indicates the CAN Bus communication baud rate in kbps. */
@@ -94,7 +95,7 @@ typedef enum
 } CanTrcv_InitStateType ;
 
 /* Container gives CAN transceiver driver information about a single CAN */
-typedef struct
+typedef struct CanTrcv_ChannelType_tag
 {
 	CanTrcv_AccessType* CanTrcvAccess ;
 	CanTrcv_PartialNetworkType* CanTrcvPartialNetwork ;
@@ -129,7 +130,7 @@ typedef struct
 /* Reference to a wakeup source in the EcuM configuration. */
 /* This reference is only needed if CanTrcvWakeupByBusUsed is true. */
 /* /AUTOSAR/EcucDefs/EcuM/EcuMConfiguration/EcuMCommonConfiguration/EcuMWakeupSource */
-	EcuM_WakeupSourceType* CanTrcvWakeupSourceRef ;
+    struct EcuM_WakeupSourceType_tag* CanTrcvWakeupSourceRef ;
 } CanTrcv_ChannelType ;
 
 /* Informs whether wake up is supported by polling or not supported. In case no */
@@ -140,7 +141,7 @@ typedef enum
 } CanTrcv_WakeUpSupportType ;
 
 /* This is the multiple configuration set container for CAN Transceiver. */
-typedef struct
+typedef struct CanTrcv_ConfigSetType_tag
 {
 /* transceiver (channel). */
 	CanTrcv_ChannelType* CanTrcvChannel ;
@@ -161,7 +162,7 @@ typedef struct
 } CanTrcv_ConfigSetType ;
 
 /* Container gives CAN transceiver driver basic information. */
-typedef struct
+typedef struct CanTrcv_GeneralType_tag
 {
 /* If switched on, #define CANTRCV_DEV _ERROR_DETECT ON shall be generated. If switched off, #define
  *  CANTRCV_DEV_ERROR _DETECT OFF shall be generated. Define shall be part of file CanTrcv_Cfg.h.

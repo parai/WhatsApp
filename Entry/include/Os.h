@@ -133,10 +133,11 @@ typedef union {
 	AppModeType			mode;
 	CounterType			cntid;
 } _ErrorHook_Par;
+
 #ifdef __cplusplus
 }} //name space
 #endif
-
+#include "Os_Types.h"
 #include "os_i.h"
 
 #ifdef __cplusplus

@@ -19,6 +19,13 @@
 
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
+#include "Dem.h"
+#include "Mcu.h"
+#include "Os.h"
+#include "ComM.h"
+#include "Can.h"
+#include "CanIf.h"
+#include "Gpt.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
@@ -39,26 +46,26 @@ typedef enum
 /* This container describes the default shutdown target to be selected by EcuM. The actual shutdown
  *  target may be overridden by the EcuM_SelectShutdownTarget service.
  */
-typedef struct
+typedef struct EcuM_DefaultShutdownTargetType_tag
 {
 	EcuM_DefaultStateType EcuMDefaultState ;
 /* If EcuMDefaultShutdownTarget is EcuMStateReset, this parameter selects the default reset mode.
  *  Otherwise this parameter may be ignored.
  */
 /* /AUTOSAR/EcucDefs/EcuM/EcuMConfiguration/EcuMFlexConfiguration/EcuMResetMode */
-	EcuM_ResetModeType* EcuMDefaultResetModeRef ;
+    struct EcuM_ResetModeType_tag* EcuMDefaultResetModeRef ;
 /* If EcuMDefaultShutdownTarget is EcuMStateSleep, this parameter selects the default sleep mode.
  *  Otherwise this parameter may be ignored.
  */
 /* /AUTOSAR/EcucDefs/EcuM/EcuMConfiguration/EcuMCommonConfiguration/EcuMSleepMode */
-	EcuM_SleepModeType* EcuMDefaultSleepModeRef ;
+    struct EcuM_SleepModeType_tag* EcuMDefaultSleepModeRef ;
 } EcuM_DefaultShutdownTargetType ;
 
 /* Container for the references to DemEventParameter elements which shall be invoked using the
  *  API Dem_ReportErrorStatus in case the corresponding error occurs. The EventId is taken from
  *  the referenced DemEventParameter's DemEventId value.
  */
-typedef struct
+typedef struct EcuM_DemEventParameterRefsType_tag
 {
 /* Reference to the DemEventParameter which shall be issued when the error "ECUM_E_ALL_RUN_REQUESTS_KILLED"
  *  has occured.
@@ -78,7 +85,7 @@ typedef struct
 } EcuM_DemEventParameterRefsType ;
 
 /* These containers describe the entries in a driver init list. */
-typedef struct
+typedef struct EcuM_DriverInitItemType_tag
 {
 /* Short name of the module to be initialized, e.g. Mcu, Gpt etc. */
 	char* EcuMModuleID ;
@@ -92,25 +99,25 @@ typedef struct
 } EcuM_DriverInitItemType ;
 
 /* Container for Init Block I. */
-typedef struct
+typedef struct EcuM_DriverInitListOneType_tag
 {
 	EcuM_DriverInitItemType* EcuMDriverInitItem ;
 } EcuM_DriverInitListOneType ;
 
 /* Container for Init Block 0. */
-typedef struct
+typedef struct EcuM_DriverInitListZeroType_tag
 {
 	EcuM_DriverInitItemType* EcuMDriverInitItem ;
 } EcuM_DriverInitListZeroType ;
 
 /* List of module IDs. */
-typedef struct
+typedef struct EcuM_DriverRestartListType_tag
 {
 	EcuM_DriverInitItemType* EcuMDriverInitItem ;
 } EcuM_DriverRestartListType ;
 
 /* These containers describe the configured sleep modes. */
-typedef struct
+typedef struct EcuM_SleepModeType_tag
 {
 /* This ID identifies this sleep mode in services like EcuM_SelectShutdownTarget. */
 	uint8 EcuMSleepModeId ;
@@ -123,11 +130,11 @@ typedef struct
 	Mcu_ModeSettingConfType* EcuMSleepModeMcuModeRef ;
 /* These parameters are references to the wakeup sources that shall be enabled for this sleep mode. */
 /* /AUTOSAR/EcucDefs/EcuM/EcuMConfiguration/EcuMCommonConfiguration/EcuMWakeupSource */
-	EcuM_WakeupSourceType* EcuMWakeupSourceMask ;
+    struct EcuM_WakeupSourceType_tag* EcuMWakeupSourceMask ;
 } EcuM_SleepModeType ;
 
 /* These containers describe the configured wakeup sources. */
-typedef struct
+typedef struct EcuM_WakeupSourceType_tag
 {
 /* When the timeout is not instantiated, there is no validation routine and the ECU Manager shall
  *  not validate the wakeup source.
@@ -155,7 +162,7 @@ typedef struct
 } EcuM_WakeupSourceType ;
 
 /* This container contains the common configuration (parameters) of the ECU State Manager. */
-typedef struct
+typedef struct EcuM_CommonConfigurationType_tag
 {
 	EcuM_DefaultShutdownTargetType* EcuMDefaultShutdownTarget ;
 /* The standardized errors are provided in this container and can be extended by vendor specific
@@ -197,21 +204,21 @@ typedef struct
 	uint64 EcuMConfigConsistencyHash ;
 /* The default application mode loaded when the ECU comes out of reset. */
 /* /AUTOSAR/EcucDefs/Os/OsAppMode */
-	Os_AppModeType* EcuMDefaultAppMode ;
+    struct Os_AppModeType_tag* EcuMDefaultAppMode ;
 /* This parameter is a reference to a OS ressource which is used to bring the ECU into sleep mode. */
 /* In case of multi core each core shall have an own OsResource. */
 /* /AUTOSAR/EcucDefs/Os/OsResource */
-	Os_ResourceType* EcuMOSResource ;
+    struct Os_ResourceType_tag* EcuMOSResource ;
 } EcuM_CommonConfigurationType ;
 
 /* Container for Init Block III. */
-typedef struct
+typedef struct EcuM_DriverInitListThreeType_tag
 {
 	EcuM_DriverInitItemType* EcuMDriverInitItem ;
 } EcuM_DriverInitListThreeType ;
 
 /* Container for Init Block II. */
-typedef struct
+typedef struct EcuM_DriverInitListTwoType_tag
 {
 	EcuM_DriverInitItemType* EcuMDriverInitItem ;
 } EcuM_DriverInitListTwoType ;
@@ -221,7 +228,7 @@ typedef struct
  *  requestors refer to entities above RTE, system requestors to entities below RTE (e.g. Communication
  *  Manager).
  */
-typedef struct
+typedef struct EcuM_FixedUserConfigType_tag
 {
 /* Parameter used to identify one user. */
 	uint8 EcuMFixedUser ;
@@ -231,7 +238,7 @@ typedef struct
  *  elements. These structures are concatenated to build a list as indicated by Figure 27 - Configuration
  *  Container Diagram.
  */
-typedef struct
+typedef struct EcuM_TTIIType_tag
 {
 /* This parameter defines the divisor preload value. */
 	uint64 EcuMDivisor ;
@@ -244,7 +251,7 @@ typedef struct
 } EcuM_TTIIType ;
 
 /* This container contains the configuration (parameters) of the EcuMFixed. */
-typedef struct
+typedef struct EcuM_FixedConfigurationType_tag
 {
 /* This container holds a list of module IDs that will be initialised. Each module in the list
  *  will be called for initialisation in the list order.
@@ -286,97 +293,97 @@ typedef struct
 	union
 	{
 /* /AUTOSAR/EcucDefs/Adc/AdcConfigSet */
-		Adc_ConfigSetType* AdcConfigSet;
+//		Adc_ConfigSetType* AdcConfigSet;
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet */
-		Can_ConfigSetType* CanConfigSet;
+        struct Can_ConfigSetType_tag* CanConfigSet;
 /* /AUTOSAR/EcucDefs/CanIf/CanIfInitCfg */
-		CanIf_InitCfgType* CanIfInitCfg;
+        struct CanIf_InitCfgType_tag* CanIfInitCfg;
 /* /AUTOSAR/EcucDefs/CanNm/CanNmGlobalConfig */
-		CanNm_GlobalConfigType* CanNmGlobalConfig;
+//		CanNm_GlobalConfigType* CanNmGlobalConfig;
 /* /AUTOSAR/EcucDefs/CanSM/CanSMConfiguration */
-		CanSM_ConfigurationType* CanSMConfiguration;
+//		CanSM_ConfigurationType* CanSMConfiguration;
 /* /AUTOSAR/EcucDefs/CanTp/CanTpConfig */
-		CanTp_ConfigType* CanTpConfig;
+//        CanTp_ConfigType* CanTpConfig;
 /* /AUTOSAR/EcucDefs/CanTrcv/CanTrcvConfigSet */
-		CanTrcv_ConfigSetType* CanTrcvConfigSet;
+//		CanTrcv_ConfigSetType* CanTrcvConfigSet;
 /* /AUTOSAR/EcucDefs/Com/ComConfig */
 		Com_ConfigType* ComConfig;
 /* /AUTOSAR/EcucDefs/ComM/ComMConfigSet */
 		ComM_ConfigSetType* ComMConfigSet;
 /* /AUTOSAR/EcucDefs/Dbg/DbgMultipleConfigurationContainer */
-		Dbg_MultipleConfigurationContainerType* DbgMultipleConfigurationContainer;
+//		Dbg_MultipleConfigurationContainerType* DbgMultipleConfigurationContainer;
 /* /AUTOSAR/EcucDefs/Dcm/DcmConfigSet */
-		Dcm_ConfigSetType* DcmConfigSet;
+//		Dcm_ConfigSetType* DcmConfigSet;
 /* /AUTOSAR/EcucDefs/Dem/DemConfigSet */
 		Dem_ConfigSetType* DemConfigSet;
 /* /AUTOSAR/EcucDefs/Dio/DioConfig */
-		Dio_ConfigType* DioConfig;
+//		Dio_ConfigType* DioConfig;
 /* /AUTOSAR/EcucDefs/Dlt/DltMultipleConfigurationContainer */
-		Dlt_MultipleConfigurationContainerType* DltMultipleConfigurationContainer;
+//		Dlt_MultipleConfigurationContainerType* DltMultipleConfigurationContainer;
 /* /AUTOSAR/EcucDefs/Eep/EepInitConfiguration */
-		Eep_InitConfigurationType* EepInitConfiguration;
+//		Eep_InitConfigurationType* EepInitConfiguration;
 /* /AUTOSAR/EcucDefs/Eth/EthConfigSet */
-		Eth_ConfigSetType* EthConfigSet;
+//		Eth_ConfigSetType* EthConfigSet;
 /* /AUTOSAR/EcucDefs/EthIf/EthIfConfigSet */
-		EthIf_ConfigSetType* EthIfConfigSet;
+//		EthIf_ConfigSetType* EthIfConfigSet;
 /* /AUTOSAR/EcucDefs/EthTrcv/EthTrcvConfigSet */
-		EthTrcv_ConfigSetType* EthTrcvConfigSet;
+//		EthTrcv_ConfigSetType* EthTrcvConfigSet;
 /* /AUTOSAR/EcucDefs/FiM/FiMConfigSet */
 		FiM_ConfigSetType* FiMConfigSet;
 /* /AUTOSAR/EcucDefs/Fls/FlsConfigSet */
-		Fls_ConfigSetType* FlsConfigSet;
+//		Fls_ConfigSetType* FlsConfigSet;
 /* /AUTOSAR/EcucDefs/FlsTst/FlsTstConfigSet */
-		FlsTst_ConfigSetType* FlsTstConfigSet;
+//		FlsTst_ConfigSetType* FlsTstConfigSet;
 /* /AUTOSAR/EcucDefs/FrArTp/FrArTpMultipleConfig */
-		FrArTp_MultipleConfigType* FrArTpMultipleConfig;
+//		FrArTp_MultipleConfigType* FrArTpMultipleConfig;
 /* /AUTOSAR/EcucDefs/FrIf/FrIfConfig */
-		FrIf_ConfigType* FrIfConfig;
+//		FrIf_ConfigType* FrIfConfig;
 /* /AUTOSAR/EcucDefs/Fr/FrMultipleConfiguration */
-		Fr_MultipleConfigurationType* FrMultipleConfiguration;
+//		Fr_MultipleConfigurationType* FrMultipleConfiguration;
 /* /AUTOSAR/EcucDefs/FrNm/FrNmChannelConfig */
-		FrNm_ChannelConfigType* FrNmChannelConfig;
+//		FrNm_ChannelConfigType* FrNmChannelConfig;
 /* /AUTOSAR/EcucDefs/FrSM/FrSMConfig */
-		FrSM_ConfigType* FrSMConfig;
+//		FrSM_ConfigType* FrSMConfig;
 /* /AUTOSAR/EcucDefs/FrTp/FrTpMultipleConfig */
-		FrTp_MultipleConfigType* FrTpMultipleConfig;
+//		FrTp_MultipleConfigType* FrTpMultipleConfig;
 /* /AUTOSAR/EcucDefs/Gpt/GptChannelConfigSet */
-		Gpt_ChannelConfigSetType* GptChannelConfigSet;
+        struct Gpt_ChannelConfigSetType_tag* GptChannelConfigSet;
 /* /AUTOSAR/EcucDefs/Icu/IcuConfigSet */
-		Icu_ConfigSetType* IcuConfigSet;
+//		Icu_ConfigSetType* IcuConfigSet;
 /* /AUTOSAR/EcucDefs/IpduM/IpduMConfig */
-		IpduM_ConfigType* IpduMConfig;
+//		IpduM_ConfigType* IpduMConfig;
 /* /AUTOSAR/EcucDefs/J1939Tp/J1939TpConfiguration */
-		J1939Tp_ConfigurationType* J1939TpConfiguration;
+//		J1939Tp_ConfigurationType* J1939TpConfiguration;
 /* /AUTOSAR/EcucDefs/Lin/LinGlobalConfig */
-		Lin_GlobalConfigType* LinGlobalConfig;
+//		Lin_GlobalConfigType* LinGlobalConfig;
 /* /AUTOSAR/EcucDefs/LinIf/LinIfGlobalConfig */
-		LinIf_GlobalConfigType* LinIfGlobalConfig;
+//		LinIf_GlobalConfigType* LinIfGlobalConfig;
 /* /AUTOSAR/EcucDefs/LinSM/LinSMConfigSet */
-		LinSM_ConfigSetType* LinSMConfigSet;
+//		LinSM_ConfigSetType* LinSMConfigSet;
 /* /AUTOSAR/EcucDefs/LinTp/LinTpGlobalConfig */
-		LinTp_GlobalConfigType* LinTpGlobalConfig;
+//		LinTp_GlobalConfigType* LinTpGlobalConfig;
 /* /AUTOSAR/EcucDefs/Mcu/McuModuleConfiguration */
 		Mcu_ModuleConfigurationType* McuModuleConfiguration;
 /* /AUTOSAR/EcucDefs/PduR/PduRRoutingTables */
-		PduR_RoutingTablesType* PduRRoutingTables;
+//		PduR_RoutingTablesType* PduRRoutingTables;
 /* /AUTOSAR/EcucDefs/Port/PortConfigSet */
-		Port_ConfigSetType* PortConfigSet;
+//		Port_ConfigSetType* PortConfigSet;
 /* /AUTOSAR/EcucDefs/Pwm/PwmChannelConfigSet */
-		Pwm_ChannelConfigSetType* PwmChannelConfigSet;
+//		Pwm_ChannelConfigSetType* PwmChannelConfigSet;
 /* /AUTOSAR/EcucDefs/Rte/RtePostBuildVariantConfiguration */
-		Rte_PostBuildVariantConfigurationType* RtePostBuildVariantConfiguration;
+//		Rte_PostBuildVariantConfigurationType* RtePostBuildVariantConfiguration;
 /* /AUTOSAR/EcucDefs/SoAd/SoAdDoIpConfig */
-		SoAd_DoIpConfigType* SoAdDoIpConfig;
+//		SoAd_DoIpConfigType* SoAdDoIpConfig;
 /* /AUTOSAR/EcucDefs/Spi/SpiDriver */
-		Spi_DriverType* SpiDriver;
+//		Spi_DriverType* SpiDriver;
 /* /AUTOSAR/EcucDefs/UdpNm/UdpNmGlobalConfig */
-		UdpNm_GlobalConfigType* UdpNmGlobalConfig;
+//		UdpNm_GlobalConfigType* UdpNmGlobalConfig;
 /* /AUTOSAR/EcucDefs/WdgM/WdgMConfigSet */
-		WdgM_ConfigSetType* WdgMConfigSet;
+//		WdgM_ConfigSetType* WdgMConfigSet;
 /* /AUTOSAR/EcucDefs/Wdg/WdgSettingsConfig */
-		Wdg_SettingsConfigType* WdgSettingsConfig;
+//		Wdg_SettingsConfigType* WdgSettingsConfig;
 /* /AUTOSAR/EcucDefs/Xcp/XcpConfig */
-		Xcp_ConfigType* XcpConfig;
+//		Xcp_ConfigType* XcpConfig;
 	} EcuMFixedModuleConfigurationRef ;
 /* These parameters contain references to the ComMChannels for which EcuM has to call ComM_CommunicationAllowed.
  */
@@ -388,7 +395,7 @@ typedef struct
 } EcuM_FixedConfigurationType ;
 
 /* These containers describe the configured alarm clocks. */
-typedef struct
+typedef struct EcuM_AlarmClockType_tag
 {
 /* This ID identifies this alarmclock. */
 	uint8 EcuMAlarmClockId ;
@@ -397,13 +404,13 @@ typedef struct
 	uint64 EcuMAlarmClockTimeOut ;
 /* This parameter allows an alarm to be assigned to a user. */
 /* /AUTOSAR/EcucDefs/EcuM/EcuMConfiguration/EcuMFlexConfiguration/EcuMFlexUserConfig */
-	EcuM_FlexUserConfigType* EcuMAlarmClockUser ;
+    struct EcuM_FlexUserConfigType_tag* EcuMAlarmClockUser ;
 } EcuM_AlarmClockType ;
 
 /* These containers describe the identifiers that are needed to refer to a software component or
  *  another appropriate entity in the system which uses the EcuMFlex Interfaces.
  */
-typedef struct
+typedef struct EcuM_FlexUserConfigType_tag
 {
 /* Parameter used to identify one user. */
 	uint8 EcuMFlexUser ;
@@ -415,7 +422,7 @@ typedef struct
 /* This container describes the collection of allowed users which are allowed to call the EcuM_GoDown
  *  API.
  */
-typedef struct
+typedef struct EcuM_GoDownAllowedUsersType_tag
 {
 /* These parameters describe the references to the users which are allowed to call the EcuM_GoDown
  *  API.
@@ -425,7 +432,7 @@ typedef struct
 } EcuM_GoDownAllowedUsersType ;
 
 /* These containers describe the configured reset modes. */
-typedef struct
+typedef struct EcuM_ResetModeType_tag
 {
 /* This ID identifies this reset mode in services like EcuM_SelectShutdownTarget. */
 	uint8 EcuMResetModeId ;
@@ -434,7 +441,7 @@ typedef struct
 /* This container describes the collection of allowed users which are allowed to call the EcuM_SetClock
  *  API.
  */
-typedef struct
+typedef struct EcuM_SetClockAllowedUsersType_tag
 {
 /* These parameters describe the references to the users which are allowed to call the EcuM_SetClock
  *  API.
@@ -444,21 +451,21 @@ typedef struct
 } EcuM_SetClockAllowedUsersType ;
 
 /* These containers describe the configured shut down or reset causes. */
-typedef struct
+typedef struct EcuM_ShutdownCauseType_tag
 {
 /* This ID identifies this shut down cause. */
 	uint8 EcuMShutdownCauseId ;
 } EcuM_ShutdownCauseType ;
 
 /* These containers describe the configured shut down targets. */
-typedef struct
+typedef struct EcuM_ShutdownTargetType_tag
 {
 /* This ID identifies this shut down target in services like EcuM_SelectShutdownTarget. */
 	uint8 EcuMShutdownTargetId ;
 } EcuM_ShutdownTargetType ;
 
 /* This container contains the configuration (parameters) of the EcuMFlex. */
-typedef struct
+typedef struct EcuM_FlexConfigurationType_tag
 {
 /* The name of these conatiners allows giving a symbolic name to one alarm clock. */
 	EcuM_AlarmClockType* EcuMAlarmClock ;
@@ -489,31 +496,31 @@ typedef struct
 	union
 	{
 /* /AUTOSAR/EcucDefs/Adc/AdcConfigSet */
-		Adc_ConfigSetType* AdcConfigSet;
+//		Adc_ConfigSetType* AdcConfigSet;
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet */
-		Can_ConfigSetType* CanConfigSet;
+        struct Can_ConfigSetType_tag* CanConfigSet;
 /* /AUTOSAR/EcucDefs/Dem/DemConfigSet */
 		Dem_ConfigSetType* DemConfigSet;
 /* /AUTOSAR/EcucDefs/Fls/FlsConfigSet */
-		Fls_ConfigSetType* FlsConfigSet;
+//		Fls_ConfigSetType* FlsConfigSet;
 /* /AUTOSAR/EcucDefs/Gpt/GptChannelConfigSet */
-		Gpt_ChannelConfigSetType* GptChannelConfigSet;
+        struct Gpt_ChannelConfigSetType_tag* GptChannelConfigSet;
 /* /AUTOSAR/EcucDefs/Icu/IcuConfigSet */
-		Icu_ConfigSetType* IcuConfigSet;
+//		Icu_ConfigSetType* IcuConfigSet;
 /* /AUTOSAR/EcucDefs/Lin/LinGlobalConfig */
-		Lin_GlobalConfigType* LinGlobalConfig;
+//		Lin_GlobalConfigType* LinGlobalConfig;
 /* /AUTOSAR/EcucDefs/Mcu/McuModuleConfiguration */
 		Mcu_ModuleConfigurationType* McuModuleConfiguration;
 /* /AUTOSAR/EcucDefs/Port/PortConfigSet */
-		Port_ConfigSetType* PortConfigSet;
+//		Port_ConfigSetType* PortConfigSet;
 /* /AUTOSAR/EcucDefs/Pwm/PwmChannelConfigSet */
-		Pwm_ChannelConfigSetType* PwmChannelConfigSet;
+//		Pwm_ChannelConfigSetType* PwmChannelConfigSet;
 /* /AUTOSAR/EcucDefs/Spi/SpiDriver */
-		Spi_DriverType* SpiDriver;
+//		Spi_DriverType* SpiDriver;
 /* /AUTOSAR/EcucDefs/WdgM/WdgMConfigSet */
-		WdgM_ConfigSetType* WdgMConfigSet;
+//		WdgM_ConfigSetType* WdgMConfigSet;
 /* /AUTOSAR/EcucDefs/Wdg/WdgSettingsConfig */
-		Wdg_SettingsConfigType* WdgSettingsConfig;
+//		Wdg_SettingsConfigType* WdgSettingsConfig;
 	} EcuMFlexModuleConfigurationRef ;
 /* This parameter is a reference to the normal MCU mode to be restored after a sleep. */
 /* /AUTOSAR/EcucDefs/Mcu/McuModuleConfiguration/McuModeSettingConf */
@@ -521,7 +528,7 @@ typedef struct
 } EcuM_FlexConfigurationType ;
 
 /* This container contains the configuration (parameters) of the ECU State Manager. */
-typedef struct
+typedef struct EcuM_ConfigurationType_tag
 {
 	EcuM_CommonConfigurationType* EcuMCommonConfiguration ;
 /* Only applicable if EcuMFixed is implemented. */
@@ -531,7 +538,7 @@ typedef struct
 } EcuM_ConfigurationType ;
 
 /* This container holds the general, pre-compile configuration parameters for the EcuMFixed. */
-typedef struct
+typedef struct EcuM_FixedGeneralType_tag
 {
 /* This configuration parameter defines whether the communication  manager is supported by EcuM.
  *  This feature is presented for development purpose to compile out the communication manager
@@ -563,7 +570,7 @@ typedef struct
 } EcuM_FixedGeneralType ;
 
 /* This container holds the general, pre-compile configuration parameters for the EcuMFlex. */
-typedef struct
+typedef struct EcuM_FlexGeneralType_tag
 {
 /* This flag indicates whether the optional AlarmClock feature is present. */
 	boolean EcuMAlarmClockPresent ;
@@ -577,7 +584,7 @@ typedef struct
 } EcuM_FlexGeneralType ;
 
 /* This container holds the general, pre-compile configuration parameters. */
-typedef struct
+typedef struct EcuM_GeneralType_tag
 {
 /* If false, no debug artifacts (e.g. calls to DET) shall remain in the executable object. Initialization
  *  of DET, however is controlled by configuration of optional BSW modules.

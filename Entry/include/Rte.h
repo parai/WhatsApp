@@ -16,7 +16,7 @@
 #define RTE_H_
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
-
+#include "Rte_Types.h"
 #ifdef __cplusplus
 namespace autosar { extern "C" {
 #endif

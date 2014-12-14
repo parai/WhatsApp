@@ -334,7 +334,7 @@ class arXML():
                container.tag == '{%s}ECUC-CHOICE-CONTAINER-DEF'%(__namespace__)) 
         name = arxml_short_name(container)
         container_type = self.comment_str(arxml_desc(container))
-        container_type += 'typedef struct\n{\n'
+        container_type += 'typedef struct %s_tag\n{\n'%(self.type_name(module_name, name))
         for sub_containters in arxml_sub_containers_def_list(container):
             for sub_containter in sub_containters:
                 sub_container_type = self.generate_contariner_types(fp,module_name,sub_containter)
@@ -490,4 +490,4 @@ def ARXML():
     return __arxml_global_instance__ 
     
 if __name__ == '__main__':
-    arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml').generate_basic_type_header_files()
+    arXML('AUTOSAR_MOD_ECUConfigurationParameters.arxml').generate_basic_type_header_files('.types')

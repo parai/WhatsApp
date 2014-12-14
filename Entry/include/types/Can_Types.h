@@ -19,6 +19,9 @@
 
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
+#include "EcuM.h"
+#include "Os.h"
+#include "CanIf.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
@@ -26,7 +29,7 @@ extern "C" {
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
 /* This container contains bit timing related configuration parameters of the CAN controller(s). */
-typedef struct
+typedef struct Can_ControllerBaudrateConfigType_tag
 {
 /* Specifies the baudrate of the controller in kbps. */
 	uint16 CanControllerBaudRate ;
@@ -41,7 +44,7 @@ typedef struct
 } Can_ControllerBaudrateConfigType ;
 
 /* This container contains the configuration (parameters) of the CAN Filter Mask(s). */
-typedef struct
+typedef struct Can_FilterMaskType_tag
 {
 /* The mask shall be build by filling with leading 0. In case of CanIdType 
  *                                                         EXTENDED or MIXED a 29 bit mask shall
@@ -71,7 +74,7 @@ typedef enum
 } Can_TTIRQProcessingType ;
 
 /* This container is only included and valid if TTCAN SWS is used and TTCAN is enabled. */
-typedef struct
+typedef struct Can_TTControllerType_tag
 {
 /* Defines the maximum time period (unit is 256 times NTU) after which the application has to serve
  *  the watchdog.
@@ -224,7 +227,7 @@ typedef enum
 } Can_WakeupProcessingType ;
 
 /* This container contains the configuration parameters of the CAN controller(s). */
-typedef struct
+typedef struct Can_ControllerConfigType_tag
 {
 	Can_ControllerBaudrateConfigType* CanControllerBaudrateConfig ;
 	Can_FilterMaskType* CanFilterMask ;
@@ -260,8 +263,8 @@ typedef struct
  */
 /* Implementation Type: reference to EcuM_WakeupSourceType */
 /* /AUTOSAR/EcucDefs/EcuM/EcuMConfiguration/EcuMCommonConfiguration/EcuMWakeupSource */
-	EcuM_WakeupSourceType* CanWakeupSourceRef ;
-} Can_ControllerType ;
+    struct EcuM_WakeupSourceType_tag* CanWakeupSourceRef ;
+} Can_ControllerConfigType ;
 
 /* Defines the type of the trigger associated with the hardware object. This parameter depends
  *  on plain CAN parameter CAN_OBJECT_TYPE.
@@ -277,7 +280,7 @@ typedef enum
 } Can_TTHardwareObjectTriggerTypeType ;
 
 /* This container is only included and valid if TTCAN SWS is used and TTCAN is enabled. */
-typedef struct
+typedef struct Can_TTHardwareObjectTriggerType_tag
 {
 /* CanTTHardwareObjectBaseCycle must be not greater than cycle_count_max. */
 /* Defines the cycle_offset. */
@@ -329,7 +332,7 @@ typedef enum
 } Can_ObjectTypeType ;
 
 /* This container contains the configuration (parameters) of CAN Hardware Objects. */
-typedef struct
+typedef struct Can_HardwareObjectType_tag
 {
 /* This container contains the configuration (parameters) of TTCAN triggers for Hardware Objects,
  *  which are additional to the configuration (parameters) of CAN Hardware Objects.
@@ -359,7 +362,7 @@ typedef struct
 	Can_ObjectTypeType CanObjectType ;
 /* Reference to CAN Controller to which the HOH is associated to. */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanController */
-	Can_ControllerType* CanControllerRef ;
+    Can_ControllerConfigType* CanControllerRef ;
 /* Reference to the filter mask that is used for hardware filtering together with the CAN_ID_VALUE. */
 /* Different CanHardwareObjects with different CanIdTypes (STANDARD, MIXED,  EXTENDED)
  *                                                 can share the same CanFilterMask (i.e., the
@@ -380,10 +383,10 @@ typedef struct
 	Can_FilterMaskType* CanFilterMaskRef ;
 /* Reference to CAN Controller to which the HOH is associated to. */
 /* /AUTOSAR/EcucDefs/Can/CanGeneral/CanMainFunctionRWPeriods */
-	Can_MainFunctionRWPeriodsType* CanMainFunctionRWPeriodRef ;
+    struct Can_MainFunctionRWPeriodsType_tag* CanMainFunctionRWPeriodRef ;
 } Can_HardwareObjectType ;
 
-typedef struct
+typedef struct Can_MainFunctionRWPeriodsType_tag
 {
 /* This parameter describes the period for cyclic call to Can_MainFunction_Read. Unit is seconds.
  *  Different poll-cycles will be configurable if more than one CanMainFunctionReadPeriod is configured.
@@ -402,18 +405,24 @@ typedef struct
 /* This parameter defines the existence and the name of a callout function that is called after
  *  a successful
  */
-typedef void (*Can_LPduReceiveCalloutFunctionType)(uint32 canid,uint8 dlc,uint8* data);
-
+/* TODO: */
+typedef void (*Can_LPduReceiveCalloutFunctionType)(void);
 
 /* This is the multiple configuration set container for CAN Driver */
-typedef struct
+typedef struct Can_ConfigType_tag
 {
-	Can_ControllerType* CanController ;
+	Can_ControllerConfigType* CanController ;
 	Can_HardwareObjectType* CanHardwareObject ;
+} Can_ConfigType ;
+
+/* This is the multiple configuration set container for CAN Driver */
+typedef struct Can_ConfigSetType_tag
+{
+	Can_ConfigType* ConfigSet ;
 } Can_ConfigSetType ;
 
 /* This container contains the parameters related each CAN Driver Unit. */
-typedef struct
+typedef struct Can_GeneralType_tag
 {
 	Can_MainFunctionRWPeriodsType* CanMainFunctionRWPeriods ;
 /* If this parameter is set to true the Can_ChangeBaudrate API shall be supported. Otherwise the
@@ -451,11 +460,11 @@ typedef struct
 	boolean CanVersionInfoApi ;
 /* This parameter contains a reference to the counter, which is used by the CAN driver. */
 /* /AUTOSAR/EcucDefs/Os/OsCounter */
-	Os_CounterType* CanCounterRef ;
+    struct Os_CounterType_tag* CanCounterRef ;
 /* The parameter refers to CanIfSupportTTCAN parameter in the CAN Interface Module configuration. */
 /* The CanIfSupportTTCAN parameter defines whether TTCAN is supported. */
 /* /AUTOSAR/EcucDefs/CanIf/CanIfPrivateCfg */
-	CanIf_PrivateCfgType* CanSupportTTCANRef ;
+    struct CanIf_PrivateCfgType_tag* CanSupportTTCANRef ;
 } Can_GeneralType ;
 
 /* ============================ [ DATAS     ] ====================================================== */

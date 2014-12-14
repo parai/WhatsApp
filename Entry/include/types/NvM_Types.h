@@ -19,6 +19,7 @@
 
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
+#include "Dem.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
@@ -26,7 +27,7 @@ extern "C" {
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
 /* This parameter is just a container for the parameters for EA and FEE */
-typedef struct
+typedef struct NvM_TargetBlockReferenceType_tag
 {
 } NvM_TargetBlockReferenceType ;
 
@@ -51,30 +52,26 @@ typedef enum
 /* Entry address of a block specific callback routine which shall be called if no ROM data is available
  *  for initialization of the NVRAM block.
  */
-/* TODO: 
- * typedef void (*NvM_InitBlockCallbackType)(void);
- */
+/* TODO:*/
+typedef void (*NvM_InitBlockCallbackType)(void);
 
 /* Entry address of a block specific callback routine which shall be called in order to let the
  *  application copy data from the NvM module's mirror to RAM block.
  */
-/* TODO: 
- * typedef void (*NvM_ReadRamBlockFromNvCallbackType)(void);
- */
+/* TODO: */
+typedef void (*NvM_ReadRamBlockFromNvCallbackType)(void);
 
 /* Entry address of the block specific callback routine which shall be invoked on termination of
  *  each asynchronous single block request [NVM113].
  */
-/* TODO: 
- * typedef void (*NvM_SingleBlockCallbackType)(void);
- */
+/* TODO: */
+typedef void (*NvM_SingleBlockCallbackType)(void);
 
 /* Entry address of a block specific callback routine which shall be called in order to let the
  *  application copy data from RAM block to NvM module's mirror.
  */
-/* TODO: 
- * typedef void (*NvM_WriteRamBlockToNvCallbackType)(void);
- */
+/* TODO: */
+typedef void (*NvM_WriteRamBlockToNvCallbackType)(void);
 
 /* Preprocessor switch to enable some API calls which are related to NVM API configuration classes. */
 typedef enum
@@ -87,15 +84,14 @@ typedef enum
 /* Entry address of the common callback routine which shall be invoked on termination of each asynchronous
  *  multi block request
  */
-/* TODO: 
- * typedef void (*NvM_MultiBlockCallbackType)(void);
- */
+/* TODO: */
+typedef void (*NvM_MultiBlockCallbackType)(void);
 
 /* Container for a management structure to configure the composition of a given NVRAM Block Management
  *  Type. Its multiplicity describes the number of configured NVRAM blocks, one block is required
  *  to be configured. The NVRAM block descriptors are condensed in the NVRAM block descriptor table.
  */
-typedef struct
+typedef struct NvM_BlockDescriptorType_tag
 {
 	NvM_TargetBlockReferenceType* NvMTargetBlockReference ;
 	NvM_BlockCrcTypeType NvMBlockCrcType ;
@@ -279,7 +275,7 @@ typedef struct
 } NvM_BlockDescriptorType ;
 
 /* Container for common configuration options. */
-typedef struct
+typedef struct NvM_CommonType_tag
 {
 	NvM_ApiConfigClassType NvMApiConfigClass ;
 /* True: call  BswM_NvM_CurrentJobMode if ReadAll and WriteAll are started, finished, canceled
@@ -369,43 +365,43 @@ typedef struct
  *  from the referenced DemEventParameter's DemEventId value. The standardized errors are provided
  *  in the container and can be extended by vendor specific error references.
  */
-typedef struct
+typedef struct NvM_DemEventParameterRefsType_tag
 {
 /* Reference to the DemEventParameter which shall be issued when the error "API request integrity
  *  failed" has occured.
  */
 /* /AUTOSAR/EcucDefs/Dem/DemConfigSet/DemEventParameter */
-	Dem_EventParameterType* NVM_E_INTEGRITY_FAILED ;
+    struct Dem_EventParameterType_tag* NVM_E_INTEGRITY_FAILED ;
 /* Reference to the DemEventParameter which shall be issued when the error "loss of redundancy"
  *  has occured.
  */
 /* /AUTOSAR/EcucDefs/Dem/DemConfigSet/DemEventParameter */
-	Dem_EventParameterType* NVM_E_LOSS_OF_REDUNDANCY ;
+    struct Dem_EventParameterType_tag* NVM_E_LOSS_OF_REDUNDANCY ;
 /* Reference to the DemEventParameter which shall be issued when the error "NVRAM Managers job
  *  queue overflow" has occured.
  */
 /* /AUTOSAR/EcucDefs/Dem/DemConfigSet/DemEventParameter */
-	Dem_EventParameterType* NVM_E_QUEUE_OVERFLOW ;
+    struct Dem_EventParameterType_tag* NVM_E_QUEUE_OVERFLOW ;
 /* Reference to the DemEventParameter which shall be issued when the error "API request failed"
  *  has occured.
  */
 /* /AUTOSAR/EcucDefs/Dem/DemConfigSet/DemEventParameter */
-	Dem_EventParameterType* NVM_E_REQ_FAILED ;
+    struct Dem_EventParameterType_tag* NVM_E_REQ_FAILED ;
 /* Reference to the DemEventParameter which shall be issued when the error "Write Verification
  *  failed" has occured.
  */
 /* /AUTOSAR/EcucDefs/Dem/DemConfigSet/DemEventParameter */
-	Dem_EventParameterType* NVM_E_VERIFY_FAILED ;
+    struct Dem_EventParameterType_tag* NVM_E_VERIFY_FAILED ;
 /* Reference to the DemEventParameter which shall be issued when the error "write attempt to NVRAM
  *  block with write protection" has occured.
  */
 /* /AUTOSAR/EcucDefs/Dem/DemConfigSet/DemEventParameter */
-	Dem_EventParameterType* NVM_E_WRITE_PROTECTED ;
+    struct Dem_EventParameterType_tag* NVM_E_WRITE_PROTECTED ;
 /* Reference to the DemEventParameter which shall be issued when the error "Static Block ID check
  *  failed" has occured.
  */
 /* /AUTOSAR/EcucDefs/Dem/DemConfigSet/DemEventParameter */
-	Dem_EventParameterType* NVM_E_WRONG_BLOCK_ID ;
+    struct Dem_EventParameterType_tag* NVM_E_WRONG_BLOCK_ID ;
 } NvM_DemEventParameterRefsType ;
 
 /* ============================ [ DATAS     ] ====================================================== */

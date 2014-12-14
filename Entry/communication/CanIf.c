@@ -51,8 +51,8 @@ FUNC(void,MEM_CanIf_Init) CanIf_Init ( const CanIf_ConfigType* ConfigPtr )
 		{
 			uint8 canControllerId;
 			const Can_ControllerConfigType * canConfig;
-			canControllerId = ConfigPtr->CanIfInitConfig->CanIfCtrlCfg[chlid].CanIfCtrlId;
-			canConfig = ConfigPtr->CanIfInitConfig->CanIfCtrlCfg[chlid].CanIfCtrlCanCtrlIdRef;
+//			canControllerId = ConfigPtr->CanIfInitConfig->CanIfCtrlCfg[chlid].CanIfCtrlId;
+//			canConfig = ConfigPtr->CanIfInitConfig->CanIfCtrlCfg[chlid].CanIfCtrlCanCtrlIdRef;
 			Can_InitController(canControllerId, canConfig);
 			canIfControllerMode[chlid] = CANIF_CS_STOPPED;
 			canIfPduMode[chlid] = CANIF_GET_OFFLINE;
@@ -61,10 +61,10 @@ FUNC(void,MEM_CanIf_Init) CanIf_Init ( const CanIf_ConfigType* ConfigPtr )
 #if (CANIF_DYNAMIC_CAN_TX_PDUID_NUMBER > 0)
 		{   /* dynamic L-PDU's ID in CANIF must <= CanIfInitNumberOfDynamicCanTxPduIds */
 			PduIdType i;
-			for(i=0;i<ConfigPtr->CanIfInitConfig->CanIfInitNumberOfDynamicCanTxPduIds;i++)
-			{
-				canIfDynamicIds[i] = ConfigPtr->CanIfInitConfig->CanIfTxPduCfg[i].CanIfTxPduCanId;
-			}
+//			for(i=0;i<ConfigPtr->CanIfInitConfig->CanIfInitNumberOfDynamicCanTxPduIds;i++)
+//			{
+//				canIfDynamicIds[i] = ConfigPtr->CanIfInitConfig->CanIfTxPduCfg[i].CanIfTxPduCanId;
+//			}
 		}
 #endif
 #if ( CANIF_DEV_ERROR_DETECT == 1 )
@@ -88,7 +88,7 @@ FUNC(Std_ReturnType,MEM_CanIf_SetControllerMode) CanIf_SetControllerMode ( uint8
 	else
 	{
 #endif
-		uint8 canControllerId = canIfConfig->CanIfInitConfig->CanIfCtrlCfg[ControllerId].CanIfCtrlCanCtrlIdRef->CanControllerId;
+        uint8 canControllerId = 0;  //canIfConfig->CanIfInitConfig->CanIfCtrlCfg[ControllerId].CanIfCtrlCanCtrlIdRef->CanControllerId;
 		/* According to Figure 30 Start CAN network,AUTOSAR 4.0 */
 		switch (ControllerMode)
 		{
@@ -170,11 +170,11 @@ FUNC(Std_ReturnType,MEM_CanIf_Transmit) CanIf_Transmit ( PduIdType CanTxPduId , 
 	{
 		Det_ReportError(MODULE_ID_CANIF,0,0x05,CANIF_E_UNINIT);
 	}
-	else if ( CanTxPduId >= (canIfConfig->CanIfInitConfig->CanIfInitNumberOfStaticCanTXPduIds
-							 + canIfConfig->CanIfInitConfig->CanIfInitNumberOfDynamicCanTxPduIds) )
-	{
-		Det_ReportError(MODULE_ID_CANIF,0,0x05,CANIF_E_INVALID_TXPDUID);
-	}
+//	else if ( CanTxPduId >= (canIfConfig->CanIfInitConfig->CanIfInitNumberOfStaticCanTXPduIds
+//							 + canIfConfig->CanIfInitConfig->CanIfInitNumberOfDynamicCanTxPduIds) )
+//	{
+//		Det_ReportError(MODULE_ID_CANIF,0,0x05,CANIF_E_INVALID_TXPDUID);
+//	}
 	else if ( NULL == PduInfoPtr )
 	{
 		Det_ReportError(MODULE_ID_CANIF,0,0x05,CANIF_E_PARAM_POINTER);
@@ -182,43 +182,43 @@ FUNC(Std_ReturnType,MEM_CanIf_Transmit) CanIf_Transmit ( PduIdType CanTxPduId , 
 	else
 	{
 #endif
-		const CanIf_TxPduConfigType* txPduCfg = &canIfConfig->CanIfInitConfig->CanIfTxPduCfg[CanTxPduId];
-		uint8 chlid = txPduCfg->CanIfTxPduHthIdRef->CanIfHthCanCtrlIdRef->CanIfCtrlId;
-		if ( (CANIF_CS_STARTED == canIfControllerMode[chlid]) &&
-			 ((CANIF_GET_ONLINE == canIfPduMode[chlid]) || (CANIF_GET_TX_ONLINE == canIfPduMode[chlid])) )
-		{
-			Can_PduType pdu;
-			Can_ReturnType result;
+//		const CanIf_TxPduConfigType* txPduCfg = &canIfConfig->CanIfInitConfig->CanIfTxPduCfg[CanTxPduId];
+//		uint8 chlid = txPduCfg->CanIfTxPduHthIdRef->CanIfHthCanCtrlIdRef->CanIfCtrlId;
+//		if ( (CANIF_CS_STARTED == canIfControllerMode[chlid]) &&
+//			 ((CANIF_GET_ONLINE == canIfPduMode[chlid]) || (CANIF_GET_TX_ONLINE == canIfPduMode[chlid])) )
+//		{
+//			Can_PduType pdu;
+//			Can_ReturnType result;
 
-			Can_HwHandleType hth = txPduCfg->CanIfTxPduHthIdRef->CanIfHthIdSymRef;
-			if ( CANIF_PDU_TYPE_DYNAMIC == txPduCfg->CanIfTxPduType )
-			{ /* configuration tool should make sure all the dynamic PDUs in the front of the list of CanIfTxPduCfg */
-				pdu.id = canIfDynamicIds[CanTxPduId];
-			}
-			else
-			{
-				pdu.id = txPduCfg->CanIfTxPduCanId;
-			}
+//			Can_HwHandleType hth = txPduCfg->CanIfTxPduHthIdRef->CanIfHthIdSymRef;
+//			if ( CANIF_PDU_TYPE_DYNAMIC == txPduCfg->CanIfTxPduType )
+//			{ /* configuration tool should make sure all the dynamic PDUs in the front of the list of CanIfTxPduCfg */
+//				pdu.id = canIfDynamicIds[CanTxPduId];
+//			}
+//			else
+//			{
+//				pdu.id = txPduCfg->CanIfTxPduCanId;
+//			}
 
-			if ( CANIF_ID_TYPE_EXTENDED == txPduCfg->CanIfTxPduCanIdType )
-			{
-				pdu.id |= 0x80000000UL; /* indicate CAN that id is 29 bits long */
-			}
-			pdu.length = PduInfoPtr->SduLength;
-			pdu.sdu    = PduInfoPtr->SduDataPtr;
-			pdu.swPduHandle = CanTxPduId;
+//			if ( CANIF_ID_TYPE_EXTENDED == txPduCfg->CanIfTxPduCanIdType )
+//			{
+//				pdu.id |= 0x80000000UL; /* indicate CAN that id is 29 bits long */
+//			}
+//			pdu.length = PduInfoPtr->SduLength;
+//			pdu.sdu    = PduInfoPtr->SduDataPtr;
+//			pdu.swPduHandle = CanTxPduId;
 
-			result = Can_Write(hth,&pdu);
+//			result = Can_Write(hth,&pdu);
 
-			if ( CAN_OK == result )
-			{
-				ercd = E_OK;
-			}
-		}
-		else
-		{
-			/* not on line */
-		}
+//			if ( CAN_OK == result )
+//			{
+//				ercd = E_OK;
+//			}
+//		}
+//		else
+//		{
+//			/* not on line */
+//		}
 #if ( CANIF_DEV_ERROR_DETECT == 1 )
 	}
 #endif
@@ -232,11 +232,11 @@ FUNC(void,MEM_CanIf_ControllerModeIndication) CanIf_ControllerModeIndication ( u
 	/* change parameter CAN Controller to CANIF channel Id */
 	for (i=0;i<CANIF_CHL_NUMBER;i++)
 	{
-		if(Controller==(canIfConfig->CanIfInitConfig->CanIfCtrlCfg[i].CanIfCtrlCanCtrlIdRef->CanControllerId))
-		{
-			chlid = i;
-			break;
-		}
+//		if(Controller==(canIfConfig->CanIfInitConfig->CanIfCtrlCfg[i].CanIfCtrlCanCtrlIdRef->CanControllerId))
+//		{
+//			chlid = i;
+//			break;
+//		}
 	}
 #if ( CANIF_DEV_ERROR_DETECT == 1 )
 	if ( FALSE == canIfInitialized )

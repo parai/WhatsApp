@@ -19,6 +19,7 @@
 
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "Std_Types.h"
+#include "EcuC.h"
 #ifdef __cplusplus
 namespace autosar {
 extern "C" {
@@ -28,30 +29,29 @@ extern "C" {
 /* Each instance of this choice container allows to define one routing destination either by reference
  *  to an already configured COM signal / signal group or by a  destination description container.
  */
-typedef struct
+typedef struct Com_GwDestinationType_tag
 {
 } Com_GwDestinationType ;
 
 /* This choice container allows the definition of the gateway source signal either by reference
  *  to an already configured COM signal / signal group or by a  source description container.
  */
-typedef struct
+typedef struct Com_GwSourceType_tag
 {
 } Com_GwSourceType ;
 
-typedef struct
+typedef struct Com_GwMappingType_tag
 {
 	Com_GwDestinationType* ComGwDestination ;
 	Com_GwSourceType* ComGwSource ;
 } Com_GwMappingType ;
 
 /* Name of Com_CbkCounterErr callback function to be called. If this */
-/* TODO: 
- * typedef void (*Com_IPduCounterErrorNotificationType)(void);
- */
+/* TODO: */
+typedef void (*Com_IPduCounterErrorNotificationType)(void);
 
 /* This optional container contains the configuration parameters of PDU Counter. */
-typedef struct
+typedef struct Com_IPduCounterType_tag
 {
 /* parameter is omitted no I-PDU counter mismatch notification shall take place. */
 	Com_IPduCounterErrorNotificationType ComIPduCounterErrorNotification ;
@@ -69,7 +69,7 @@ typedef struct
 } Com_IPduCounterType ;
 
 /* This optional container contains the information needed for each I-PDU replicated. */
-typedef struct
+typedef struct Com_IPduReplicationType_tag
 {
 /* The number of identical I-PDUs needed for successful voting. */
 	uint8 ComIPduReplicationQuorum ;
@@ -90,7 +90,7 @@ typedef enum
 /* This container contains the configuration parameters of the AUTOSAR COM module's transmission
  *  modes.
  */
-typedef struct
+typedef struct Com_TxModeType_tag
 {
 /* The transmission mode None shall not have any further sub-attributes in the ComTxMode object. */
 	Com_TxModeModeType ComTxModeMode ;
@@ -121,7 +121,7 @@ typedef struct
 /* This container contains the configuration parameters of the AUTOSAR COM module's transmission
  *  modes in the case the ComFilter evaluates to false.
  */
-typedef struct
+typedef struct Com_TxModeFalseType_tag
 {
 	Com_TxModeType* ComTxMode ;
 } Com_TxModeFalseType ;
@@ -129,7 +129,7 @@ typedef struct
 /* This container contains the configuration parameters of the AUTOSAR COM module's transmission
  *  modes in the case the ComFilter evaluates to true.
  */
-typedef struct
+typedef struct Com_TxModeTrueType_tag
 {
 	Com_TxModeType* ComTxMode ;
 } Com_TxModeTrueType ;
@@ -146,7 +146,7 @@ typedef enum
 /* This container contains additional transmission related configuration parameters of the AUTOSAR
  *  COM module's I-PDUs.
  */
-typedef struct
+typedef struct Com_TxIPduType_tag
 {
 	Com_TxModeFalseType* ComTxModeFalse ;
 	Com_TxModeTrueType* ComTxModeTrue ;
@@ -171,9 +171,8 @@ typedef struct
  *  I-PDU. If this parameter is omitted no I-PDU callout shall take place for the corresponding
  *  I-PDU.
  */
-/* TODO: 
- * typedef void (*Com_IPduCalloutType)(void);
- */
+/* TODO: */
+typedef void (*Com_IPduCalloutType)(void);
 
 /* The direction defines if this I-PDU, and therefore the contributing signals and signal groups,
  *  shall be sent or received.
@@ -194,9 +193,9 @@ typedef enum
 /* If there is a trigger transmit callout defined for this I-PDU this parameter contains the name
  *  of the callout function.
  */
-/* TODO: 
- * typedef void (*Com_IPduTriggerTransmitCalloutType)(void);
- */
+/* TODO: */
+typedef void (*Com_IPduTriggerTransmitCalloutType)(void);
+
 
 /* Defines if this I-PDU is a normal I-PDU that can be sent unfragmented or if this is a large
  *  I-PDU that shall be sent via the Transport Protocol of the underlying bus.
@@ -208,7 +207,7 @@ typedef enum
 } Com_IPduTypeType ;
 
 /* Contains the configuration parameters of the AUTOSAR COM module's I-PDUs. */
-typedef struct
+typedef struct Com_IPduType_tag
 {
 	Com_IPduCounterType* ComIPduCounter ;
 	Com_IPduReplicationType* ComIPduReplication ;
@@ -233,20 +232,20 @@ typedef struct
 	Com_IPduTypeType ComIPduType ;
 /* Reference to the I-PDU groups this I-PDU belongs to. */
 /* /AUTOSAR/EcucDefs/Com/ComConfig/ComIPduGroup */
-	Com_IPduGroupType* ComIPduGroupRef ;
+    struct Com_IPduGroupType_tag* ComIPduGroupRef ;
 /* References to all signal groups contained in this I-Pdu */
 /* /AUTOSAR/EcucDefs/Com/ComConfig/ComSignalGroup */
-	Com_SignalGroupType* ComIPduSignalGroupRef ;
+    struct Com_SignalGroupType_tag* ComIPduSignalGroupRef ;
 /* References to all signals contained in this I-PDU. */
 /* /AUTOSAR/EcucDefs/Com/ComConfig/ComSignal */
-	Com_SignalType* ComIPduSignalRef ;
+    struct Com_SignalType_tag* ComIPduSignalRef ;
 /* Reference to the "global" Pdu structure to allow harmonization of handle IDs in the COM-Stack. */
 /* /AUTOSAR/EcucDefs/EcuC/EcucPduCollection/Pdu */
 	EcuC_PduType* ComPduIdRef ;
 } Com_IPduType ;
 
 /* Contains the configuration parameters of the AUTOSAR COM module's I-PDU groups. */
-typedef struct
+typedef struct Com_IPduGroupType_tag
 {
 /* The ComIPduGroupHandleId is required by the API calls to start and stop I-PDU  Groups.
  * 
@@ -258,7 +257,7 @@ typedef struct
  *  this I-PDU group does not belong to another I-PDU group.
  */
 /* /AUTOSAR/EcucDefs/Com/ComConfig/ComIPduGroup */
-	Com_IPduGroupType* ComIPduGroupGroupRef ;
+    struct Com_IPduGroupType_tag* ComIPduGroupGroupRef ;
 } Com_IPduGroupType ;
 
 /* The range of values is specified in the [17] specification, chapter 2.2.2, Reception Filtering. */
@@ -275,7 +274,7 @@ typedef enum
 } Com_FilterAlgorithmType ;
 
 /* This container contains the configuration parameters of the AUTOSAR COM module's Filters. */
-typedef struct
+typedef struct Com_FilterType_tag
 {
 	Com_FilterAlgorithmType ComFilterAlgorithm ;
 /* The name of this attribute corresponds to the parameter name in the [17] specification of Reception
@@ -311,22 +310,20 @@ typedef enum
 } Com_DataInvalidActionType ;
 
 /* Only valid on sender side: Name of Com_CbkTxErr callback function to be called. */
-/* TODO: 
- * typedef void (*Com_ErrorNotificationType)(void);
- */
+/* TODO: */
+typedef void (*Com_ErrorNotificationType)(void);
+
 
 /* Only valid on receiver side: Name of Com_CbkInv callback function to be called. Name of the
  *  function which notifies the RTE about the reception of an invalidated signal/ signal group.
  *  Only applicable if ComDataInvalidAction is configured to NOTIFY.
  */
-/* TODO: 
- * typedef void (*Com_InvalidNotificationType)(void);
- */
+/* TODO: */
+typedef void (*Com_InvalidNotificationType)(void);
 
 /* On sender side: Name of Com_CbkTxAck callback function to be called. */
-/* TODO: 
- * typedef void (*Com_NotificationType)(void);
- */
+/* TODO: */
+typedef void (*Com_NotificationType)(void);
 
 /* This parameter defines the action performed upon expiration of the  reception deadline monitoring
  *  timer.
@@ -364,9 +361,9 @@ typedef enum
 } Com_SignalTypeType ;
 
 /* On sender side: Name of Com_CbkTxTOut callback function to be called. */
-/* TODO: 
- * typedef void (*Com_TimeoutNotificationType)(void);
- */
+/* TODO: */
+typedef void (*Com_TimeoutNotificationType)(void);
+
 
 /* Defines if a write access to this signal can trigger the transmission of the corresponding I-PDU.
  *  If the I-PDU is triggered, depends also on the transmission mode of the corresponding I-PDU.
@@ -381,7 +378,7 @@ typedef enum
 } Com_TransferPropertyType ;
 
 /* Contains the configuration parameters of the AUTOSAR COM module's signals. */
-typedef struct
+typedef struct Com_SignalType_tag
 {
 /* Note: On sender side the container is used to specify the transmission mode conditions. */
 	Com_FilterType* ComFilter ;
@@ -486,7 +483,7 @@ typedef struct
 /* This container contains the configuration parameters of group signals. I.e. signals that are
  *  included within a signal group.
  */
-typedef struct
+typedef struct Com_GroupSignalType_tag
 {
 /* Note: On sender side the container is used to specify the transmission mode conditions. */
 	Com_FilterType* ComFilter ;
@@ -546,7 +543,7 @@ typedef struct
 } Com_GroupSignalType ;
 
 /* Contains the configuration parameters of the AUTOSAR COM module's signal groups. */
-typedef struct
+typedef struct Com_SignalGroupType_tag
 {
 	Com_GroupSignalType* ComGroupSignal ;
 /* Relating to signal groups the action in case if one of the included signals is an invalid signal.
@@ -589,7 +586,7 @@ typedef struct
 } Com_SignalGroupType ;
 
 /* Contains the timebase parameters for Tx, Rx and routing. */
-typedef struct
+typedef struct Com_TimeBaseType_tag
 {
 /* The COM module (generator) might rely on the fact that Com_MainFunctionRouteSignals is scheduled
  *  according to the value configured here.
@@ -627,7 +624,7 @@ typedef struct
  *  This container is a MultipleConfigurationContainer, i.e. this container and its sub-containers
  *  exist once per configuration set.
  */
-typedef struct
+typedef struct Com_ConfigType_tag
 {
 	Com_GwMappingType* ComGwMapping ;
 	Com_IPduType* ComIPdu ;
@@ -640,7 +637,7 @@ typedef struct
 } Com_ConfigType ;
 
 /* Contains the general configuration parameters of the module. */
-typedef struct
+typedef struct Com_GeneralType_tag
 {
 /* If this parameter is configured COM_DEV_ERROR_DETECT shall be set to ON as output of the configuration
  *  tool. (as input for the source code), see COM028.
