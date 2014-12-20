@@ -83,11 +83,14 @@ namespace autosar {
 #endif
 /* ============================ [ TYPES     ] ====================================================== */
 /* ============================ [ CLASS     ] ====================================================== */
+/* ============================ [ DECLARES  ] ====================================================== */
+int Print (lua_State *L);
 /* ============================ [ DATAS     ] ====================================================== */
 static lua_State *globalL = NULL;
 
 static const char *progname = LUA_PROGNAME;
 
+static arLua* self = NULL;
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 static void lstop (lua_State *L, lua_Debug *ar) {
@@ -475,7 +478,6 @@ static int pmain (lua_State *L) {
   return 1;
 }
 
-
 static int lua_main (int argc, char **argv) {
   int status, result;
   lua_State *L = luaL_newstate();  /* create state */
@@ -494,6 +496,23 @@ static int lua_main (int argc, char **argv) {
   return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 /* ============================ [ FUNCTIONS ] ====================================================== */
+extern "C" void luai_writestring(const char* s, int l)
+{
+	static char local[1024];
+	strncpy(local,s,l);
+	local[l] = '\0';
+
+	QString string(local);
+
+	assert(self != NULL);
+
+	self->print(string);
+}
+extern "C" void luai_writeline(void)
+{
+	luai_writestring("\n",1);
+}
+
 arLuaBG::arLuaBG(QString script,QObject *parent) :
 		QThread(parent),script(script)
 {
@@ -508,7 +527,7 @@ void arLuaBG::run()
     char* argv[2];
 
     argv[0] = "lua";
-    argv[1] = "D:/Qt/Projects/WhatsApp/example/Lua.lua";//script.toStdString().c_str();
+    argv[1] = script.toLocal8Bit().data();
 
     status = lua_main(argc,argv);
 
@@ -556,6 +575,12 @@ arLua::arLua(QString name,QWidget *parent) :
     arluaBG = NULL;
 
     setVisible(true);
+    self = this;
+}
+
+void arLua::print(QString& string)
+{
+	pleResult->setPlainText(pleResult->toPlainText()+string);
 }
 
 void arLua::on_btnLoadScript_clicked(void)
@@ -569,9 +594,19 @@ void arLua::on_btnExecuteScript_clicked(void)
 {
     if(arluaBG != NULL) { delete arluaBG; }
 
-    arluaBG = new arLuaBG(luaScript,this);
+    luaScript = leScript->text();
 
-    arluaBG->start();
+    QFile file(luaScript);
+    if(file.exists())
+    {
+        arluaBG = new arLuaBG(luaScript,this);
+
+        arluaBG->start();
+    }
+    else
+    {
+    	QMessageBox::warning(this,"Lua Script","Invalid Script: "+luaScript);
+    }
 }
 #ifdef __cplusplus
 } /* namespace autosar */

@@ -55,6 +55,8 @@ private:
 public:
     explicit arLua(QString name,QWidget *parent = 0);
 
+    void print(QString& string);
+
 private slots:
 	void on_btnLoadScript_clicked(void);
 	void on_btnExecuteScript_clicked(void);
@@ -63,6 +65,8 @@ private slots:
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
+extern "C" void luai_writestring(const char* s, int l);
+extern "C" void luai_writeline(void);
 #ifdef __cplusplus
 }  /* name space */
 #endif

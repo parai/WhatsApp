@@ -283,6 +283,7 @@ void arCan::on_load_trace(void)
                 }
             }
         } while(lineLength != -1);
+        file.close();
     }
 }
 

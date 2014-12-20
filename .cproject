@@ -42,6 +42,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.578288375" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_OPENCAN_DIRECTLY"/>
+									<listOptionValue builtIn="false" value="lua_c"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.1082794316" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin"/>
 							</tool>
@@ -56,6 +57,7 @@
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1874503577" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_OPENCAN_DIRECTLY"/>
+									<listOptionValue builtIn="false" value="lua_c"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.92961413" superClass="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin"/>
 							</tool>
