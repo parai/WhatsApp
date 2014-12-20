@@ -17,6 +17,7 @@
 #include "arcan.h"
 #include "Can.h"
 #include "CanIf.h"
+#include "Det.h"
 #ifdef __cplusplus
 namespace autosar {  extern "C" {
 #endif
@@ -27,27 +28,28 @@ namespace autosar {  extern "C" {
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 STATIC const Can_ConfigType *canConfig;
+STATIC boolean canInitialised = FALSE;
 /* ============================ [ FUNCTIONS ] ====================================================== */
 FUNC(void,MEM_Can_Init) Can_Init ( const Can_ConfigType *Config )
 {
 	uint8 i;
 	canConfig = Config;
 
-    //Entry::Self()->registerDevice(new arCan(CAN_DEVICE_NAME,Config->CanControllerNumber,Entry::Self()));
+	canInitialised = TRUE;
+
+    Entry::Self()->registerDevice(new arCan(CAN_DEVICE_NAME,CAN_CTRL_NUM,Entry::Self()));
 }
 
 FUNC(void,MEM_Can_DeInit) Can_DeInit ( void )
 {
+	canInitialised = FALSE;
+
     Entry::Self()->deleteDevice(CAN_DEVICE_NAME);
 }
 
 FUNC(void,MEM_Can_InitController) Can_InitController ( uint8 controller, const Can_ControllerConfigType *config )
 {
-	uint8 i;
-//	for(i=0;i<config->CanHardwareObjectNumber;i++)
-//	{
-//		// TODO: Initialize each HW object
-//	}
+
 }
 
 FUNC(Can_ReturnType,MEM_Can_SetControllerMode) Can_SetControllerMode ( uint8 Controller ,
@@ -81,33 +83,46 @@ FUNC(void,MEM_Can_EnableControllerInterrupts) Can_EnableControllerInterrupts( ui
 
 FUNC(Can_ReturnType,MEM_Can_Write) Can_Write( Can_HwHandleType hwh, Can_PduType *pduInfo )
 {
-	Can_ReturnType ercd = CAN_OK;
+	Can_ReturnType ercd = CAN_NOT_OK;
 
-	OcMessage msg(pduInfo->id,pduInfo->sdu,pduInfo->length,false);
-
-	switch (hwh)
+#if ( CAN_DEV_ERROR_DETECT == 1 )
+	if (FALSE == canInitialised)
 	{
-		case CAN0_OBJECT_TX:
-			msg.setBusId(0);
-			break;
-		case CAN1_OBJECT_TX:
-			msg.setBusId(1);
-			break;
-		default:
-			break;
+		Det_ReportError(MODULE_ID_CAN,0,0x06,CAN_E_UNINIT);
 	}
-
-    arCan* can = (arCan*)Entry::Self()->getDevice(CAN_DEVICE_NAME);
-
-	if ( NULL != can )
+	else if (hwh >= CAN_HW_OBJECT_NUM)
 	{
-		can->WriteMessage(pduInfo->swPduHandle,&msg);
+		Det_ReportError(MODULE_ID_CAN,0,0x06,CAN_E_PARAM_HANDLE);
+	}
+	else if (NULL == pduInfo)
+	{
+		Det_ReportError(MODULE_ID_CAN,0,0x06,CAN_E_PARAM_POINTER);
+	}
+	else if (pduInfo->length > 8 )
+	{
+		Det_ReportError(MODULE_ID_CAN,0,0x06,CAN_E_PARAM_DLC);
 	}
 	else
 	{
-		ercd = CAN_NOT_OK;
-	}
+#endif
+		OcMessage msg(pduInfo->id,pduInfo->sdu,pduInfo->length,false);
+		const Can_HardwareObjectType* hth = canConfig->CanHardwareObject[hwh];
 
+		msg.setBusId(hth->CanControllerRef->CanControllerId);
+
+		arCan* can = (arCan*)Entry::Self()->getDevice(CAN_DEVICE_NAME);
+
+		if ( NULL != can )
+		{
+			can->WriteMessage(pduInfo->swPduHandle,&msg);
+		}
+		else
+		{
+			ercd = CAN_NOT_OK;
+		}
+#if ( CAN_DEV_ERROR_DETECT == 1 )
+	}
+#endif
 	return ercd;
 }
 
@@ -117,24 +132,7 @@ FUNC(void,MEM_Can_TxConfirmation) Can_TxConfirmation ( PduIdType canTxPduId )
 }
 FUNC(void,MEM_Can_RxIndication)  Can_RxIndication( uint8 bus, Can_IdType CanId, uint8 CanDlc, const uint8 *CanSduPtr )
 {
-	uint8 hrh = UINT8_INVALID;
-	switch(bus)
-	{
-		case 0:
-			hrh = CAN0_OBJECT_RX;
-			break;
-		case 1:
-			hrh = CAN1_OBJECT_RX;
-			break;
-		default:
-			assert(0);
-			break;
-	}
-
-	if(hrh != UINT8_INVALID)
-	{
-		CanIf_RxIndication(hrh,CanId,CanDlc,CanSduPtr);
-	}
+	CanIf_RxIndication(bus,CanId,CanDlc,CanSduPtr);
 }
 #ifdef __cplusplus
 } }/* namespace autosar */

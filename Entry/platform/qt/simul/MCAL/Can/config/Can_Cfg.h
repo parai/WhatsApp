@@ -21,11 +21,23 @@ namespace autosar { extern "C" {
 /* ============================ [ MACROS    ] ====================================================== */
 #define CAN_DEVICE_NAME   "Can"
 
-#define CAN0_OBJECT_RX   (Can_HwHandleType )0
-#define CAN1_OBJECT_RX   (Can_HwHandleType )1
+enum
+{
+	CAN_CTRL_0 = 0,
+	CAN_CTRL_1,
+	CAN_CTRL_NUM
+};
 
-#define CAN0_OBJECT_TX   (Can_HwHandleType )0
-#define CAN1_OBJECT_TX   (Can_HwHandleType )1
+enum
+{
+	CAN0_RX_OBJECT = 0,
+	CAN0_TX_OBJECT,
+	CAN1_RX_OBJECT,
+	CAN1_TX_OBJECT,
+	CAN_HW_OBJECT_NUM
+};
+
+#define CAN_DEV_ERROR_DETECT			1
 /* ============================ [ TYPES     ] ====================================================== */
 
 /* ============================ [ DATAS     ] ====================================================== */
