@@ -12,50 +12,58 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
-#ifndef ARDEVICE_H
-#define ARDEVICE_H
+#ifndef ARLUA_H_
+#define ARLUA_H_
 /* ============================ [ INCLUDES  ] ====================================================== */
-#include <QMainWindow>
-#include <QDebug>
-#include <QObject>
-#include <QGridLayout>
-#include <QLabel>
-#include <QTableWidget>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QCheckBox>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QPlainTextEdit>
+#include "Std_Types.h"
+#include <QThread>
+#include <signal.h>
+#include "lua.hpp"
+#include "ardevice.h"
+
+#ifdef __cplusplus
+namespace autosar {
+#endif
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
 /* ============================ [ CLASS     ] ====================================================== */
-/* basic devices for QT platform, both for real devices and simulation devices. */
-class arDevice : public QMainWindow
+class arLuaBG: public QThread
 {
     Q_OBJECT
 private:
-    QString name;
-public:
-    explicit arDevice(QString name,QWidget *parent = 0);
-    virtual ~arDevice();
-    QString Name(void) { return this->name; }
+    QString script;
+private:
 
-signals:
+public:
+    explicit arLuaBG(QString script,QObject *parent = 0);
+
+    void run();
+
+};
+
+class arLua : public arDevice
+{
+	Q_OBJECT
+private:
+	QPushButton * btnLoadScript;
+	QPushButton * btnExecuteScript;
+	QLineEdit * leScript;
+	QPlainTextEdit* pleResult;
+	QString  luaScript;
+
+    arLuaBG* arluaBG;
+public:
+    explicit arLua(QString name,QWidget *parent = 0);
 
 private slots:
-    virtual void wakeup(void) {
-        if(!this->isVisible())
-        {
-            this->show();
-        }
-    }
+	void on_btnLoadScript_clicked(void);
+	void on_btnExecuteScript_clicked(void);
 };
 /* ============================ [ DATAS     ] ====================================================== */
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
-
-
-#endif // DEVICE_H
+#ifdef __cplusplus
+}  /* name space */
+#endif
+#endif /* ARLUA_H_ */

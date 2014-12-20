@@ -26,8 +26,8 @@
 
 typedef QMap<QString, arDevice*> map_device_t;
 // ====================== [ ICON RESOURCES ] =======================
-#define ICON_SAVE  ":/res/isave.bmp"
-#define ICON_PARAI ":/res/iParai.png"
+#define ICON_SAVE  ":Entry/platform/qt/qrc/isave.bmp"
+#define ICON_PARAI ":Entry/platform/qt/qrc/iParai.png"
 class Entry: public QMainWindow
 {
 Q_OBJECT

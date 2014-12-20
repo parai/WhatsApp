@@ -15,6 +15,7 @@
 #include "entry.h"
 #include "Os.h"
 #include "EcuM.h"
+#include "arLua.h"
 using namespace autosar;
 
 static class Entry* self = NULL;
@@ -23,7 +24,7 @@ Entry::Entry ( QWidget *parent )
 		: QMainWindow(parent)
 {
 	self = this;
-	this->setWindowTitle("WhatsApp ( parai@foxmail.com )");
+	this->setWindowTitle(tr("WhatsApp ( parai@foxmail.com )"));
     this->setWindowIcon(QIcon(ICON_PARAI));
 	this->createMenuAndToolbar();
 	this->startTimer(1);
@@ -31,6 +32,9 @@ Entry::Entry ( QWidget *parent )
 	this->setGeometry(25,30,600,20);
 
 	EcuM_Init();
+
+	//
+	registerDevice(new arLua(tr("Lua"),this));
 }
 
 class Entry* Entry::Self ( void )

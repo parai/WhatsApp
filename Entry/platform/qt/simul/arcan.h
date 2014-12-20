@@ -16,16 +16,6 @@
 #define ARCAN_H
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "ardevice.h"
-#include <QObject>
-#include <QGridLayout>
-#include <QLabel>
-#include <QTableWidget>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QCheckBox>
-#include <QFileDialog>
-#include <QMessageBox>
 #include "ocdevice.h"
 #include "Os.h"
 #include "Can.h"

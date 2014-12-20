@@ -106,7 +106,7 @@ FUNC(Can_ReturnType,MEM_Can_Write) Can_Write( Can_HwHandleType hwh, Can_PduType 
 	{
 #endif
 		OcMessage msg(pduInfo->id,pduInfo->sdu,pduInfo->length,false);
-		const Can_HardwareObjectType* hth = canConfig->CanHardwareObject[hwh];
+        const Can_HardwareObjectType* hth = &canConfig->CanHardwareObject[hwh];
 
 		msg.setBusId(hth->CanControllerRef->CanControllerId);
 

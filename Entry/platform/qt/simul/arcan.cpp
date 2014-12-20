@@ -249,7 +249,7 @@ void arCan::on_load_trace(void)
 {
     static QRegularExpression reComment("^\\s*//");
     static QRegularExpression reEntry("^\\s*(\\d)\\s+(\\d+)\\s+(RX|TX)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)");
-    QString filename = QFileDialog::getOpenFileName(this,"Load CAN Trace",".",tr("CAN Trace (*.rec *.txt)"));
+    QString filename = QFileDialog::getOpenFileName(this,"Load CAN Trace","../WhatsApp/example",tr("CAN Trace (*.rec *.txt)"));
 
     clear();    // clear history log information
     QFile file(filename);

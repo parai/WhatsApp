@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>res/iParai.png</file>
-        <file>res/isave.bmp</file>
+        <file>Entry/platform/qt/qrc/iParai.png</file>
+        <file>Entry/platform/qt/qrc/isave.bmp</file>
     </qresource>
 </RCC>
