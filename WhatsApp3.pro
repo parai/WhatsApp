@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = WhatsApp
 TEMPLATE = app
 
-DEFINES = USE_KERNEL3 USE_OPENCAN_DIRECTLY
+DEFINES = USE_KERNEL3 USE_OPENCAN_DIRECTLY DYNAMIC_XLDRIVER_DLL
 
 
 SOURCES +=              \
@@ -25,11 +25,11 @@ SOURCES +=              \
     Entry/communication/CanIf.c \
     Entry/communication/config/CanIf_Cfg.c \
     Entry/diagnostic/Det.c \
-    Entry/platform/qt/simul/MCAL/Can/Can.cpp \
-    Entry/platform/qt/simul/arcan.cpp \
+    Entry/platform/qt/MCAL/Can/Can.cpp \
+    Entry/platform/qt/MCAL/Can/arcan.cpp \
     Entry/platform/qt/entry.cpp \
     Entry/platform/qt/main.cpp \
-    Entry/platform/qt/simul/MCAL/Can/config/Can_Cfg.c \
+    Entry/platform/qt/MCAL/Can/config/Can_Cfg.c \
     Entry/platform/qt/common/OpenCAN/ocdevice.cpp \
     Entry/platform/qt/common/OpenCAN/ocdevicemanager.cpp \
     Entry/platform/qt/common/OpenCAN/ocmessage.cpp \
@@ -68,7 +68,8 @@ SOURCES +=              \
     Entry/platform/qt/lua-5.2.3/src/lundump.c \
     Entry/platform/qt/lua-5.2.3/src/lvm.c \
     Entry/platform/qt/lua-5.2.3/src/lzio.c \
-    Entry/platform/qt/lua-5.2.3/src/lua.c
+    Entry/platform/qt/lua-5.2.3/src/lua.c \
+    Entry/platform/qt/MCAL/Can/xlLoadlib.cpp
 
 HEADERS  +=             \
     Entry/include/Os.h \
@@ -83,8 +84,8 @@ HEADERS  +=             \
     Entry/include/ComStack_Types.h \
     Entry/include/Modules.h \
     Entry/communication/config/CanIf_Cfg.h \
-    Entry/platform/qt/simul/MCAL/Can/config/Can_Cfg.h \
-    Entry/platform/qt/simul/arcan.h \
+    Entry/platform/qt/MCAL/Can/config/Can_Cfg.h \
+    Entry/platform/qt/MCAL/Can/arcan.h \
     Entry/platform/qt/entry.h \
     Entry/platform/qt/common/OpenCAN/occore.h \
     Entry/platform/qt/common/OpenCAN/ocdevice.h \
@@ -191,7 +192,8 @@ HEADERS  +=             \
     Entry/platform/qt/lua-5.2.3/src/lualib.h \
     Entry/platform/qt/lua-5.2.3/src/lundump.h \
     Entry/platform/qt/lua-5.2.3/src/lvm.h \
-    Entry/platform/qt/lua-5.2.3/src/lzio.h
+    Entry/platform/qt/lua-5.2.3/src/lzio.h \
+    Entry/platform/qt/MCAL/Can/vxlapi.h
 
 FORMS    +=
 
@@ -201,9 +203,8 @@ INCLUDEPATH += Entry/include Entry/include/types
 INCLUDEPATH += Entry/platform/qt/kernel3
 INCLUDEPATH += Entry/platform/qt/kernel3/config
 INCLUDEPATH += Entry/communication/config   \
-               Entry/platform/qt/simul/MCAL/Can \
-               Entry/platform/qt/simul/MCAL/Can/config  \
-               Entry/platform/qt/simul  \
+               Entry/platform/qt/MCAL/Can \
+               Entry/platform/qt/MCAL/Can/config  \
                Entry/platform/qt        \
                Entry/platform/qt/common/OpenCAN \
                Entry/platform/qt/common \

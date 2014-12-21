@@ -19,12 +19,15 @@
 #include "ocdevice.h"
 #include "Os.h"
 #include "Can.h"
+typedef void* HANDLE;
+#define POINTER_32
+#include "vxlapi.h"
 /* ============================ [ MACROS    ] ====================================================== */
 using namespace autosar;
 
 /* ============================ [ TYPES     ] ====================================================== */
 /* ============================ [ CLASS     ] ====================================================== */
-class SimulationCan : public OcDevice
+class arCanBus : public OcDevice
 {
     Q_OBJECT
 private:
@@ -35,9 +38,12 @@ private:
     TickType  prevMsgTimeStamp;
     QList<OcMessage*> rxMsgList;
     QList<OcMessage*> txMsgList;
+
+    XLportHandle xlPortHandle;
+    XLaccess     xlAccess;
 public:
-    explicit SimulationCan(unsigned long canCardId);
-    ~SimulationCan();
+    explicit arCanBus(unsigned long canCardId);
+    ~arCanBus();
     void clear(void);
 private:
 
@@ -58,7 +64,7 @@ class arCan : public arDevice
     Q_OBJECT
 private:
     unsigned long channelNumber;
-    QList<SimulationCan*> simulationCanList;
+    QList<arCanBus*> canBusList;
     QPushButton* btnPlayPause;
     QPushButton* btnHexlDeci;
     QPushButton* btnAbsRelTime;
@@ -75,15 +81,15 @@ public:
     ~arCan();
     void WriteMessage(PduIdType swHandle,OcMessage *msg);
 private slots:
-    void on_play_pause(void);
-    void on_stop(void);
-    void on_clear_trace(void);
-    void on_save_trace(void);
-    void on_load_trace(void);
-    void on_hexl_decimal(void);
-    void on_abs_rel_time(void);
+    void on_btnPlayPause_clicked(void);
+    void on_btnStop_clicked(void);
+    void on_btnClearTrace_clicked(void);
+    void on_btnSaveTrace_clicked(void);
+    void on_btnLoadTrace_clicked(void);
+    void on_btnHexlDeci_clicked(void);
+    void on_btnAbsRelTime_clicked(void);
     void on_messageReceived(OcMessage *, const QTime &);
-    void on_trigger_tx(void);
+    void on_btnTriggerTx_clicked(void);
 private:
     void createGui(void);
     OcMessage* entry2msg(QRegularExpressionMatch match);

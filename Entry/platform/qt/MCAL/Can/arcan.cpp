@@ -19,16 +19,38 @@
 /* ============================ [ MACROS    ] ====================================================== */
 /* ============================ [ TYPES     ] ====================================================== */
 /* ============================ [ DATAS     ] ====================================================== */
+static bool IsXLReady = false;
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
-SimulationCan::SimulationCan(unsigned long id):
+arCanBus::arCanBus(unsigned long id):
     OcDevice(QString("/dev/can%1").arg(id))
 {
     this->canCardId = id;
     setAutonomous(true);
+
+    if(IsXLReady)
+    {
+    	char userName[32];
+		sprintf(userName,"port%d",(int)id);
+		XLaccess accessMask = 1<<id;
+		XLstatus status= xlOpenPort(&xlPortHandle,userName,accessMask,&xlAccess,512,XL_INTERFACE_VERSION,XL_BUS_TYPE_CAN);
+
+		if(XL_SUCCESS != status)
+		{
+			qDebug()<<xlGetErrorString(status);
+			return;
+		}
+
+		setBaudRate(OcBaud_500K);	// default
+    }
+    else
+    {
+    	/* do nothing */
+    }
+
 }
-void SimulationCan::clear(void)
+void arCanBus::clear(void)
 {
     while (!rxMsgList.isEmpty())
     {
@@ -42,23 +64,23 @@ void SimulationCan::clear(void)
         txMsgList.removeLast();
     }
 }
-void SimulationCan::registerRxMsg(OcMessage *msg)
+void arCanBus::registerRxMsg(OcMessage *msg)
 {
     rxMsgList.append(msg);
 }
 
-void SimulationCan::registerTxMsg(OcMessage *msg)
+void arCanBus::registerTxMsg(OcMessage *msg)
 {
     txMsgList.append(msg);
 }
 
-SimulationCan::~SimulationCan()
+arCanBus::~arCanBus()
 {
-    qDebug() << "~SimulationCan()";
+    qDebug() << "~arCanBus()";
     clear();
 }
 
-OcStatus SimulationCan::startup()
+OcStatus arCanBus::startup()
 {
     OcStatus retval = OcSuccess;
     if((!started) &&(rxMsgList.size()>0))
@@ -73,10 +95,19 @@ OcStatus SimulationCan::startup()
     {
         retval = OcFail;
     }
+
+    if(IsXLReady)
+    {
+    	XLstatus status = xlActivateChannel(xlPortHandle,xlAccess,XL_BUS_TYPE_CAN,XL_ACTIVATE_RESET_CLOCK);
+    	if(XL_SUCCESS == status)
+    	{
+    		qDebug() << xlGetErrorString(status);
+    	}
+    }
     return retval;
 }
 
-OcStatus SimulationCan::shutdown()
+OcStatus arCanBus::shutdown()
 {
     OcStatus retval = OcSuccess;
     if(started)
@@ -88,15 +119,24 @@ OcStatus SimulationCan::shutdown()
     {
         retval = OcFail;
     }
+
+    if(IsXLReady)
+	{
+		XLstatus status = xlDeactivateChannel(xlPortHandle,xlAccess);
+		if(XL_SUCCESS == status)
+		{
+			qDebug() << xlGetErrorString(status);
+		}
+	}
     return retval;
 }
 
-OcStatus SimulationCan::sendMessage(const OcMessage &msg)
+OcStatus arCanBus::sendMessage(const OcMessage &msg)
 {
     return OcSuccess;
 }
 
-OcStatus SimulationCan::receivedMessage()
+OcStatus arCanBus::receivedMessage()
 {
     OcStatus retv;
 
@@ -119,9 +159,26 @@ OcStatus SimulationCan::receivedMessage()
         retv = OcFail; // over flow
     }
 
+    // 2
+    if(IsXLReady)
+    {
+        unsigned int event_count=1;
+    	XLevent event_list;
+        XLstatus status = xlReceive(xlPortHandle, &event_count, &event_list);
+        if(status == XL_SUCCESS)
+		{
+            qDebug()<< xlGetEventString(&event_list);
+			retv = OcSuccess;
+		}
+		else
+		{
+
+		}
+    }
+
     return retv;
 }
-OcStatus SimulationCan::internalGetMessage(OcMessage *msg)
+OcStatus arCanBus::internalGetMessage(OcMessage *msg)
 {
     OcStatus retv;
     if((rxMsgIndex < rxMsgList.size()) && started)
@@ -146,13 +203,14 @@ OcStatus SimulationCan::internalGetMessage(OcMessage *msg)
     return retv;
 }
 
-int SimulationCan::getBaudRate()
+int arCanBus::getBaudRate()
 {
     return OcBaud_500K;
 }
 
-OcStatus SimulationCan::setBaudRate(int baud)
+OcStatus arCanBus::setBaudRate(int baud)
 {
+	XLstatus status = xlCanSetChannelBitrate(xlPortHandle,xlAccess,baud);
     return OcSuccess;
 }
 
@@ -162,27 +220,44 @@ arCan::arCan(QString name,unsigned long channelNumber, QWidget *parent) : arDevi
     this->createGui();
     this->setGeometry(25,120,1200,500);
 
+    /* for simulation */
     for(unsigned long i=0;i<channelNumber;i++)
     {
-        SimulationCan* can = new SimulationCan(i);
-        simulationCanList.append( can );
+        arCanBus* can = new arCanBus(i);
+        canBusList.append( can );
         connect(can,SIGNAL(messageReceived(OcMessage*,QTime)),this,SLOT(on_messageReceived(OcMessage*,QTime)));
     }
 
+    XLstatus status = xlOpenDriver();
+
+    if(XL_SUCCESS == status)
+    {
+    	IsXLReady = true;
+    }
+    else
+    {
+    	IsXLReady = false;
+    	qDebug() << "arCan::start CAN XL device failed.";
+    }
 
     setVisible(true);
 }
 
 arCan::~arCan()
 {
-    while (!simulationCanList.isEmpty())
+    while (!canBusList.isEmpty())
     {
-        delete simulationCanList.at(simulationCanList.size() - 1);
-        simulationCanList.removeLast();
+        delete canBusList.at(canBusList.size() - 1);
+        canBusList.removeLast();
+    }
+
+    if(IsXLReady)
+    {
+    	xlCloseDriver();
     }
 }
 
-void arCan::on_play_pause(void)
+void arCan::on_btnPlayPause_clicked(void)
 {
     QString str = btnPlayPause->text();
 
@@ -191,7 +266,7 @@ void arCan::on_play_pause(void)
         btnPlayPause->setText("Pause");
         for(unsigned long i=0;i<channelNumber;i++)
         {
-            simulationCanList[i]->startup();
+            canBusList[i]->startup();
         }
         btnLoadTrace->setDisabled(true);
         btnStop->setDisabled(false);
@@ -203,7 +278,7 @@ void arCan::on_play_pause(void)
     }
 }
 
-void arCan::on_stop(void)
+void arCan::on_btnStop_clicked(void)
 {
     btnPlayPause->setText("Play");
     btnPlayPause->setDisabled(false);
@@ -211,11 +286,11 @@ void arCan::on_stop(void)
     btnStop->setDisabled(true);
     for(unsigned long i=0;i<channelNumber;i++)
     {
-        simulationCanList[i]->shutdown();
+        canBusList[i]->shutdown();
     }
 }
 
-void arCan::on_clear_trace(void)
+void arCan::on_btnClearTrace_clicked(void)
 {
     QStringList  list;
     tableTrace->clear();
@@ -229,11 +304,11 @@ void arCan::clear(void)
 {
     for(unsigned long i=0;i<channelNumber;i++)
     {
-        simulationCanList[i]->clear();
+        canBusList[i]->clear();
     }
 }
 
-void arCan::on_save_trace(void)
+void arCan::on_btnSaveTrace_clicked(void)
 {
     quint32 prevTime;
     QString filename = QFileDialog::getSaveFileName(this,"Save CAN Trace",".",tr("CAN Trace (*.rec *.txt)"));
@@ -245,7 +320,7 @@ void arCan::on_save_trace(void)
     }
 }
 
-void arCan::on_load_trace(void)
+void arCan::on_btnLoadTrace_clicked(void)
 {
     static QRegularExpression reComment("^\\s*//");
     static QRegularExpression reEntry("^\\s*(\\d)\\s+(\\d+)\\s+(RX|TX)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)");
@@ -277,7 +352,7 @@ void arCan::on_load_trace(void)
                         bus = msg->busid();
                         if(NULL != msg)
                         {
-                            simulationCanList[bus]->registerRxMsg(msg);
+                            canBusList[bus]->registerRxMsg(msg);
                         }
                     }
                 }
@@ -287,7 +362,7 @@ void arCan::on_load_trace(void)
     }
 }
 
-void arCan::on_hexl_decimal(void)
+void arCan::on_btnHexlDeci_clicked(void)
 {
     QString str = btnHexlDeci->text();
 
@@ -301,7 +376,7 @@ void arCan::on_hexl_decimal(void)
     }
 }
 
-void arCan::on_abs_rel_time(void)
+void arCan::on_btnAbsRelTime_clicked(void)
 {
     QString str = btnAbsRelTime->text();
 
@@ -332,10 +407,11 @@ void arCan::putMsg(OcMessage*msg)
 void arCan::WriteMessage(PduIdType swHandle,OcMessage *msg)
 {
 	putMsg(msg);
-    int timer_id = startTimer(1);
+
+	int timer_id = startTimer(1);
 
 	this->swHandle.append(swHandle);
-    this->timerId.append(timer_id);
+	this->timerId.append(timer_id);
 }
 
 void arCan::timerEvent(QTimerEvent *Event)
@@ -359,7 +435,7 @@ void arCan::on_messageReceived(OcMessage *msg, const QTime &time)
     quint32 isFinished = true;
     for(unsigned long i=0;i<channelNumber;i++)
     {
-        if(simulationCanList[i]->isStarted())
+        if(canBusList[i]->isStarted())
         {
             isFinished = false;
         }
@@ -374,7 +450,7 @@ void arCan::on_messageReceived(OcMessage *msg, const QTime &time)
     }
 }
 
-void arCan::on_trigger_tx(void)
+void arCan::on_btnTriggerTx_clicked(void)
 {
     bool ok;
     quint32 id = leId->text().toLong(&ok,16);
@@ -445,33 +521,33 @@ void arCan::createGui(void)
         QHBoxLayout* hbox = new QHBoxLayout();
 
         btnLoadTrace = new QPushButton("Load Trace...");
-        this->connect(btnLoadTrace,SIGNAL(clicked()),this,SLOT(on_load_trace()));
+        this->connect(btnLoadTrace,SIGNAL(clicked()),this,SLOT(on_btnLoadTrace_clicked()));
         hbox->addWidget(btnLoadTrace);
 
         btnPlayPause = new QPushButton("Play");
-        this->connect(btnPlayPause,SIGNAL(clicked()),this,SLOT(on_play_pause()));
+        this->connect(btnPlayPause,SIGNAL(clicked()),this,SLOT(on_btnPlayPause_clicked()));
         hbox->addWidget(btnPlayPause);
 
         btnStop = new QPushButton("Stop");
-        this->connect(btnStop,SIGNAL(clicked()),this,SLOT(on_stop()));
+        this->connect(btnStop,SIGNAL(clicked()),this,SLOT(on_btnStop_clicked()));
         hbox->addWidget(btnStop);
         btnStop->setDisabled(true);
 
         button = new QPushButton("Clear Trace");
-        this->connect(button,SIGNAL(clicked()),this,SLOT(on_clear_trace()));
+        this->connect(button,SIGNAL(clicked()),this,SLOT(on_btnClearTrace_clicked()));
         hbox->addWidget(button);
 
         button = new QPushButton("Save Trace");
-        this->connect(button,SIGNAL(clicked()),this,SLOT(on_save_trace()));
+        this->connect(button,SIGNAL(clicked()),this,SLOT(on_btnSaveTrace_clicked()));
         hbox->addWidget(button);
 
         btnHexlDeci = new QPushButton("Hexl");
-        this->connect(btnHexlDeci,SIGNAL(clicked()),this,SLOT(on_hexl_decimal()));
+        this->connect(btnHexlDeci,SIGNAL(clicked()),this,SLOT(on_btnHexlDeci_clicked()));
         hbox->addWidget(btnHexlDeci);
         btnHexlDeci->setDisabled(true); // TODO
 
         btnAbsRelTime = new QPushButton("Real Time");
-        this->connect(btnAbsRelTime,SIGNAL(clicked()),this,SLOT(on_abs_rel_time()));
+        this->connect(btnAbsRelTime,SIGNAL(clicked()),this,SLOT(on_btnAbsRelTime_clicked()));
         hbox->addWidget(btnAbsRelTime);
         btnAbsRelTime->setDisabled(true);   // TODO
 
@@ -507,7 +583,7 @@ void arCan::createGui(void)
         leData->setText(("55 55 55 55 55 55 55 55"));
 
         button = new QPushButton("Trigger Tx");
-        connect(button,SIGNAL(clicked()),this,SLOT(on_trigger_tx()));
+        connect(button,SIGNAL(clicked()),this,SLOT(on_btnTriggerTx_clicked()));
         hbox->addWidget(button);
 
         hbox->setSpacing(5);
