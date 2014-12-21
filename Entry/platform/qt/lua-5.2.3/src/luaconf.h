@@ -209,19 +209,21 @@
 ** They are only used in libraries and the stand-alone program. (The #if
 ** avoids including 'stdio.h' everywhere.)
 */
-#if defined(LUA_LIB) || defined(lua_c)
-#include <stdio.h>
-#define luai_writestring(s,l)	fwrite((s), sizeof(char), (l), stdout)
-#define luai_writeline()	(luai_writestring("\n", 1), fflush(stdout))
-#endif
+//#if defined(LUA_LIB) || defined(lua_c)
+//#include <stdio.h>
+//#define luai_writestring(s,l)	fwrite((s), sizeof(char), (l), stdout)
+//#define luai_writeline()	(luai_writestring("\n", 1), fflush(stdout))
+//#endif
+void luai_writestring(const char* s, int l);
+void luai_writeline(void);
 
 /*
 @@ luai_writestringerror defines how to print error messages.
 ** (A format string with one argument is enough for Lua...)
 */
-#define luai_writestringerror(s,p) \
-	(fprintf(stderr, (s), (p)), fflush(stderr))
-
+//#define luai_writestringerror(s,p) \
+//	(fprintf(stderr, (s), (p)), fflush(stderr))
+void luai_writestringerror(const char* format,...);
 
 /*
 @@ LUAI_MAXSHORTLEN is the maximum length for short strings, that is,

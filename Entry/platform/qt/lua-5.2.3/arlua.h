@@ -38,7 +38,8 @@ public:
     explicit arLuaBG(QString script,QObject *parent = 0);
 
     void run();
-
+signals:
+    void message(QString* msg);
 };
 
 class arLua : public arDevice
@@ -55,18 +56,18 @@ private:
 public:
     explicit arLua(QString name,QWidget *parent = 0);
 
-    void print(QString& string);
-
+    void timerEvent(QTimerEvent*);
+private:
+    void print(QString*);
 private slots:
 	void on_btnLoadScript_clicked(void);
 	void on_btnExecuteScript_clicked(void);
+	void on_arluaBG_message(QString*);
 };
 /* ============================ [ DATAS     ] ====================================================== */
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
-extern "C" void luai_writestring(const char* s, int l);
-extern "C" void luai_writeline(void);
 #ifdef __cplusplus
 }  /* name space */
 #endif

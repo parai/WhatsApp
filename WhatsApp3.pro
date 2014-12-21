@@ -67,7 +67,8 @@ SOURCES +=              \
     Entry/platform/qt/lua-5.2.3/src/ltm.c \
     Entry/platform/qt/lua-5.2.3/src/lundump.c \
     Entry/platform/qt/lua-5.2.3/src/lvm.c \
-    Entry/platform/qt/lua-5.2.3/src/lzio.c
+    Entry/platform/qt/lua-5.2.3/src/lzio.c \
+    Entry/platform/qt/lua-5.2.3/src/lua.c
 
 HEADERS  +=             \
     Entry/include/Os.h \
