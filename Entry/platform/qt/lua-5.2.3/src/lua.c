@@ -492,6 +492,7 @@ int lua_main (int argc, char **argv) {
   result = lua_toboolean(L, -1);  /* get result */
   finalreport(L, status);
   lua_close(L);
+  globalL = NULL;
   return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 

@@ -32,8 +32,6 @@ class arCanBus : public OcDevice
     Q_OBJECT
 private:
     unsigned long canCardId;
-    unsigned long rxMsgIndex;
-    unsigned long txMsgIndex;
     TickType  osTick;
     TickType  prevMsgTimeStamp;
     QList<OcMessage*> rxMsgList;
@@ -55,8 +53,9 @@ public:
     OcStatus internalGetMessage(OcMessage *msg);
     int getBaudRate();
     OcStatus setBaudRate(int baud);
-    void registerRxMsg(OcMessage *msg);
-    void registerTxMsg(OcMessage *msg);
+    /* if atFirst true, means execute it as soon as possible */
+    void registerRxMsg(OcMessage *msg,bool atFirst=false);
+    void registerTxMsg(OcMessage *msg,bool atFirst=false);
 };
 
 class arCan : public arDevice
@@ -79,7 +78,9 @@ private:
 public:
     explicit arCan(QString name,unsigned long channelNumber,QWidget *parent=0);
     ~arCan();
+    static class arCan* Self ( void );
     void WriteMessage(PduIdType swHandle,OcMessage *msg);
+    void ReceiveMessage(OcMessage *msg);
 private slots:
     void on_btnPlayPause_clicked(void);
     void on_btnStop_clicked(void);
@@ -93,7 +94,7 @@ private slots:
 private:
     void createGui(void);
     OcMessage* entry2msg(QRegularExpressionMatch match);
-    void putMsg(OcMessage*);
+    void putMsg(OcMessage*,bool isRx=true);
     void clear(void);
 
     void timerEvent(QTimerEvent * Event);

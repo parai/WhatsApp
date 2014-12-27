@@ -105,16 +105,16 @@ FUNC(Can_ReturnType,MEM_Can_Write) Can_Write( Can_HwHandleType hwh, Can_PduType 
 	else
 	{
 #endif
-		OcMessage msg(pduInfo->id,pduInfo->sdu,pduInfo->length,false);
+		OcMessage* msg= new OcMessage(pduInfo->id,pduInfo->sdu,pduInfo->length,false);
         const Can_HardwareObjectType* hth = &canConfig->CanHardwareObject[hwh];
 
-		msg.setBusId(hth->CanControllerRef->CanControllerId);
+		msg->setBusId(hth->CanControllerRef->CanControllerId);
 
 		arCan* can = (arCan*)Entry::Self()->getDevice(CAN_DEVICE_NAME);
 
 		if ( NULL != can )
 		{
-			can->WriteMessage(pduInfo->swPduHandle,&msg);
+			can->WriteMessage(pduInfo->swPduHandle,msg);
 		}
 		else
 		{

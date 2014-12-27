@@ -14,6 +14,7 @@
  */
 /* ============================ [ INCLUDES  ] ====================================================== */
 #include "arlua.h"
+#include "arcan.h"
 #ifdef __cplusplus
 namespace autosar {
 #endif
@@ -23,6 +24,7 @@ namespace autosar {
 /* ============================ [ DATAS     ] ====================================================== */
 /* ============================ [ DECLARES  ] ====================================================== */
 extern "C" int lua_main (int argc, char **argv);
+extern "C" lua_State * lua_getGlobalL(void);
 static int luai_can_write (lua_State *L);
 /* ============================ [ LOCALS    ] ====================================================== */
 QList<QString*> luaPrint;
@@ -100,6 +102,11 @@ static int luai_can_write (lua_State *L)
 			qDebug()<<"Can_Write("<<busid<<","<<canid<<","<<dlc<<",["<<data[0]<<data[1]	\
 					<<data[2]<<data[3]<<data[4]<<data[5]<<data[6]<<data[7]<<"])";
 
+			OcMessage* msg= new OcMessage(canid,data,dlc,false);
+
+			msg->setBusId(busid);
+
+			arCan::Self()->ReceiveMessage(msg);
 		}
 
 		lua_pushnumber(L, 0);        /* result OK */

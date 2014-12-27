@@ -15,7 +15,7 @@
 #include "entry.h"
 #include "Os.h"
 #include "EcuM.h"
-#include "arLua.h"
+#include "arlua.h"
 using namespace autosar;
 
 static class Entry* self = NULL;

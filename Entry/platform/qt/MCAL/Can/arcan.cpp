@@ -20,6 +20,7 @@
 /* ============================ [ TYPES     ] ====================================================== */
 /* ============================ [ DATAS     ] ====================================================== */
 static bool IsXLReady = false;
+static class arCan* self=NULL;
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
@@ -64,14 +65,30 @@ void arCanBus::clear(void)
         txMsgList.removeLast();
     }
 }
-void arCanBus::registerRxMsg(OcMessage *msg)
+void arCanBus::registerRxMsg(OcMessage *msg,bool atFirst)
 {
-    rxMsgList.append(msg);
+	if(atFirst)
+	{
+		msg->setTimestamp(GetOsTick());	/* for sure, send it as soon as possible */
+		rxMsgList.push_front(msg);
+	}
+	else
+	{
+		rxMsgList.append(msg);
+	}
 }
 
-void arCanBus::registerTxMsg(OcMessage *msg)
+void arCanBus::registerTxMsg(OcMessage *msg,bool atFirst)
 {
-    txMsgList.append(msg);
+	if(atFirst)
+	{
+		msg->setTimestamp(GetOsTick());	/* for sure, send it as soon as possible */
+		txMsgList.push_front(msg);
+	}
+	else
+	{
+		txMsgList.append(msg);
+	}
 }
 
 arCanBus::~arCanBus()
@@ -83,13 +100,12 @@ arCanBus::~arCanBus()
 OcStatus arCanBus::startup()
 {
     OcStatus retval = OcSuccess;
-    if((!started) &&(rxMsgList.size()>0))
+    if(!started)
     {
         started = true;
         OcDevice::startup();
         osTick = GetOsTick();
-        prevMsgTimeStamp = 0;
-        rxMsgIndex = 0;
+        prevMsgTimeStamp = osTick;
     }
     else
     {
@@ -140,10 +156,10 @@ OcStatus arCanBus::receivedMessage()
 {
     OcStatus retv;
 
-    if((rxMsgIndex < rxMsgList.size()) && started)
+    if((false==rxMsgList.isEmpty()) && started)
     {
         TickType elapsedTick = GetOsElapsedTick(osTick);
-        TickType limitTick = rxMsgList[rxMsgIndex]->timestamp() - prevMsgTimeStamp;
+        TickType limitTick = rxMsgList[0]->timestamp() - prevMsgTimeStamp;
 
         if(elapsedTick >= limitTick)
         {
@@ -181,13 +197,13 @@ OcStatus arCanBus::receivedMessage()
 OcStatus arCanBus::internalGetMessage(OcMessage *msg)
 {
     OcStatus retv;
-    if((rxMsgIndex < rxMsgList.size()) && started)
+    if((false==rxMsgList.isEmpty()) && started)
     {
-        *msg = *rxMsgList[rxMsgIndex];
+        *msg = *rxMsgList[0];
 
         osTick = GetOsTick();
-        prevMsgTimeStamp = rxMsgList[rxMsgIndex]->timestamp();
-        rxMsgIndex ++;
+        prevMsgTimeStamp = rxMsgList[0]->timestamp();
+        rxMsgList.removeFirst();
         retv = OcSuccess;
     }
     else
@@ -195,11 +211,6 @@ OcStatus arCanBus::internalGetMessage(OcMessage *msg)
         retv = OcFail;
     }
 
-    // stop as all the rxMsg has been played
-    if(rxMsgIndex>=rxMsgList.size())
-    {
-        shutdown();
-    }
     return retv;
 }
 
@@ -227,6 +238,11 @@ arCan::arCan(QString name,unsigned long channelNumber, QWidget *parent) : arDevi
         canBusList.append( can );
         connect(can,SIGNAL(messageReceived(OcMessage*,QTime)),this,SLOT(on_messageReceived(OcMessage*,QTime)));
     }
+    /* automatically start-up */
+    for(unsigned long i=0;i<channelNumber;i++)
+    {
+        canBusList[i]->startup();
+    }
 
     XLstatus status = xlOpenDriver();
 
@@ -241,6 +257,8 @@ arCan::arCan(QString name,unsigned long channelNumber, QWidget *parent) : arDevi
     }
 
     setVisible(true);
+
+    self = this;
 }
 
 arCan::~arCan()
@@ -259,35 +277,12 @@ arCan::~arCan()
 
 void arCan::on_btnPlayPause_clicked(void)
 {
-    QString str = btnPlayPause->text();
 
-    if(str == "Play")
-    {
-        btnPlayPause->setText("Pause");
-        for(unsigned long i=0;i<channelNumber;i++)
-        {
-            canBusList[i]->startup();
-        }
-        btnLoadTrace->setDisabled(true);
-        btnStop->setDisabled(false);
-        btnPlayPause->setDisabled(true);
-    }
-    else
-    {
-        btnPlayPause->setText("Play");
-    }
 }
 
 void arCan::on_btnStop_clicked(void)
 {
-    btnPlayPause->setText("Play");
-    btnPlayPause->setDisabled(false);
-    btnLoadTrace->setDisabled(false);
-    btnStop->setDisabled(true);
-    for(unsigned long i=0;i<channelNumber;i++)
-    {
-        canBusList[i]->shutdown();
-    }
+
 }
 
 void arCan::on_btnClearTrace_clicked(void)
@@ -317,6 +312,8 @@ void arCan::on_btnSaveTrace_clicked(void)
     if(file.open(QFile::WriteOnly))
     {
         //file.write()
+
+    	file.close();
     }
 }
 
@@ -389,13 +386,20 @@ void arCan::on_btnAbsRelTime_clicked(void)
         btnAbsRelTime->setText("Real Time");
     }
 }
-void arCan::putMsg(OcMessage*msg)
+void arCan::putMsg(OcMessage*msg,bool isRx)
 {
     quint32 index = tableTrace->rowCount();
     tableTrace->setRowCount(index+1);
     tableTrace->setItem(index,0,new QTableWidgetItem(QString("%1").arg(msg->busid())));
     tableTrace->setItem(index,1,new QTableWidgetItem(QString("%1").arg(GetOsTick())));
-    tableTrace->setItem(index,2,new QTableWidgetItem(QString("RX")));
+    if(isRx)
+    {
+    	tableTrace->setItem(index,2,new QTableWidgetItem(QString("RX")));
+    }
+    else
+    {
+    	tableTrace->setItem(index,2,new QTableWidgetItem(QString("TX")));
+    }
     tableTrace->setItem(index,3,new QTableWidgetItem(QString("%1").arg(msg->id(),0,16)));
     quint8 *data = msg->data();
     for(int i=0;i<8;i++)
@@ -406,12 +410,26 @@ void arCan::putMsg(OcMessage*msg)
 }
 void arCan::WriteMessage(PduIdType swHandle,OcMessage *msg)
 {
-	putMsg(msg);
+	putMsg(msg,false);
 
 	int timer_id = startTimer(1);
 
 	this->swHandle.append(swHandle);
 	this->timerId.append(timer_id);
+
+	delete msg;
+}
+class arCan* arCan::Self ( void )
+{
+	assert(self!=NULL);
+
+	return self;
+}
+void arCan::ReceiveMessage(OcMessage *msg)
+{
+	int bus = msg->busid();
+
+	canBusList[bus]->registerRxMsg(msg,true);
 }
 
 void arCan::timerEvent(QTimerEvent *Event)
@@ -427,27 +445,11 @@ void arCan::timerEvent(QTimerEvent *Event)
 }
 void arCan::on_messageReceived(OcMessage *msg, const QTime &time)
 {
-
 	putMsg(msg);
 
 	Can_RxIndication((uint8)msg->busid(),(uint32)msg->id(),(uint8)msg->length(),(uint8*)msg->data());
-    // check all is finished
-    quint32 isFinished = true;
-    for(unsigned long i=0;i<channelNumber;i++)
-    {
-        if(canBusList[i]->isStarted())
-        {
-            isFinished = false;
-        }
-    }
 
-    if(isFinished)
-    {
-        btnLoadTrace->setDisabled(false);
-        btnPlayPause->setText("Play");
-        btnPlayPause->setDisabled(false);
-        btnStop->setDisabled(true);
-    }
+    delete msg;
 }
 
 void arCan::on_btnTriggerTx_clicked(void)
@@ -524,32 +526,32 @@ void arCan::createGui(void)
         this->connect(btnLoadTrace,SIGNAL(clicked()),this,SLOT(on_btnLoadTrace_clicked()));
         hbox->addWidget(btnLoadTrace);
 
-        btnPlayPause = new QPushButton("Play");
-        this->connect(btnPlayPause,SIGNAL(clicked()),this,SLOT(on_btnPlayPause_clicked()));
-        hbox->addWidget(btnPlayPause);
-
-        btnStop = new QPushButton("Stop");
-        this->connect(btnStop,SIGNAL(clicked()),this,SLOT(on_btnStop_clicked()));
-        hbox->addWidget(btnStop);
-        btnStop->setDisabled(true);
+//        btnPlayPause = new QPushButton("Play");
+//        this->connect(btnPlayPause,SIGNAL(clicked()),this,SLOT(on_btnPlayPause_clicked()));
+//        hbox->addWidget(btnPlayPause);
+//
+//        btnStop = new QPushButton("Stop");
+//        this->connect(btnStop,SIGNAL(clicked()),this,SLOT(on_btnStop_clicked()));
+//        hbox->addWidget(btnStop);
+//        btnStop->setDisabled(true);
 
         button = new QPushButton("Clear Trace");
         this->connect(button,SIGNAL(clicked()),this,SLOT(on_btnClearTrace_clicked()));
         hbox->addWidget(button);
 
-        button = new QPushButton("Save Trace");
-        this->connect(button,SIGNAL(clicked()),this,SLOT(on_btnSaveTrace_clicked()));
-        hbox->addWidget(button);
-
-        btnHexlDeci = new QPushButton("Hexl");
-        this->connect(btnHexlDeci,SIGNAL(clicked()),this,SLOT(on_btnHexlDeci_clicked()));
-        hbox->addWidget(btnHexlDeci);
-        btnHexlDeci->setDisabled(true); // TODO
-
-        btnAbsRelTime = new QPushButton("Real Time");
-        this->connect(btnAbsRelTime,SIGNAL(clicked()),this,SLOT(on_btnAbsRelTime_clicked()));
-        hbox->addWidget(btnAbsRelTime);
-        btnAbsRelTime->setDisabled(true);   // TODO
+//        button = new QPushButton("Save Trace");
+//        this->connect(button,SIGNAL(clicked()),this,SLOT(on_btnSaveTrace_clicked()));
+//        hbox->addWidget(button);
+//
+//        btnHexlDeci = new QPushButton("Hexl");
+//        this->connect(btnHexlDeci,SIGNAL(clicked()),this,SLOT(on_btnHexlDeci_clicked()));
+//        hbox->addWidget(btnHexlDeci);
+//        btnHexlDeci->setDisabled(true); // TODO
+//
+//        btnAbsRelTime = new QPushButton("Real Time");
+//        this->connect(btnAbsRelTime,SIGNAL(clicked()),this,SLOT(on_btnAbsRelTime_clicked()));
+//        hbox->addWidget(btnAbsRelTime);
+//        btnAbsRelTime->setDisabled(true);   // TODO
 
         hbox->setSpacing(20);
 
@@ -605,7 +607,7 @@ OcMessage* arCan::entry2msg(QRegularExpressionMatch match)
         if(bus < channelNumber)
         {
             quint32 Id = match.captured(4).toLong(NULL,16);
-            quint32 timestamp =  match.captured(2).toLong(NULL,10);
+            quint32 timestamp =  match.captured(2).toLong(NULL,10)+GetOsTick();
             quint8 data[8];
             for(int i=0;i<8;i++)
             {
