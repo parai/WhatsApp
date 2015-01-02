@@ -76,6 +76,9 @@ public:
     void setBusId(quint32 busid);
     quint32 busid(void);
 
+    void setSWHandle(quint32);
+    quint32 SWHandle(void);
+
 protected:
 	/// CAN message identifier
 	quint32 msgId;
@@ -88,6 +91,7 @@ protected:
 	/// Timestamp
 	quint32 time;
     quint32 busId;    // externded by parai
+    quint32 swHandle; // externded by parai
 };
 
 // Inline Methods
@@ -187,6 +191,16 @@ inline void OcMessage::setBusId(quint32 busid)
 inline quint32 OcMessage::busid(void)
 {
     return busId;
+}
+
+inline void OcMessage::setSWHandle(quint32 handle)
+{
+    swHandle = handle;
+}
+
+inline quint32 OcMessage::SWHandle(void)
+{
+    return swHandle;
 }
 
 

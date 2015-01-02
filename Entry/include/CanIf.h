@@ -107,44 +107,6 @@ typedef enum {
 
 typedef uint16 CanIf_ChannelIdType;
 
-typedef enum
-{
-    CANIF_ID_TYPE_EXTENDED,
-    CANIF_ID_TYPE_STANDARD
-} CanIf_IdTypeType;
-
-typedef enum
-{
-	CANIF_PDU_TYPE_DYNAMIC,
-	CANIF_PDU_TYPE_STATIC
-}CanIf_PduTypeType;
-
-typedef enum
-{
-	CANIF_TXCONFIRMATION_UL_CAN_NM,
-	CANIF_TXCONFIRMATION_UL_CAN_TP,
-	CANIF_TXCONFIRMATION_UL_CDD,	/* Complex Device Driver */
-	CANIF_TXCONFIRMATION_UL_J1939_TP,
-	CANIF_TXCONFIRMATION_UL_PDUR,
-	CANIF_TXCONFIRMATION_UL_XCP
-}CanIf_TxConfirmationULType;
-
-typedef enum
-{
-	PDUID_PDUINFOPTR,
-	PDUID_SDUDATAPTR
-}CanIf_RxIndicationTypeType;
-
-typedef enum
-{
-	CANIF_RXINDICATION_UL_CAN_NM,
-	CANIF_RXINDICATION_UL_CAN_TP,
-	CANIF_RXINDICATION_UL_CDD,	/* Complex Device Driver */
-	CANIF_RXINDICATION_UL_J1939_TP,
-	CANIF_RXINDICATION_UL_PDUR,
-	CANIF_RXINDICATION_UL_XCP
-}CanIf_RxIndicationULType;
-
 #ifdef __cplusplus
 }}  /* name space */
 #endif

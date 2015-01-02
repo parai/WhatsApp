@@ -30,7 +30,6 @@ namespace autosar { extern "C" {
 #define CANIF_CDD_HEADERFILE			32
 #define CANIF_DEV_ERROR_DETECT			1
 #define CANIF_MULTIPLE_DRV_SUPPORT		0
-#define CANIF_NUMBER_OF_CAN_HW_UNITS    2	/* CAN0 and CAN1 */
 #define CANIF_READRXPDU_DATA_API			1
 #define CANIF_READRXPDU_NOTIFY_STATUS_API	1
 #define CANIF_READTXPDU_NOTIFY_STATUS_API	1
@@ -39,11 +38,12 @@ namespace autosar { extern "C" {
 #define CANIF_VERSION_INFO_API				1
 #define CANIF_WAKEUP_CHECK_VALIDATION_API	1
 
-#define CANIF_DYNAMIC_CAN_TX_PDUID_NUMBER	2
-
-#define CANIF_CHL_LS		(Can_HwHandleType )0
-#define CANIF_CHL_HS		(Can_HwHandleType )1
-#define CANIF_CHL_NUMBER	(Can_HwHandleType )2
+enum
+{
+	CANIF_CHL_HS = 0,	/* CAN0 */
+	CANIF_CHL_LS,		/* CAN1 */
+	CANIF_CHL_NUM
+};
 /* ============================ [ TYPES     ] ====================================================== */
 
 /* ============================ [ DATAS     ] ====================================================== */

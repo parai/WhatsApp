@@ -52,8 +52,7 @@ FUNC(void,MEM_Can_InitController) Can_InitController ( uint8 controller, const C
 
 }
 
-FUNC(Can_ReturnType,MEM_Can_SetControllerMode) Can_SetControllerMode ( uint8 Controller ,
-		Can_StateTransitionType transition )
+FUNC(Can_ReturnType,MEM_Can_SetControllerMode) Can_SetControllerMode ( uint8 Controller , Can_StateTransitionType transition )
 {
 	Can_ReturnType ercd = CAN_OK;
 	/* simulation implementation */

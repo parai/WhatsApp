@@ -1,4 +1,4 @@
-/**
+''/**
  * WhatsApp - the open source AUTOSAR platform https://github.com/parai
  *
  * Copyright (C) 2014  WhatsApp <parai@foxmail.com>
@@ -40,7 +40,12 @@ TASK(Rte_Runnable100ms){}
 TASK(Rte_Runnable200ms){}
 TASK(Rte_Runnable1s)
 {
-
+//	uint8 data[8];
+//	PduInfoType pdu;
+//	pdu.SduDataPtr=data;
+//	pdu.SduLength = 8;
+//	memset(data,0x12,8);
+//	CanIf_Transmit(0,&pdu);
 }
 
 /* This is my example, don't care about it */
@@ -51,7 +56,7 @@ Std_ReturnType Rte_Start(void)
 	SetRelAlarm(ALARMID_Rte_Runnable50ms, 10,50);
 	SetRelAlarm(ALARMID_Rte_Runnable100ms,10,100);
 	SetRelAlarm(ALARMID_Rte_Runnable200ms,10,200);
-	SetRelAlarm(ALARMID_Rte_Runnable1s,   10,10000);
+	SetRelAlarm(ALARMID_Rte_Runnable1s,   10,1000);
 }
 Std_ReturnType Rte_Stop(void)
 {

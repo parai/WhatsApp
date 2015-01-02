@@ -259,6 +259,8 @@ arCan::arCan(QString name,unsigned long channelNumber, QWidget *parent) : arDevi
     setVisible(true);
 
     self = this;
+
+    startTimer(1);
 }
 
 arCan::~arCan()
@@ -410,21 +412,17 @@ void arCan::putMsg(OcMessage*msg,bool isRx)
 }
 void arCan::WriteMessage(PduIdType swHandle,OcMessage *msg)
 {
-	putMsg(msg,false);
-
-	int timer_id = startTimer(1);
-
-	this->swHandle.append(swHandle);
-	this->timerId.append(timer_id);
-
-	delete msg;
+	msg->setSWHandle((quint32)swHandle);
+	this->swMsg.append(msg);
 }
+
 class arCan* arCan::Self ( void )
 {
 	assert(self!=NULL);
 
 	return self;
 }
+
 void arCan::ReceiveMessage(OcMessage *msg)
 {
 	int bus = msg->busid();
@@ -434,14 +432,21 @@ void arCan::ReceiveMessage(OcMessage *msg)
 
 void arCan::timerEvent(QTimerEvent *Event)
 {
-	int swHandle = this->swHandle[0];
-    int timer_id = this->timerId[0]; // TODO: Event->timerId()
-    this->killTimer(timer_id);
+	if(false == swMsg.isEmpty())
+	{
+		OcMessage *msg = swMsg[0];
+		Can_TxConfirmation( msg->SWHandle() );
 
-	Can_TxConfirmation( swHandle );
+		putMsg(msg);
 
-	this->swHandle.removeFirst();
-    this->timerId.removeFirst();
+		swMsg.removeFirst();
+
+		delete msg;
+	}
+	else
+	{
+		/* no mseesage */
+	}
 }
 void arCan::on_messageReceived(OcMessage *msg, const QTime &time)
 {

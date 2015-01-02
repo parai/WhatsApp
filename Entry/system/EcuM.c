@@ -40,12 +40,16 @@ STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitOne ( const EcuM_
 
 STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitTwo ( const EcuM_ConfigType *ConfigPtr )
 {
-	//CanIf_Init(&CanIf_Config);
+	CanIf_Init(&CanIf_Config);
 }
 
 STATIC FUNC(void,MEM_EcuM_AL_DriverInitZero) EcuM_AL_DriverInitThree ( const EcuM_ConfigType *ConfigPtr )
 {
-
+	/* TODO */
+	CanIf_SetControllerMode(CANIF_CHL_HS,CANIF_CS_STARTED);
+	CanIf_SetControllerMode(CANIF_CHL_LS,CANIF_CS_STARTED);
+	CanIf_SetPduMode(CANIF_CHL_HS,CANIF_SET_ONLINE);
+	CanIf_SetPduMode(CANIF_CHL_LS,CANIF_SET_ONLINE);
 }
 /* ============================ [ FUNCTIONS ] ====================================================== */
 void StartupHook(void)

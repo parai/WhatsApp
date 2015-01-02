@@ -232,7 +232,7 @@ typedef struct CanIf_HrhCfgType_tag
  *                                                         - CanObjectId (see CAN326_Conf)
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanHardwareObject */
-    struct Can_HardwareObjectType_tag* CanIfHrhIdSymRef ;
+    uint32 CanIfHrhIdSymRef ;
 } CanIf_HrhCfgType ;
 
 /* This container contains parameters related to each HTH. */
@@ -272,7 +272,9 @@ typedef struct CanIf_InitHohCfgType_tag
  *  Drivers.
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet */
-    struct Can_ConfigSetType_tag* CanIfInitRefCfgSet ;
+    /* struct Can_ConfigSetType_tag* CanIfInitRefCfgSet ; TODO: */
+/* I think better direct linked to CAN controller configuration data */
+    struct Can_ControllerConfigType_tag* CanCtrlCfg;
 } CanIf_InitHohCfgType ;
 
 /* Optional container that allows to map a range of CAN Ids to one PduId. */
@@ -496,6 +498,9 @@ typedef struct CanIf_TxPduCfgType_tag
 /* Reference to an exclusive area Id defined within the BSW Scheduler. */
 /* /AUTOSAR/EcucDefs/Rte/RteBswModuleInstance/RteBswExclusiveAreaImpl */
 	Rte_BswExclusiveAreaImplType* CanIfTxPduBswSchExclAreaIdRef ;
+/* The HTH to which Tx L-PDU belongs to, is referred through this parameter. */
+/* /AUTOSAR/EcucDefs/CanIf/CanIfInitCfg/CanIfInitHohCfg/CanIfHthCfg */
+	CanIf_HthCfgType* CanIfTxPduHthIdRef;
 /* Configurable reference to a CanIf buffer configuration. */
 /* /AUTOSAR/EcucDefs/CanIf/CanIfInitCfg/CanIfBufferCfg */
 	CanIf_BufferCfgType* CanIfTxPduBufferRef ;
@@ -652,18 +657,21 @@ typedef struct CanIf_InitCfgType_tag
 {
 	CanIf_BufferCfgType* CanIfBufferCfg ;
 	CanIf_InitHohCfgType* CanIfInitHohCfg ;
+	uint8                 CanIfInitHohNum;
 /* The SHORT-NAME of "CanIfRxPduConfig" container itself represents the symolic name of Receive
  *  L-PDU.
  */
 	CanIf_RxPduCfgType* CanIfRxPduCfg ;
+	uint32              CanIfRxPduNum;
 /* The SHORT-NAME of "CanIfTxPduConfig" container represents the symolic name of Transmit L-PDU. */
 	CanIf_TxPduCfgType* CanIfTxPduCfg ;
+	uint32              CanIfTxPduNum;
 /* constant to CanIf_ConfigType */
 /* Selects the CAN Interface specific configuration setup. This type of the external data structure
  *  shall contain the post build initialization data for the CAN Interface for all underlying CAN
  *  Dirvers.
  */
-	char* CanIfInitCfgSet ;
+	/*char* CanIfInitCfgSet ; TODO: */
 } CanIf_InitCfgType ;
 
 typedef CanIf_InitCfgType CanIf_ConfigType;

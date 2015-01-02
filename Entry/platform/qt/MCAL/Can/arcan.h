@@ -73,8 +73,7 @@ private:
     QLineEdit*   leId;
     QLineEdit*   leData;
     QTableWidget* tableTrace;
-    QList<PduIdType> swHandle;
-    QList<int>       timerId;
+    QList<OcMessage*> swMsg;
 public:
     explicit arCan(QString name,unsigned long channelNumber,QWidget *parent=0);
     ~arCan();

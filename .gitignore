@@ -3,3 +3,5 @@
 *.out
 Tool/arxml/.types
 Entry/platform/qt/lua-5.2.3/doc
+Entry/platform/qt/common/OpenVG
+
