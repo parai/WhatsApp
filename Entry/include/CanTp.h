@@ -15,23 +15,20 @@
 #ifndef CANTP_H_
 #define CANTP_H_
 /* ============================ [ INCLUDES  ] ====================================================== */
-#include "Std_Types.h"
+#include "Modules.h"
+#include "ComStack_Types.h"
+#include "CanIf.h"
 
 #ifdef __cplusplus
 namespace autosar { extern "C" {
 #endif
 /* ============================ [ MACROS    ] ====================================================== */
-// TODO
-#define CANTP_RX_DIAG_LS_MSG 0
-#define CANTP_RX_DIAG_HS_MSG 1
-
-#define CANTP_TX_DIAG_LS_MSG 0
-#define CANTP_TX_DIAG_HS_MSG 1
 /* ============================ [ TYPES     ] ====================================================== */
 /* ============================ [ DATAS     ] ====================================================== */
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
+FUNC(void,MEM_CanTp_RxIndication) CanTp_RxIndication(PduIdType CanTpRxPduId, const PduInfoType *CanTpRxPduPtr);
 #ifdef __cplusplus
 }}  /* name space */
 #endif

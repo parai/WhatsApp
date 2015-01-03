@@ -12,42 +12,23 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
-#ifndef CAN_CFG_H_
-#define CAN_CFG_H_
 /* ============================ [ INCLUDES  ] ====================================================== */
+#include "CanTp.h"
 #ifdef __cplusplus
-namespace autosar { extern "C" {
+namespace autosar {
 #endif
+
 /* ============================ [ MACROS    ] ====================================================== */
-#define CAN_DEVICE_NAME   "Can"
-
-enum
-{
-	CAN_CTRL_0 = 0,
-	CAN_CTRL_1,
-	CAN_CTRL_NUM
-};
-
-enum
-{
-	CAN0_RX_OBJECT = 0,
-	CAN0_TX_OBJECT,
-	CAN1_RX_OBJECT,
-	CAN1_TX_OBJECT,
-	CAN_HW_OBJECT_NUM
-};
-
-#define CAN_DEV_ERROR_DETECT			1
 /* ============================ [ TYPES     ] ====================================================== */
-
 /* ============================ [ DATAS     ] ====================================================== */
-extern CONST(Can_ControllerConfigType,MEM_CAN_CONFIG) Can_ControllerConfig[];
-extern CONST(Can_HardwareObjectType,MEM_CAN_CONFIG) Can_HardwareObject[CAN_HW_OBJECT_NUM];
-extern CONST(Can_ConfigType,MEM_CAN_CONFIG) Can_Config;
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
+
+FUNC(void,MEM_CanTp_RxIndication) CanTp_RxIndication(PduIdType CanTpRxPduId, const PduInfoType *CanTpRxPduPtr)
+{
+	printf("CanTp_RxIndication()\n");
+}
 #ifdef __cplusplus
-}}  /* name space */
+} /* namespace autosar */
 #endif
-#endif /* CAN_CFG_H_ */

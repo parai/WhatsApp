@@ -223,7 +223,7 @@ typedef struct CanIf_HrhCfgType_tag
  *  In the next major release this reference will be deleted.
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanHardwareObject */
-    struct Can_HardwareObjectType_tag* CanIfHrhCanHandleTypeRef ;
+    //struct Can_HardwareObjectType_tag* CanIfHrhCanHandleTypeRef ;
 /* The parameter refers to a particular HRH object in the CanDrv configuration (see CanHardwareObject
  *  CAN324_Conf).
  */
@@ -232,7 +232,7 @@ typedef struct CanIf_HrhCfgType_tag
  *                                                         - CanObjectId (see CAN326_Conf)
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanHardwareObject */
-    uint32 CanIfHrhIdSymRef ;
+    struct Can_HardwareObjectType_tag* CanIfHrhIdSymRef ;
 } CanIf_HrhCfgType ;
 
 /* This container contains parameters related to each HTH. */
@@ -250,7 +250,7 @@ typedef struct CanIf_HthCfgType_tag
  *  In the next major release this reference will be deleted.
  */
 /* /AUTOSAR/EcucDefs/Can/CanConfigSet/CanHardwareObject */
-    struct Can_HardwareObjectType_tag* CanIfHthCanHandleTypeRef ;
+    //struct Can_HardwareObjectType_tag* CanIfHthCanHandleTypeRef ;
 /* The parameter refers to a particular HTH object in the CanDrv configuration (see CanHardwareObject
  *  CAN324_Conf).
  */

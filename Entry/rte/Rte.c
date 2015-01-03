@@ -1,4 +1,4 @@
-''/**
+/**
  * WhatsApp - the open source AUTOSAR platform https://github.com/parai
  *
  * Copyright (C) 2014  WhatsApp <parai@foxmail.com>

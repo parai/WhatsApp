@@ -131,7 +131,17 @@ FUNC(void,MEM_Can_TxConfirmation) Can_TxConfirmation ( PduIdType canTxPduId )
 }
 FUNC(void,MEM_Can_RxIndication)  Can_RxIndication( uint8 bus, Can_IdType CanId, uint8 CanDlc, const uint8 *CanSduPtr )
 {
-	CanIf_RxIndication(bus,CanId,CanDlc,CanSduPtr);
+	uint8 hrh;
+	switch(bus)
+	{
+		case CAN_CTRL_0:
+			hrh = CAN0_RX_OBJECT;
+			break;
+		case CAN_CTRL_1:
+			hrh = CAN1_RX_OBJECT;
+			break;
+	}
+	CanIf_RxIndication(hrh,CanId,CanDlc,CanSduPtr);
 }
 #ifdef __cplusplus
 } }/* namespace autosar */

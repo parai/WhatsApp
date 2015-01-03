@@ -30,6 +30,75 @@ STATIC CanIf_ChannelGetModeType canIfChannelGetPduMode[CANIF_CHL_NUM];
 STATIC CanIf_ConfigType* canIfConfig;
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
+static const CanIf_RxPduCfgType* find_rxpdu(uint32 CanId,uint8 Hrh)
+{
+	uint16 i;
+	const CanIf_RxPduCfgType* targetRxPdu = NULL;
+	for (i = 0; i < canIfConfig->CanIfRxPduNum; i++)
+	{
+		const CanIf_RxPduCfgType *rxPdu = &(canIfConfig->CanIfRxPduCfg[i]);
+		if ( rxPdu->CanIfRxPduHrhIdRef->CanIfHrhIdSymRef->CanObjectId == Hrh)
+		{
+			if (CAN_HANDLETYPE_BASIC == (rxPdu->CanIfRxPduHrhIdRef->CanIfHrhIdSymRef->CanHandleType))
+			{	/* basic can, do sw filter */
+				if (rxPdu->CanIfRxPduHrhIdRef->CanIfHrhSoftwareFilter)
+				{
+					if (rxPdu->CanIfRxPduCanIdRange != NULL)
+					{
+						if ((rxPdu->CanIfRxPduCanIdRange->CanIfRxPduCanIdRangeLowerCanId<=CanId) &&
+							(rxPdu->CanIfRxPduCanIdRange->CanIfRxPduCanIdRangeUpperCanId>=CanId))
+						{
+							targetRxPdu = rxPdu;
+							break;
+						}
+						else
+						{
+							continue;
+						}
+					}
+					else
+					{
+						if(rxPdu->CanIfRxPduCanId==CanId)
+						{
+							targetRxPdu = rxPdu;
+							break;
+						}
+						else
+						{
+							continue;
+						}
+					}
+				}
+				else
+				{	/* the way that do mask filter should be done by CAN Hardware object itself */
+					if(rxPdu->CanIfRxPduCanId==CanId)
+					{
+						targetRxPdu = rxPdu;
+						break;
+					}
+					else
+					{
+						continue;
+					}
+				}
+			}
+			else
+			{	/* full can. no filter */
+				if(rxPdu->CanIfRxPduCanId==CanId)
+				{
+					targetRxPdu = rxPdu;
+					break;
+				}
+				else
+				{
+					continue;
+				}
+			}
+		}
+	}
+
+	return targetRxPdu;
+}
 /* ============================ [ FUNCTIONS ] ====================================================== */
 FUNC(void,MEM_CanIf_Init) CanIf_Init ( const CanIf_ConfigType* ConfigPtr )
 {
@@ -325,7 +394,7 @@ FUNC(Std_ReturnType,MEM_CanIf_Transmit) CanIf_Transmit ( PduIdType CanTxPduId , 
 			Can_PduType pdu;
 			Can_ReturnType result;
 
-			Can_HwHandleType hth = txPduCfg->CanIfTxPduHthIdRef->CanIfHthIdSymRef;
+			Can_HwHandleType hth = txPduCfg->CanIfTxPduHthIdRef->CanIfHthIdSymRef->CanObjectId;
 			if ( CANIF_TXPDUTYPE_DYNAMIC == txPduCfg->CanIfTxPduType )
 			{ /* configuration tool should make sure all the dynamic PDUs in the front of the list of CanIfTxPduCfg */
 				/* TODO */
@@ -439,15 +508,41 @@ FUNC(void,MEM_CanIf_RxIndication) CanIf_RxIndication ( uint8 Hrh , Can_IdType Ca
 		}
 		else
 		{
-			uint16 i;
-			for (i = 0; i < canIfConfig->CanIfRxPduNum; i++)
-			{
-				const CanIf_RxPduCfgType *rxPdu = &(canIfConfig->CanIfRxPduCfg[i]);
-				if ( rxPdu->CanIfRxPduHrhIdRef->CanIfHrhIdSymRef == Hrh)
-				{
+			const CanIf_RxPduCfgType* rxPdu = find_rxpdu(CanId,Hrh);
 
+			if(NULL == rxPdu)
+			{
+#if ( CANIF_DEV_ERROR_DETECT == 1 )
+				Det_ReportError(MODULE_ID_CANIF,0,0x14,CANIF_E_PARAM_CANID);
+#endif
+			}
+			else
+			{
+				if(rxPdu->CanIfRxPduDlc != CanDlc)
+				{
+#if ( CANIF_DEV_ERROR_DETECT == 1 )
+					Det_ReportError(MODULE_ID_CANIF,0,0x14,CANIF_E_PARAM_DLC);
+#endif
+				}
+				else
+				{
+					switch(rxPdu->CanIfRxPduUserRxIndicationUL)
+					{
+						case CANIF_RXPDUUSERRXINDICATIONUL_CAN_TP:
+						{
+							PduInfoType pdu;
+							pdu.SduDataPtr=CanSduPtr;
+							pdu.SduLength=CanDlc;
+							CanTp_RxIndication(rxPdu->CanIfRxPduCanId,&pdu);
+							break;
+						}
+						default:
+							assert(0);
+							break;
+					}
 				}
 			}
+
 		}
 #if ( CANIF_DEV_ERROR_DETECT == 1 )
 	}

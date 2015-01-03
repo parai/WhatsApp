@@ -48,15 +48,13 @@ STATIC CONST(CanIf_HrhCfgType,MEM_CANIF_CONFIG) CanIfHrhCfg_HS =
 	.CanIfHrhRangeCfg = &CanIf_HrhRangeCfgNormal,
 	.CanIfHrhSoftwareFilter = TRUE,	/* use CanIf_HrhRangeCfgNormal to do SW filtering */
 	.CanIfHrhCanCtrlIdRef = &CanIf_CtrlCfg[CANIF_CHL_HS],
-	.CanIfHrhCanHandleTypeRef = NULL, /* not used */
-	.CanIfHrhIdSymRef         = CAN0_RX_OBJECT
+	.CanIfHrhIdSymRef         = &Can_HardwareObject[CAN0_RX_OBJECT]
 };
 
 STATIC CONST(CanIf_HthCfgType,MEM_CANIF_CONFIG) CanIfHthCfg_HS =
 {
 	.CanIfHthCanCtrlIdRef = &CanIf_CtrlCfg[CANIF_CHL_HS],
-	.CanIfHthCanHandleTypeRef = NULL, /* not used */
-	.CanIfHthIdSymRef         = CAN0_TX_OBJECT
+	.CanIfHthIdSymRef         = &Can_HardwareObject[CAN0_TX_OBJECT]
 };
 
 STATIC CONST(CanIf_HrhCfgType,MEM_CANIF_CONFIG) CanIfHrhCfg_LS =
@@ -64,15 +62,13 @@ STATIC CONST(CanIf_HrhCfgType,MEM_CANIF_CONFIG) CanIfHrhCfg_LS =
 	.CanIfHrhRangeCfg = &CanIf_HrhRangeCfgNormal,
 	.CanIfHrhSoftwareFilter = TRUE,	/* use CanIf_HrhRangeCfgNormal to do SW filtering */
 	.CanIfHrhCanCtrlIdRef = &CanIf_CtrlCfg[CANIF_CHL_LS],
-	.CanIfHrhCanHandleTypeRef = NULL, /* not used */
-	.CanIfHrhIdSymRef         = CAN1_RX_OBJECT
+	.CanIfHrhIdSymRef         = &Can_HardwareObject[CAN1_RX_OBJECT]
 };
 
 STATIC CONST(CanIf_HthCfgType,MEM_CANIF_CONFIG) CanIfHthCfg_LS =
 {
 	.CanIfHthCanCtrlIdRef = &CanIf_CtrlCfg[CANIF_CHL_LS],
-	.CanIfHthCanHandleTypeRef = NULL, /* not used */
-	.CanIfHthIdSymRef         = CAN1_TX_OBJECT
+	.CanIfHthIdSymRef         = &Can_HardwareObject[CAN1_TX_OBJECT]
 };
 STATIC CONST(CanIf_InitHohCfgType,MEM_CANIF_CONFIG) CanIf_InitHohCfg[] =
 {

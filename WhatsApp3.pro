@@ -69,7 +69,8 @@ SOURCES +=              \
     Entry/platform/qt/lua-5.2.3/src/lvm.c \
     Entry/platform/qt/lua-5.2.3/src/lzio.c \
     Entry/platform/qt/lua-5.2.3/src/lua.c \
-    Entry/platform/qt/MCAL/Can/xlLoadlib.cpp
+    Entry/platform/qt/MCAL/Can/xlLoadlib.cpp \
+    Entry/communication/CanTp.c
 
 HEADERS  +=             \
     Entry/include/Os.h \

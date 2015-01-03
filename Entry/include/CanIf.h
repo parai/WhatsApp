@@ -18,6 +18,7 @@
 #include "Modules.h"
 #include "ComStack_Types.h"
 #include "Can.h"
+#include "CanTp.h"
 #ifdef __cplusplus
 namespace autosar { extern "C" {
 #endif
