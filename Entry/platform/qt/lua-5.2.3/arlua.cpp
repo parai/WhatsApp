@@ -36,8 +36,6 @@ static const luaL_Reg autosarlib[] = {
 /* ============================ [ FUNCTIONS ] ====================================================== */
 static int luai_can_write (lua_State *L)
 {
-	qDebug() << "luai_can_write called" ;
-
 	int n = lua_gettop(L);  /* number of arguments */
 	if(3==n)
 	{
@@ -57,9 +55,7 @@ static int luai_can_write (lua_State *L)
 			 return luaL_error(L,"incorrect argument canid to function 'Can_Write'");
 		}
 
-		qDebug()<<busid<<canid;
 		int dlc = luaL_len ( L , 3 ) ;
-		qDebug()<<busid<<canid<<dlc;
 		if(dlc > 8)
 		{
 			return luaL_error(L,"len(data array{})>8 to function 'Can_Write'");
@@ -99,8 +95,6 @@ static int luai_can_write (lua_State *L)
 			// Pop table
 			lua_pop(L, 1);
 			// Stack is now the same as it was on entry to this function
-			qDebug()<<"Can_Write("<<busid<<","<<canid<<","<<dlc<<",["<<data[0]<<data[1]	\
-					<<data[2]<<data[3]<<data[4]<<data[5]<<data[6]<<data[7]<<"])";
 
 			OcMessage* msg= new OcMessage(canid,data,dlc,false);
 

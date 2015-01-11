@@ -56,23 +56,23 @@ typedef struct CanTp_TxFcNPduType_tag
 /* Declares which communication addressing mode is supported for this Rx N-SDU. */
 typedef enum
 {
-	CANTP_EXTENDED,
-	CANTP_MIXED,
-	CANTP_STANDARD
+    CANTP_RX_ADDRESSING_FORMAT_EXTENDED,
+    CANTP_RX_ADDRESSING_FORMAT_MIXED,
+    CANTP_RX_ADDRESSING_FORMAT_STANDARD
 } CanTp_RxAddressingFormatType ;
 
 /* Defines if the receive frame uses padding or not. */
 typedef enum
 {
-	CANTP_OFF,
-	CANTP_ON
+    CANTP_RX_PADDING_OFF,
+    CANTP_RX_PADDING_ON
 } CanTp_RxPaddingActivationType ;
 
 /* Declares the communication type of this Rx N-SDU. */
 typedef enum
 {
-	CANTP_FUNCTIONAL,
-	CANTP_PHYSICAL
+    CANTP_RX_TYPE_FUNCTIONAL,
+    CANTP_RX_TYPE_PHYSICAL
 } CanTp_RxTaTypeType ;
 
 /* The following parameters needs to be configured for each CAN N-SDU that the CanTp module receives
@@ -80,9 +80,9 @@ typedef enum
  */
 typedef struct CanTp_RxNSduType_tag
 {
-	CanTp_NAeType* CanTpNAe ;
-	CanTp_NSaType* CanTpNSa ;
-	CanTp_NTaType* CanTpNTa ;
+	CanTp_NAeType CanTpNAe ;
+	CanTp_NSaType CanTpNSa ;
+	CanTp_NTaType CanTpNTa ;
 	CanTp_RxNPduType* CanTpRxNPdu ;
 	CanTp_TxFcNPduType* CanTpTxFcNPdu ;
 /* Sets the number of N-PDUs the CanTp receiver allows the sender to send, before waiting for an
@@ -187,23 +187,23 @@ typedef struct CanTp_TxNPduType_tag
 /* Declares which communication addressing format is supported for this TxNsdu. */
 typedef enum
 {
-	CANTP_EXTENDED,
-	CANTP_MIXED,
-	CANTP_STANDARD
+    CANTP_TX_ADDRESSING_FORMAT_EXTENDED,
+    CANTP_TX_ADDRESSING_FORMAT_MIXED,
+    CANTP_TX_ADDRESSING_FORMAT_STANDARD
 } CanTp_TxAddressingFormatType ;
 
 /* Defines if the transmit frame use padding or not. */
 typedef enum
 {
-	CANTP_OFF,
-	CANTP_ON
+    CANTP_TX_PADDING_OFF,
+    CANTP_TX_PADDING_ON
 } CanTp_TxPaddingActivationType ;
 
 /* Declares the communication type of this TxNsdu. */
 typedef enum
 {
-	CANTP_FUNCTIONAL,
-	CANTP_PHYSICAL
+    CANTP_TX_TYPE_FUNCTIONAL,
+    CANTP_TX_TYPE_PHYSICAL
 } CanTp_TxTaTypeType ;
 
 /* The following parameters needs to be configured for each CAN N-SDU that the CanTp module transmits
@@ -211,9 +211,9 @@ typedef enum
  */
 typedef struct CanTp_TxNSduType_tag
 {
-	CanTp_NAeType* CanTpNAe ;
-	CanTp_NSaType* CanTpNSa ;
-	CanTp_NTaType* CanTpNTa ;
+	CanTp_NAeType CanTpNAe ;
+	CanTp_NSaType CanTpNSa ;
+	CanTp_NTaType CanTpNTa ;
 	CanTp_RxFcNPduType* CanTpRxFcNPdu ;
 	CanTp_TxNPduType* CanTpTxNPdu ;
 /* Value in second of the N_As timeout. N_As is the time for transmission of a CAN frame (any N_PDU)

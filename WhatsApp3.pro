@@ -70,7 +70,8 @@ SOURCES +=              \
     Entry/platform/qt/lua-5.2.3/src/lzio.c \
     Entry/platform/qt/lua-5.2.3/src/lua.c \
     Entry/platform/qt/MCAL/Can/xlLoadlib.cpp \
-    Entry/communication/CanTp.c
+    Entry/communication/CanTp.c \
+    Entry/communication/config/CanTp_Cfg.c
 
 HEADERS  +=             \
     Entry/include/Os.h \
@@ -194,7 +195,8 @@ HEADERS  +=             \
     Entry/platform/qt/lua-5.2.3/src/lundump.h \
     Entry/platform/qt/lua-5.2.3/src/lvm.h \
     Entry/platform/qt/lua-5.2.3/src/lzio.h \
-    Entry/platform/qt/MCAL/Can/vxlapi.h
+    Entry/platform/qt/MCAL/Can/vxlapi.h \
+    Entry/communication/config/CanTp_Cfg.h
 
 FORMS    +=
 

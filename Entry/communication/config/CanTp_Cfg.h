@@ -12,46 +12,39 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  */
-#ifndef CANTP_H_
-#define CANTP_H_
+#ifndef CANTP_CFG_H_
+#define CANTP_CFG_H_
 /* ============================ [ INCLUDES  ] ====================================================== */
-#include "Modules.h"
-#include "ComStack_Types.h"
-#include "CanIf.h"
+#include "Std_Types.h"
 
 #ifdef __cplusplus
 namespace autosar { extern "C" {
 #endif
 /* ============================ [ MACROS    ] ====================================================== */
+enum
+{
+	CANTP_CHL_P2P,
+	CANTP_CHL_P2A,
+	CANTP_CHL_NUM
+};
+enum
+{
+	CANTP_TX_P2P,
+	CANTP_TX_P2A,
+	CANTP_TX_NUM
+};
+enum
+{
+	CANTP_RX_P2P,
+	CANTP_RX_P2A,
+	CANTP_RX_NUM
+};
 /* ============================ [ TYPES     ] ====================================================== */
-/* If an RxNsdu or a TxNsdu is configured for mixed addressing format, this
- * parameter contains the transport protocol address extension value
- */
-typedef uint8 CanTp_NAeType;
-/* If an RxNSdu or a TxNSdu is configured for extended addressing format,
- * this parameter contains the transport protocol source address's value.
- */
-typedef uint8 CanTp_NSaType;
-/* If an RxNsdu or a TxNsdu is configured for extended addressing format,
- * this parameter contains the transport protocol target address's value
- */
-typedef uint8 CanTp_NTaType;
-#ifdef __cplusplus
-}}  /* name space */
-#endif
-
-#include "CanTp_Types.h"
-#include "CanTp_Cfg.h"
-
-#ifdef __cplusplus
-namespace autosar { extern "C" {
-#endif
 /* ============================ [ DATAS     ] ====================================================== */
 /* ============================ [ DECLARES  ] ====================================================== */
 /* ============================ [ LOCALS    ] ====================================================== */
 /* ============================ [ FUNCTIONS ] ====================================================== */
-FUNC(void,MEM_CanTp_RxIndication) CanTp_RxIndication(PduIdType CanTpRxPduId, const PduInfoType *CanTpRxPduPtr);
 #ifdef __cplusplus
 }}  /* name space */
 #endif
-#endif /* CANTP_H_ */
+#endif /* CANTP_CFG_H_ */
